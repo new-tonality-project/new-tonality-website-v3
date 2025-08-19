@@ -1,0 +1,41 @@
+'use client'
+
+import Image from 'next/image'
+import Link from 'next/link'
+import clsx from 'clsx'
+import avatarImage from '@/images/nt-logo.png'
+
+export function Logo({
+  large = false,
+  className,
+  ...props
+}: Omit<React.ComponentPropsWithoutRef<typeof Link>, 'href'> & {
+  large?: boolean
+}) {
+  return (
+    <div
+      className={clsx(
+        className,
+        'rounded-full bg-white/90 shadow-zinc-800/5 ring-zinc-900/5 backdrop-blur-sm dark:bg-zinc-800/90 dark:ring-white/10',
+      )}
+    >
+      <Link
+        href="/"
+        aria-label="Home"
+        className="pointer-events-auto"
+        {...props}
+      >
+        <Image
+          src={avatarImage}
+          alt=""
+          sizes={large ? '4rem' : '3rem'}
+          className={clsx(
+            'rounded-full bg-zinc-100 object-cover dark:bg-zinc-800',
+            large ? 'h-16 w-16' : 'h-10 w-10',
+          )}
+          priority
+        />
+      </Link>
+    </div>
+  )
+}
