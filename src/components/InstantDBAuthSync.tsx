@@ -10,8 +10,6 @@ export default function InstantDBAuthSync() {
 
   useEffect(() => {
     if (isSignedIn) {
-      console.log('signing in...')
-
       getToken()
         .then((token) => {
           db.auth.signInWithIdToken({
