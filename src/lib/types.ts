@@ -19,3 +19,8 @@ export type Tool = {
 export type ArticleWithSlug = Article & {
   slug: string
 }
+
+export type PlotPoint = {
+  x: number
+  y: number
+}
