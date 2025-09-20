@@ -1,3 +1,5 @@
+import { StaticImageData } from "next/image";
+
 export type BasicLink = { label: string; href: string }
 
 export type Article = {
@@ -5,6 +7,13 @@ export type Article = {
   description: string
   author: string
   date: string
+}
+
+export type Tool = {
+  name: string
+  description: string
+  logo: StaticImageData
+  link: BasicLink
 }
 
 export type ArticleWithSlug = Article & {
