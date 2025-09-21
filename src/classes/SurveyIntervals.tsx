@@ -1,4 +1,6 @@
-import { PlotPoint } from '@/lib'
+import type { PlotPoint } from '@/lib'
+import { centsToRatio } from 'sethares-dissonance'
+
 
 export class SurveyIntervals {
   private _data: Map<number, number[]> = new Map()
@@ -10,15 +12,28 @@ export class SurveyIntervals {
     this.addRandomIntervals(3, 1000, 1200)
   }
 
-  get valuesAsCents() {
+  get values() {
     return Array.from(this._data.keys()).sort((a, b) => a - b)
   }
 
+  get valuesAsRatios() {
+    return this.values.map((val) => centsToRatio(val))
+  }
+
   get plotData() {
-    return this.valuesAsCents.map((interval) => ({
+    return this.values.map((interval) => ({
       x: interval,
       y: 0.5,
     })) as PlotPoint[]
+  }
+
+  public getFrequencies(medianFrequency: number) {
+    return this.values.map((interval) => {
+      const ratio = centsToRatio(interval)
+      const f_1 = medianFrequency / Math.sqrt(1 + ratio)
+      const f_2 = ratio * f_1
+      return { interval, frequencies: [f_1, f_2] as [number, number] }
+    })
   }
 
   private addRandomIntervals(length: number, min: number, max: number) {
@@ -35,7 +50,7 @@ export class SurveyIntervals {
       if (iteration > 1000) throw new Error('Infinite loop')
       iteration++
 
-      const interval = min + Math.random() * (max - min)
+      const interval = min + Math.floor(Math.random() * (max - min))
       if (this.delta(interval) < MIN_DELTA) continue
 
       this.set(interval, [])
@@ -52,7 +67,7 @@ export class SurveyIntervals {
   private delta(interval: number) {
     let delta = Infinity
 
-    for (const num of this.valuesAsCents) {
+    for (const num of this.values) {
       const newDelta = Math.abs(num - interval)
       if (newDelta < delta) delta = newDelta
     }

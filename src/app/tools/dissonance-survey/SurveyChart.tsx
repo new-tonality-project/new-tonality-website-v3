@@ -1,6 +1,6 @@
 "use client"
 
-import { PlotPoint } from '@/lib'
+import type { PlotPoint } from '@/lib'
 import { ScatterChart, Scatter, XAxis, YAxis } from 'recharts'
 
 export function SurveyChart(props: { data: PlotPoint[] }) {
