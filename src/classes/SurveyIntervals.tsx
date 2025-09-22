@@ -1,15 +1,14 @@
 import type { PlotPoint } from '@/lib'
 import { centsToRatio } from 'sethares-dissonance'
 
-
 export class SurveyIntervals {
   private _data: Map<number, number[]> = new Map()
+  private _shuffled: number[] = []
 
   constructor() {
-    this.addRandomIntervals(3, 0, 200)
-    this.addRandomIntervals(4, 200, 600)
-    this.addRandomIntervals(4, 600, 1000)
-    this.addRandomIntervals(3, 1000, 1200)
+    this.setRandomIntervalsBasedOn12TET()
+
+    this._shuffled = this.getShuffled()
   }
 
   get values() {
@@ -27,6 +26,23 @@ export class SurveyIntervals {
     })) as PlotPoint[]
   }
 
+  public getShuffled() {
+    const lastEl = this._shuffled.at(-1)
+
+    if (!lastEl) {
+      this._shuffled = this.values.toSorted(() => Math.random() - 0.5)
+      return this._shuffled
+    }
+
+    this._shuffled = this.values
+      .filter((el) => el !== lastEl)
+      .toSorted(() => Math.random() - 0.5)
+
+    this._shuffled.splice(Math.floor(this._shuffled.length / 2), 0, lastEl)
+
+    return this._shuffled
+  }
+
   public getFrequencies(medianFrequency: number) {
     return this.values.map((interval) => {
       const ratio = centsToRatio(interval)
@@ -36,7 +52,29 @@ export class SurveyIntervals {
     })
   }
 
-  private addRandomIntervals(length: number, min: number, max: number) {
+  public setRandomIntervalsBasedOn12TET() {
+    const MIN_DELTA = 50
+    let lastInterval = Infinity
+
+    for (let i = 1; i <= 12; i++) {
+      const interval12tet = i * 100
+      let newInterval
+      let iteration = 1
+
+      while (!newInterval || Math.abs(lastInterval - newInterval) < MIN_DELTA) {
+        if (iteration > 100) throw new Error('Infinite loop')
+        newInterval = interval12tet - Math.floor(Math.random() * 100)
+        iteration++
+      }
+
+      this.set(newInterval, [])
+      lastInterval = newInterval
+    }
+
+    return this
+  }
+
+  private addRandomIntervalsInARange(length: number, min: number, max: number) {
     if (min < 0 || max < 0 || length < 0)
       throw new Error('Arguments should be greater than zero')
     if (min >= max) throw new Error('Argument max should be greater than min')
