@@ -52,6 +52,15 @@ export class SurveyIntervals {
     })
   }
 
+  public getShuffledFrequencies(medianFrequency: number) {
+    return this._shuffled.map((interval) => {
+      const ratio = centsToRatio(interval)
+      const f_1 = medianFrequency / Math.sqrt(1 + ratio)
+      const f_2 = ratio * f_1
+      return { interval, frequencies: [f_1, f_2] as [number, number] }
+    })
+  }
+
   public setRandomIntervalsBasedOn12TET() {
     const MIN_DELTA = 50
     let lastInterval = Infinity

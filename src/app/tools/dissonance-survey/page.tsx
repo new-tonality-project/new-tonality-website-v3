@@ -1,15 +1,12 @@
 import { SimpleLayout } from '@/components'
 import { SurveyChart } from './SurveyChart'
 import { SurveyIntervals } from '@/classes'
-import { PlayIntervals } from './PlayIntervals'
+import { Survey } from './Survey'
 
 export default async function DissonanceSurveyPage() {
-  const intervals = new SurveyIntervals()
-
   return (
     <SimpleLayout title="Dissonance survey" intro="Description here">
-      <SurveyChart data={intervals.plotData} />
-      <PlayIntervals intervalFrequencies={intervals.getFrequencies(440)} />
+      <Survey medianFrequency={440} />
     </SimpleLayout>
   )
 }
