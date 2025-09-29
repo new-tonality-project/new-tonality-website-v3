@@ -1,4 +1,4 @@
-import { adminDb, db, SetharesDissonancePreset } from '@/db'
+import { adminDb, db, type SetharesDissonancePreset } from '@/db'
 import { debounceTransaction } from '@/lib'
 import { id } from '@instantdb/admin'
 
