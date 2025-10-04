@@ -17,14 +17,14 @@ import { HeaderButton } from './HeaderButton'
 export function Header() {
   return (
     <header
-      className="pointer-events-none relative z-50 flex flex-none flex-col"
+      className="pointer-events-none relative flex flex-none flex-col"
       style={{
         height: 'var(--header-height)',
         marginBottom: 'var(--header-mb)',
       }}
     >
       <div
-        className="top-0 z-10 h-16 pt-6"
+        className="top-0 h-16 pt-6"
         style={{
           position: 'var(--header-position)' as React.CSSProperties['position'],
         }}

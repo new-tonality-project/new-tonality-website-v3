@@ -7,39 +7,95 @@ const machineSetup = setup({
       description: string
       shareAnonymously: boolean
       sharePublicly: boolean
+      musicalBackground: string
     },
-    events: {} as {
-      type: 'acceptDisclamer'
-      value: { shareAnonymously: boolean; sharePublicly: boolean }
-    },
+    events: {} as
+      | {
+          type: 'setShareAnonymously'
+          value: boolean
+        }
+      | {
+          type: 'setSharePublicly'
+          value: boolean
+        }
+      | {
+          type: 'setMusicalBackground'
+          value: string
+        }
+      | {
+          type: 'toQuestions'
+        }
+      | {
+          type: 'toExperiment'
+        }
+      | { type: 'exitSurvey' },
   },
 })
 
 export const surveyMachine = machineSetup.createMachine({
   context: {
-    title: 'Dissonance Survey',
-    description:
-      'To take part in this survey, you have to agree that we can store and process your results.',
+    title: '',
+    description: '',
     shareAnonymously: false,
     sharePublicly: false,
+    musicalBackground: '',
   },
-  initial: 'disclamer',
+  initial: 'overview',
+  on: {
+    exitSurvey: {
+      target: '.overview',
+      actions: assign({
+        title: '',
+        description: '',
+        shareAnonymously: false,
+        sharePublicly: false,
+        musicalBackground: '',
+      }),
+    },
+  },
   states: {
-    disclamer: {
+    overview: {
+      entry: assign({
+        title: 'Overview',
+        description: '',
+      }),
       on: {
-        acceptDisclamer: {
-          target: 'start',
+        toQuestions: {
+          target: 'questions',
+        },
+      },
+    },
+    questions: {
+      entry: assign({
+        title: 'Preliminary questions',
+        description:
+          'Before we start, please answer following questions so we know how to process your data.',
+      }),
+      on: {
+        toExperiment: {
+          target: 'experiment',
+        },
+        setShareAnonymously: {
           actions: assign({
-            shareAnonymously: ({ event }) => event.value.shareAnonymously,
-            sharePublicly: ({ event }) => event.value.sharePublicly,
+            shareAnonymously: ({ event }) => event.value,
+          }),
+        },
+        setSharePublicly: {
+          actions: assign({
+            sharePublicly: ({ event }) => event.value,
+          }),
+        },
+        setMusicalBackground: {
+          actions: assign({
+            musicalBackground: ({ event }) => event.value,
           }),
         },
       },
     },
-    start: {
+    experiment: {
       entry: assign({
-        title: 'Start',
-        description: 'Description of the start',
+        title: 'Experiment',
+        description: 'Rate the consonance of the intervals you hear',
       }),
     },
   },
