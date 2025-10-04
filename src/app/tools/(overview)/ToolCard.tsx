@@ -1,5 +1,5 @@
 import { Card, LinkIcon } from '@/components'
-import { Tool } from '@/lib'
+import { type Tool } from '@/lib'
 import Image from 'next/image'
 
 export function ToolCard(props: Tool) {

@@ -3,12 +3,16 @@ import { centsToRatio } from 'sethares-dissonance'
 
 export class SurveyIntervals {
   private _data: Map<number, number[]> = new Map()
-  private _shuffled: number[] = []
+  private _surveyOrder: number[]
 
   constructor() {
     this.setRandomIntervalsBasedOn12TET()
 
-    this._shuffled = this.getShuffled()
+    this._surveyOrder = this.getSurveyOrder()
+  }
+
+  get surveyOrder() {
+    return this._surveyOrder
   }
 
   get values() {
@@ -26,42 +30,15 @@ export class SurveyIntervals {
     })) as PlotPoint[]
   }
 
-  public getShuffled() {
-    const lastEl = this._shuffled.at(-1)
+  public rateInterval({ interval, rating }: { interval: number; rating: number }) {
+    const currentRating = this._data.get(interval)
 
-    if (!lastEl) {
-      this._shuffled = this.values.toSorted(() => Math.random() - 0.5)
-      return this._shuffled
-    }
+    if (!currentRating) return
 
-    this._shuffled = this.values
-      .filter((el) => el !== lastEl)
-      .toSorted(() => Math.random() - 0.5)
-
-    this._shuffled.splice(Math.floor(this._shuffled.length / 2), 0, lastEl)
-
-    return this._shuffled
+    this._data.set(interval, [...currentRating, rating])
   }
 
-  public getFrequencies(medianFrequency: number) {
-    return this.values.map((interval) => {
-      const ratio = centsToRatio(interval)
-      const f_1 = medianFrequency / Math.sqrt(1 + ratio)
-      const f_2 = ratio * f_1
-      return { interval, frequencies: [f_1, f_2] as [number, number] }
-    })
-  }
-
-  public getShuffledFrequencies(medianFrequency: number) {
-    return this._shuffled.map((interval) => {
-      const ratio = centsToRatio(interval)
-      const f_1 = medianFrequency / Math.sqrt(1 + ratio)
-      const f_2 = ratio * f_1
-      return { interval, frequencies: [f_1, f_2] as [number, number] }
-    })
-  }
-
-  public setRandomIntervalsBasedOn12TET() {
+  private setRandomIntervalsBasedOn12TET() {
     const MIN_DELTA = 50
     let lastInterval = Infinity
 
@@ -83,42 +60,32 @@ export class SurveyIntervals {
     return this
   }
 
-  private addRandomIntervalsInARange(length: number, min: number, max: number) {
-    if (min < 0 || max < 0 || length < 0)
-      throw new Error('Arguments should be greater than zero')
-    if (min >= max) throw new Error('Argument max should be greater than min')
+  private getSurveyOrder() {
+    const result: number[] = []
+    const numberOfIterations = 3
 
-    const MIN_DELTA = (max - min) / (2 * length)
+    for (let i = 0; i < numberOfIterations; i++) {
+      const lastEl = this._surveyOrder?.at(-1)
+      const shuffledIntervals = this.getShuffledIntervals(lastEl)
 
-    let count = 0
-    let iteration = 1
-
-    while (count < length) {
-      if (iteration > 1000) throw new Error('Infinite loop')
-      iteration++
-
-      const interval = min + Math.floor(Math.random() * (max - min))
-      if (this.delta(interval) < MIN_DELTA) continue
-
-      this.set(interval, [])
-      count++
+      result.push(...shuffledIntervals)
     }
 
-    return this
+    return result
+  }
+
+  private getShuffledIntervals(lastEl?: number) {
+    if (!lastEl) {
+      return this.values.toSorted(() => Math.random() - 0.5)
+    }
+
+    return this.values
+      .filter((el) => el !== lastEl)
+      .toSorted(() => Math.random() - 0.5)
+      .splice(Math.floor(this.values.length / 2), 0, lastEl)
   }
 
   private set(key: number, value: number[]) {
     return this._data.set(key, value)
-  }
-
-  private delta(interval: number) {
-    let delta = Infinity
-
-    for (const num of this.values) {
-      const newDelta = Math.abs(num - interval)
-      if (newDelta < delta) delta = newDelta
-    }
-
-    return delta
   }
 }

@@ -1,4 +1,7 @@
+import { SurveyIntervals } from '@/classes'
+import { AdditiveSynth } from 'new-tonality-web-synth'
 import { assign, setup } from 'xstate'
+import { getIntervalFrequencies } from './utils'
 
 const machineSetup = setup({
   types: {
@@ -8,6 +11,13 @@ const machineSetup = setup({
       shareAnonymously: boolean
       sharePublicly: boolean
       musicalBackground: string
+
+      intervals?: SurveyIntervals
+      synth?: AdditiveSynth
+      isPlaying: boolean
+      canRate: boolean
+      currectIndex: number
+      medianFrequency: number
     },
     events: {} as
       | {
@@ -28,29 +38,52 @@ const machineSetup = setup({
       | {
           type: 'toExperiment'
         }
-      | { type: 'exitSurvey' },
+      | { type: 'exitSurvey' }
+      | {
+          type: 'rateInterval'
+          value: {
+            interval: number
+            rating: number
+          }
+        }
+      | {
+          type: 'playInterval'
+          value: number
+        }
+      | {
+          type: 'submitSurvey'
+          value: {
+            interval: number
+            rating: number
+          }
+        }
+      | {
+          type: 'releaseAll'
+        },
   },
 })
 
+const defaultContext = {
+  title: '',
+  description: '',
+  shareAnonymously: false,
+  sharePublicly: false,
+  musicalBackground: '',
+  intervals: undefined,
+  synth: undefined,
+  isPlaying: false,
+  canRate: false,
+  currectIndex: 0,
+  medianFrequency: 440,
+}
+
 export const surveyMachine = machineSetup.createMachine({
-  context: {
-    title: '',
-    description: '',
-    shareAnonymously: false,
-    sharePublicly: false,
-    musicalBackground: '',
-  },
-  initial: 'overview',
+  context: defaultContext,
+  initial: 'experiment',
   on: {
     exitSurvey: {
       target: '.overview',
-      actions: assign({
-        title: '',
-        description: '',
-        shareAnonymously: false,
-        sharePublicly: false,
-        musicalBackground: '',
-      }),
+      actions: assign(defaultContext),
     },
   },
   states: {
@@ -93,10 +126,90 @@ export const surveyMachine = machineSetup.createMachine({
       },
     },
     experiment: {
-      entry: assign({
-        title: 'Experiment',
-        description: 'Rate the consonance of the intervals you hear',
+      entry: assign(() => {
+        return {
+          title: 'Experiment',
+          description:
+            'Now you will be presented with 36 intervals that you will have to rate on show rough do they sound.',
+          intervals: new SurveyIntervals(),
+          synth:
+            typeof AudioContext !== 'undefined'
+              ? new AdditiveSynth({
+                  spectrum: [{ partials: [{ rate: 1, amplitude: 0.2 }] }],
+                  audioContext: new AudioContext(),
+                  adsr: { attack: 0.1, sustain: 1, release: 0.1, decay: 0 },
+                })
+              : undefined,
+        }
       }),
+
+      on: {
+        rateInterval: {
+          actions: [
+            ({ context, event }) => {
+              if (!context.intervals) return
+
+              context.intervals.rateInterval(event.value)
+            },
+            ({ context }) => {
+              context.synth?.releaseAll()
+            },
+            assign(({ context }) => ({
+              currectIndex: context.currectIndex + 1,
+              canRate: false,
+              isPlaying: false,
+            })),
+          ],
+        },
+        submitSurvey: {
+          actions: [
+            ({ context, event }) => {
+              if (!context.intervals) return
+
+              context.intervals.rateInterval(event.value)
+            },
+            ({ context }) => {
+              context.synth?.releaseAll()
+            },
+            () => {
+              window.alert('Survey complete! Thank you for your time.')
+            },
+          ],
+        },
+        playInterval: {
+          actions: [
+            assign({
+              isPlaying: true,
+              canRate: true,
+            }),
+            ({ context, event }) => {
+              if (!context.synth) return
+
+              const [f1, f2] = getIntervalFrequencies(
+                event.value,
+                context.medianFrequency,
+              )
+
+              context.synth.releaseAll()
+
+              context.synth.play({ pitch: f1, velocity: 0.5 })
+              context.synth.play({ pitch: f2, velocity: 0.5 })
+            },
+          ],
+        },
+        releaseAll: {
+          actions: [
+            ({ context }) => {
+              if (!context.synth || !context.isPlaying) return
+
+              context.synth.releaseAll()
+            },
+            assign({
+              isPlaying: false,
+            }),
+          ],
+        },
+      },
     },
   },
 })

@@ -30,7 +30,7 @@ export function Survey(props: {
       size="5xl"
     >
       <DialogTitle>{state.context.title}</DialogTitle>
-      <DialogDescription>{state.context.description}</DialogDescription>
+      <DialogDescription className="whitespace-pre-line">{state.context.description}</DialogDescription>
 
       <DialogBody>
         {state.matches('overview') && <SurveyOverview />}
@@ -40,7 +40,13 @@ export function Survey(props: {
         <ExitSurveyAlert
           open={alertOpen}
           setOpen={setAlertOpen}
-          exitSurvey={() => props.setSurveyOpen(false)}
+          exitSurvey={() => {
+            props.setSurveyOpen(false)
+
+            setTimeout(() => {
+              send({ type: 'exitSurvey' })
+            }, 250)
+          }}
         />
       </DialogBody>
 
@@ -48,7 +54,6 @@ export function Survey(props: {
         <Button
           variant="secondary"
           onClick={() => {
-            send({ type: 'exitSurvey' })
             setAlertOpen(true)
           }}
         >
