@@ -51,7 +51,7 @@ export function SurveyListening() {
 
   return (
     <div>
-      <Step number={1} disabled={false}>
+      <Step className="mb-8" title="Step" number={1} disabled={false}>
         <Text>
           We almost ready to start the survey. Make sure you use headphones or
           decent speakers. Press "Test volume" to make sure you can hear the
@@ -65,7 +65,7 @@ export function SurveyListening() {
           Test volume
         </Button>
       </Step>
-      <Step number={2} disabled={!state.context.canListen}>
+      <Step className="mb-8" title="Step" number={2} disabled={!state.context.canListen}>
         <Text>
           Once you've confirmed you can hear the intervals clearly, press
           "Listen to intervals" to get the idea how rough they sound to you so
@@ -78,14 +78,18 @@ export function SurveyListening() {
         >
           {isListening
             ? 'Listening...'
-            : !state.context.canStartExperiment
+            : state.context.canStartExperiment
               ? 'Listen again'
               : 'Listen to intervals'}
         </Button>
         <Text>{intervalsListened} / 12 intervals listened</Text>
       </Step>
 
-      <Step number={3} disabled={!state.context.canStartExperiment}>
+      <Step
+        title="Step"
+        number={3}
+        disabled={!state.context.canStartExperiment}
+      >
         <Text>Press "Continue" to proceed to the survey.</Text>
       </Step>
     </div>

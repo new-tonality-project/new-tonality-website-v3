@@ -9,25 +9,30 @@ export function Step({
   children,
   disabled,
   number,
+  title,
+  className,
 }: {
   children: React.ReactNode
   disabled?: boolean
   number: number
+  title: string
+  className?: string
 }) {
   return (
     <div
       className={clsx(
-        'mb-4 flex w-full items-stretch gap-2',
+        'flex w-full items-stretch gap-4',
         disabled && 'cursor-not-allowed opacity-50',
+        className,
       )}
     >
-      <div className="w-fit min-w-12 flex-grow-0">
-        <Text className="whitespace-nowrap">
-          <Strong>Step {number}.</Strong>
+      <div className="min-w-22">
+        <Text className="whitespace-nowrap w-full text-center">
+          <Strong>{title} {number}.</Strong>
         </Text>
       </div>
       <VerticalDivider />
-      <div className="flex-grow">{children}</div>
+      <div className="flex-grow pb-2">{children}</div>
     </div>
   )
 }

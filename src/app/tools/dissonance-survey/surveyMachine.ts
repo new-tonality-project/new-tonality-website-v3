@@ -18,7 +18,7 @@ const machineSetup = setup({
       canRate: boolean
       canListen: boolean
       canStartExperiment: boolean
-      currectIndex: number
+      currentIndex: number
       medianFrequency: number
     },
     events: {} as
@@ -54,10 +54,6 @@ const machineSetup = setup({
         }
       | {
           type: 'submitSurvey'
-          value: {
-            interval: number
-            rating: number
-          }
         }
       | {
           type: 'releaseAll'
@@ -85,7 +81,7 @@ const defaultContext = {
   canRate: false,
   canListen: false,
   canStartExperiment: false,
-  currectIndex: 0,
+  currentIndex: 0,
   medianFrequency: 440,
 }
 
@@ -138,7 +134,7 @@ export const surveyMachine = machineSetup.createMachine({
       },
     },
     listening: {
-      entry: assign({
+      entry: assign(() => ({
         title: 'Preliminary listening',
         description:
           'Now you will be presented with a set of intervals that you will have to rate so you have the idea on show rough do they sound.',
@@ -151,7 +147,7 @@ export const surveyMachine = machineSetup.createMachine({
                 adsr: { attack: 0.1, sustain: 1, release: 0.1, decay: 0 },
               })
             : undefined,
-      }),
+      })),
       on: {
         toExperiment: {
           target: 'experiment',
@@ -222,26 +218,14 @@ export const surveyMachine = machineSetup.createMachine({
               context.synth?.releaseAll()
             },
             assign(({ context }) => ({
-              currectIndex: context.currectIndex + 1,
+              currentIndex: context.currentIndex + 1,
               canRate: false,
               isPlaying: false,
             })),
           ],
         },
         submitSurvey: {
-          actions: [
-            ({ context, event }) => {
-              if (!context.intervals) return
-
-              context.intervals.rateInterval(event.value)
-            },
-            ({ context }) => {
-              context.synth?.releaseAll()
-            },
-            () => {
-              window.alert('Survey complete! Thank you for your time.')
-            },
-          ],
+          target: 'submitting',
         },
         playInterval: {
           actions: [
@@ -277,6 +261,12 @@ export const surveyMachine = machineSetup.createMachine({
           ],
         },
       },
+    },
+    submitting: {
+      entry: assign({
+        title: 'Submitting',
+        description: 'Thank you for your time.',
+      }),
     },
   },
 })

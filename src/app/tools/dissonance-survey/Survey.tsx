@@ -28,7 +28,7 @@ export function Survey(props: {
       className="z-50"
       open={props.open}
       onClose={() => setAlertOpen(true)}
-      size="5xl"
+      size="3xl"
     >
       <DialogTitle>{state.context.title}</DialogTitle>
       <DialogDescription className="whitespace-pre-line">{state.context.description}</DialogDescription>
