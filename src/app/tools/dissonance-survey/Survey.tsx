@@ -14,6 +14,7 @@ import { SurveyQuestions } from './SurveyQuestions'
 import { ExitSurveyAlert } from './ExitSurvey'
 import { SurveyOverview } from './SurveyOverview'
 import { SurveyExperiment } from './SurveyExperiment'
+import { SurveyListening } from './SurveyListening'
 
 export function Survey(props: {
   open: boolean
@@ -35,6 +36,7 @@ export function Survey(props: {
       <DialogBody>
         {state.matches('overview') && <SurveyOverview />}
         {state.matches('questions') && <SurveyQuestions />}
+        {state.matches('listening') && <SurveyListening />}
         {state.matches('experiment') && <SurveyExperiment />}
 
         <ExitSurveyAlert
@@ -79,8 +81,19 @@ export function Survey(props: {
             }
             onClick={() => {
               send({
-                type: 'toExperiment',
+                type: 'toListening',
               })
+            }}
+          >
+            Continue
+          </Button>
+        )}
+
+        {state.matches('listening') && (
+          <Button
+            disabled={!state.context.canStartExperiment}
+            onClick={() => {
+              send({ type: 'toExperiment' })
             }}
           >
             Continue

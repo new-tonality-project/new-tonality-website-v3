@@ -3,6 +3,17 @@ import { useSurveyMachine } from './useSurveyMachine'
 import { useMemo, useRef, useState } from 'react'
 import { Strong, Text } from '@/components/catalyst/text'
 
+
+const COLORS = [
+  '#E2E8F0',
+  '#E7E4EB',
+  '#ECDFE6',
+  '#F1DAE1',
+  '#F6D5DC',
+  '#FBD0D7',
+  '#FFCCD3',
+]
+
 export function SurveyExperiment() {
   const [state, send] = useSurveyMachine()
   const [selectedRating, setSelectedRating] = useState<number | null>(null)
@@ -65,7 +76,8 @@ export function SurveyExperiment() {
                 variant={selectedRating === rating ? 'primary' : 'secondary'}
                 key={rating}
                 onClick={() => setSelectedRating(rating)}
-                className="border border-zinc-300 px-4"
+                className="border px-4"
+                style={selectedRating !== rating ? { backgroundColor: `${COLORS[rating - 1]}77`, borderColor: COLORS[rating - 1] } : {}}
               >
                 {rating}
               </Button>

@@ -74,7 +74,7 @@ export class SurveyIntervals {
     return result
   }
 
-  private getShuffledIntervals(lastEl?: number) {
+  public getShuffledIntervals(lastEl?: number) {
     if (!lastEl) {
       return this.values.toSorted(() => Math.random() - 0.5)
     }
@@ -82,7 +82,7 @@ export class SurveyIntervals {
     return this.values
       .filter((el) => el !== lastEl)
       .toSorted(() => Math.random() - 0.5)
-      .splice(Math.floor(this.values.length / 2), 0, lastEl)
+      .toSpliced(Math.floor(this.values.length / 2), 0, lastEl)
   }
 
   private set(key: number, value: number[]) {
