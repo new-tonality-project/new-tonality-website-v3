@@ -1,6 +1,6 @@
 import { init } from '@instantdb/react'
 import { init as adminInit } from '@instantdb/admin'
-import schema from './schema'
+import schema from '../instant.schema'
 
 const appId = process.env.NEXT_PUBLIC_INSTANTDB_APP_ID
 const adminToken = process.env.NEXT_PUBLIC_INSTANT_APP_ADMIN_TOKEN

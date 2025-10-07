@@ -82,15 +82,15 @@ export function SurveyQuestions() {
                 name="disclamer"
                 value="share_anonymously"
                 checked={
-                  state.context.shareAnonymously || state.context.sharePublicly
+                  state.context.shareDataPrivately
                 }
                 onChange={(e) =>
                   send({
-                    type: 'setShareAnonymously',
+                    type: 'setshareDataPrivately',
                     value: e.valueOf(),
                   })
                 }
-                disabled={state.context.sharePublicly}
+                disabled={state.context.shareDataPublicly}
               />
               <Label>Allow to share anonymously</Label>
               <Description>
@@ -104,10 +104,10 @@ export function SurveyQuestions() {
               <Checkbox
                 name="disclamer"
                 value="share_publicly"
-                checked={state.context.sharePublicly}
+                checked={state.context.shareDataPublicly}
                 onChange={(e) => {
                   send({
-                    type: 'setSharePublicly',
+                    type: 'setshareDataPublicly',
                     value: e.valueOf(),
                   })
                 }}

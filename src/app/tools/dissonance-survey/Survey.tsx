@@ -31,13 +31,17 @@ export function Survey(props: {
       size="3xl"
     >
       <DialogTitle>{state.context.title}</DialogTitle>
-      <DialogDescription className="whitespace-pre-line">{state.context.description}</DialogDescription>
+      <DialogDescription className="whitespace-pre-line">
+        {state.context.description}
+      </DialogDescription>
 
       <DialogBody>
         {state.matches('overview') && <SurveyOverview />}
         {state.matches('questions') && <SurveyQuestions />}
         {state.matches('listening') && <SurveyListening />}
         {state.matches('experiment') && <SurveyExperiment />}
+        {state.matches('success') && <div>All good!</div>}
+        {state.matches('error') && <div>Something went wrong!</div>}
 
         <ExitSurveyAlert
           open={alertOpen}
@@ -77,7 +81,8 @@ export function Survey(props: {
             variant="primary"
             disabled={
               !state.context.musicalBackground ||
-              (!state.context.shareAnonymously && !state.context.sharePublicly)
+              (!state.context.shareDataPrivately &&
+                !state.context.shareDataPublicly)
             }
             onClick={() => {
               send({

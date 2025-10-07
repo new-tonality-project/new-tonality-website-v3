@@ -1,6 +1,17 @@
 import type { PlotPoint } from '@/lib'
 import { centsToRatio } from 'sethares-dissonance'
 
+export type DissonanceRating = {
+  interval: number;
+  rating1: number;
+  rating2: number;
+  rating3: number;
+  minRating: number;
+  maxRating: number;
+  medianRating: number;
+  correlationCoefficient: number;
+  isStatisticallyValid: boolean;
+}
 export class SurveyIntervals {
   private _data: Map<number, number[]> = new Map()
   private _surveyOrder: number[]
@@ -19,6 +30,67 @@ export class SurveyIntervals {
     return Array.from(this._data.keys()).sort((a, b) => a - b)
   }
 
+  get ratings(): DissonanceRating[] {
+    return Array.from(
+      this._data.entries().map(([interval, ratings]) => ({
+        interval,
+        rating1: ratings[0],
+        rating2: ratings[1],
+        rating3: ratings[2],
+        minRating: Math.min(...ratings),
+        maxRating: Math.max(...ratings),
+        medianRating: Math.sqrt(
+          ratings.reduce((acc, rating) => acc + Math.pow(rating, 2), 0),
+        ),
+        correlationCoefficient: this.correlationCoefficient,
+        isStatisticallyValid: this.isStatisticallyValid,
+      })),
+    )
+  }
+
+  get ratingSeries() {
+    return [
+      Array.from(this._data.values().map((rating) => rating[0])),
+      Array.from(this._data.values().map((rating) => rating[1])),
+      Array.from(this._data.values().map((rating) => rating[2])),
+    ]
+  }
+
+  get correlationCoefficient() {
+    const [series1, series2, series3] = this.ratingSeries
+
+    const correlation1 = this.correlation(series1, series2)
+    const correlation2 = this.correlation(series1, series3)
+    const correlation3 = this.correlation(series2, series3)
+
+    return (correlation1 + correlation2 + correlation3) / 3
+  }
+
+  get isStatisticallyValid() {
+    return this.correlationCoefficient > 0.5
+  }
+
+  private correlation(series1: number[], series2: number[]) {
+    const mean1 =
+      series1.reduce((acc, rating) => acc + rating, 0) / series1.length
+    const mean2 =
+      series2.reduce((acc, rating) => acc + rating, 0) / series2.length
+    const covariance = series1.reduce(
+      (acc, rating, index) => acc + (rating - mean1) * (series2[index] - mean2),
+      0,
+    )
+    const std1 = series1.reduce(
+      (acc, rating) => acc + Math.pow(rating - mean1, 2),
+      0,
+    )
+    const std2 = series2.reduce(
+      (acc, rating) => acc + Math.pow(rating - mean2, 2),
+      0,
+    )
+
+    return covariance / Math.sqrt(std1 * std2)
+  }
+
   get valuesAsRatios() {
     return this.values.map((val) => centsToRatio(val))
   }
@@ -30,7 +102,13 @@ export class SurveyIntervals {
     })) as PlotPoint[]
   }
 
-  public rateInterval({ interval, rating }: { interval: number; rating: number }) {
+  public rateInterval({
+    interval,
+    rating,
+  }: {
+    interval: number
+    rating: number
+  }) {
     const currentRating = this._data.get(interval)
 
     if (!currentRating) return

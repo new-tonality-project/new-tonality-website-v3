@@ -1,8 +1,12 @@
-import { Button } from '@/components'
+'use client'
+
+import { Button, Spinner } from '@/components'
 import { useSurveyMachine } from './useSurveyMachine'
 import { useMemo, useRef, useState } from 'react'
 import { Strong, Text } from '@/components/catalyst/text'
 import { Step } from '@/components/Step'
+import { db } from '@/db'
+import { submitSurvey } from './actions'
 
 const COLORS = [
   '#E2E8F0',
@@ -17,7 +21,9 @@ const COLORS = [
 export function SurveyExperiment() {
   const [state, send] = useSurveyMachine()
   const [selectedRating, setSelectedRating] = useState<number | null>(null)
+  const [submitting, setSubmitting] = useState<boolean>(false)
   const releaseNoteTimeout = useRef<NodeJS.Timeout | null>(null)
+  const user = db.useUser()
 
   const currentInterval = useMemo(() => {
     return state.context.intervals?.surveyOrder[state.context.currentIndex]
@@ -35,9 +41,32 @@ export function SurveyExperiment() {
     if (!state.context.intervals) return false
 
     return (
-      state.context.currentIndex === state.context.intervals?.surveyOrder.length - 1
+      state.context.currentIndex ===
+      state.context.intervals?.surveyOrder.length - 1
     )
   }, [state.context.currentIndex, state.context.intervals?.surveyOrder.length])
+
+  async function submit() {
+    try {
+      if (!state.context.intervals)
+        throw new Error('Cannot submit survey: no intervals found')
+
+      setSubmitting(true)
+
+      await submitSurvey({
+        ratings: state.context.intervals.ratings,
+        shareDataPrivately: state.context.shareDataPrivately,
+        shareDataPublicly: state.context.shareDataPublicly,
+        musicalBackground: state.context.musicalBackground,
+        medianFrequency: state.context.medianFrequency,
+        userId: user.id,
+      })
+      send({ type: 'success' })
+    } catch {
+      // TODO: Save survey locally so that it can be submitted later
+      send({ type: 'error' })
+    }
+  }
 
   if (
     currentInterval === undefined ||
@@ -45,6 +74,17 @@ export function SurveyExperiment() {
     state.context.intervals === undefined
   )
     return null
+
+  if (submitting)
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <Spinner className="mb-4" />
+        <Text>
+          <Strong> Thank you for your time! </Strong>
+        </Text>
+        <Text>We are submitting your answers...</Text>
+      </div>
+    )
 
   return (
     <>
@@ -134,13 +174,13 @@ export function SurveyExperiment() {
             disabled={selectedRating === null}
             onClick={() => {
               if (selectedRating === null) return
+
               send({
                 type: 'rateInterval',
                 value: { interval: currentInterval, rating: selectedRating },
               })
-              send({
-                type: 'submitSurvey',
-              })
+
+              submit()
             }}
           >
             Finish the Survey!

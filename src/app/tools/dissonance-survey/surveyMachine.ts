@@ -3,14 +3,16 @@ import { AdditiveSynth } from 'new-tonality-web-synth'
 import { assign, setup } from 'xstate'
 import { getIntervalFrequencies } from './utils'
 
+type MusicalBackground = 'microtonalist' | 'musician' | 'naive-listener' | ''
+
 const machineSetup = setup({
   types: {
     context: {} as {
       title: string
       description: string
-      shareAnonymously: boolean
-      sharePublicly: boolean
-      musicalBackground: string
+      shareDataPrivately: boolean
+      shareDataPublicly: boolean
+      musicalBackground: MusicalBackground
 
       intervals?: SurveyIntervals
       synth?: AdditiveSynth
@@ -23,11 +25,11 @@ const machineSetup = setup({
     },
     events: {} as
       | {
-          type: 'setShareAnonymously'
+          type: 'setshareDataPrivately'
           value: boolean
         }
       | {
-          type: 'setSharePublicly'
+          type: 'setshareDataPublicly'
           value: boolean
         }
       | {
@@ -53,9 +55,6 @@ const machineSetup = setup({
           value: number
         }
       | {
-          type: 'submitSurvey'
-        }
-      | {
           type: 'releaseAll'
         }
       | {
@@ -65,16 +64,18 @@ const machineSetup = setup({
           type: 'toggleCanStartExperiment'
         }
       | { type: 'toListening' }
-      | { type: 'testVolume' },
+      | { type: 'testVolume' }
+      | { type: 'success' }
+      | { type: 'error' },
   },
 })
 
 const defaultContext = {
   title: '',
   description: '',
-  shareAnonymously: false,
-  sharePublicly: false,
-  musicalBackground: '',
+  shareDataPrivately: false,
+  shareDataPublicly: false,
+  musicalBackground: '' as MusicalBackground,
   intervals: undefined,
   synth: undefined,
   isPlaying: false,
@@ -116,19 +117,30 @@ export const surveyMachine = machineSetup.createMachine({
         toListening: {
           target: 'listening',
         },
-        setShareAnonymously: {
+        setshareDataPrivately: {
           actions: assign({
-            shareAnonymously: ({ event }) => event.value,
+            shareDataPrivately: ({ event }) => event.value,
           }),
         },
-        setSharePublicly: {
+        setshareDataPublicly: {
           actions: assign({
-            sharePublicly: ({ event }) => event.value,
+            shareDataPrivately: ({ event }) => event.value,
+            shareDataPublicly: ({ event }) => event.value,
           }),
         },
         setMusicalBackground: {
           actions: assign({
-            musicalBackground: ({ event }) => event.value,
+            musicalBackground: ({ event }) => {
+              if (
+                event.value !== 'microtonalist' &&
+                event.value !== 'musician' &&
+                event.value !== 'naive-listener'
+              ) {
+                throw new Error('Invalid musical backgroun value')
+              }
+
+              return event.value
+            },
           }),
         },
       },
@@ -224,9 +236,6 @@ export const surveyMachine = machineSetup.createMachine({
             })),
           ],
         },
-        submitSurvey: {
-          target: 'submitting',
-        },
         playInterval: {
           actions: [
             assign({
@@ -260,12 +269,25 @@ export const surveyMachine = machineSetup.createMachine({
             }),
           ],
         },
+        success: {
+          target: 'success',
+        },
+        error: {
+          target: 'error',
+        },
       },
     },
-    submitting: {
+
+    success: {
       entry: assign({
-        title: 'Submitting',
+        title: 'Success',
         description: 'Thank you for your time.',
+      }),
+    },
+    error: {
+      entry: assign({
+        title: 'Error',
+        description: 'There was an error submitting your survey.',
       }),
     },
   },
