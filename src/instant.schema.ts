@@ -15,7 +15,7 @@ const _schema = i.schema({
     intervalDissonanceScores: i.entity({
       correlationCoefficient: i.number(),
       createdAt: i.date(),
-      interval: i.number(),
+      interval: i.number().indexed(),
       isMicrotonalist: i.boolean().indexed(),
       isMusician: i.boolean().indexed(),
       isNaiveListener: i.boolean().indexed(),

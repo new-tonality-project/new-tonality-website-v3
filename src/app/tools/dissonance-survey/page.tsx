@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { Survey } from './Survey'
 import { SurveyChart } from './SurveyChart'
 import { SurveyMachineProvider } from './useSurveyMachine'
+import { db } from '@/db'
 
 const pageIntro =
   'REWRITE: This tool is a part of the psychoacoustic experiment that was first outlined in 1960s paper by Plomp and Levelt and that is the basis behind modern empirical understanding of dissonance.'
@@ -16,7 +17,9 @@ export default function DissonanceSurveyPage() {
 
   return (
     <SimpleLayout title="Dissonance survey" intro={pageIntro}>
-      <SurveyChart data={[]} />
+      <db.SignedIn>
+        <SurveyChart />
+      </db.SignedIn>
 
       <div className="my-12" />
 
