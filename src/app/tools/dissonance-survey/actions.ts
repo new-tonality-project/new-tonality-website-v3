@@ -1,6 +1,6 @@
 'use server'
 
-import type { DissonanceRating, SurveyIntervals } from '@/classes'
+import type { DissonanceRating } from '@/classes'
 import { adminDb } from '@/db'
 import { id } from '@instantdb/admin'
 
@@ -10,14 +10,12 @@ export async function submitSurvey(args: {
   shareDataPrivately: boolean
   shareDataPublicly: boolean
   musicalBackground: string
-  medianFrequency: number
+  meanFrequency: number
   userId: string
 }) {
-  
-
   await adminDb.transact(
     adminDb.tx.userSettings[id()]
-      .create({
+      .update({
         isMicrotonalist: args.musicalBackground === 'microtonalist',
         isMusician: args.musicalBackground === 'musician',
         isNaiveListener: args.musicalBackground === 'naive-listener',
@@ -37,12 +35,7 @@ export async function submitSurvey(args: {
     transactionBatch.push(
       adminDb.tx.intervalDissonanceScores[id()].create({
         ...rating,
-        isMicrotonalist: args.musicalBackground === 'microtonalist',
-        isMusician: args.musicalBackground === 'musician',
-        isNaiveListener: args.musicalBackground === 'naive-listener',
-        shareDataPrivately: args.shareDataPrivately,
-        shareDataPublicly: args.shareDataPublicly,
-        medianFrequency: args.medianFrequency,
+        meanFrequency: args.meanFrequency,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       }).link({

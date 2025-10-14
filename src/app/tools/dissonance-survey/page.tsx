@@ -3,9 +3,8 @@
 import { Button, SimpleLayout } from '@/components'
 import { SignInButton, useAuth } from '@clerk/nextjs'
 import { useState } from 'react'
-import { Survey } from './Survey'
-import { SurveyChart } from './SurveyChart'
-import { SurveyMachineProvider } from './useSurveyMachine'
+import { Survey, SurveyChart } from './components'
+import { SurveyMachineProvider } from '@/state/machines'
 import { db } from '@/db'
 
 const pageIntro =
