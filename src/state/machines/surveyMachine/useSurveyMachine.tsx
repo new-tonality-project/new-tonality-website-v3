@@ -2,7 +2,7 @@
 
 import { createContext, useContext, type ReactNode } from 'react'
 import { useMachine } from '@xstate/react'
-import { surveyMachine } from './surveyMachine'
+import { surveyMachine } from './machine'
 
 const SurveyMachineContext = createContext<ReturnType<typeof useMachine<typeof surveyMachine>> | null>(null)
 

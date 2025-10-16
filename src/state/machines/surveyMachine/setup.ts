@@ -16,7 +16,7 @@ export const defaultContext = {
   canListen: false,
   canStartExperiment: false,
   currentIndex: 0,
-  medianFrequency: 440,
+  meanFrequency: 440,
 }
 
 export const machineSetup = setup({
@@ -35,7 +35,7 @@ export const machineSetup = setup({
       canListen: boolean
       canStartExperiment: boolean
       currentIndex: number
-      medianFrequency: number
+      meanFrequency: number
     },
     events: {} as
       | {

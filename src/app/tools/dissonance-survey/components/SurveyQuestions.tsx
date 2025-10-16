@@ -1,6 +1,5 @@
 'use client'
 
-import { Button } from '@/components'
 import {
   CheckboxGroup,
   CheckboxField,
@@ -12,10 +11,11 @@ import {
   Label,
   Legend,
 } from '@/components/catalyst/fieldset'
-import { useSurveyMachine } from './useSurveyMachine'
+import { useSurveyMachine } from '@/state/machines'
 import { Text } from '@/components/catalyst/text'
 import { Radio, RadioField, RadioGroup } from '@/components/catalyst/radio'
 import { Step } from '@/components/Step'
+import { MusicalBackground } from '@/lib'
 
 export function SurveyQuestions() {
   const [state, send] = useSurveyMachine()
@@ -37,7 +37,7 @@ export function SurveyQuestions() {
             }}
           >
             <RadioField>
-              <Radio value="naive-listener" />
+              <Radio value={MusicalBackground.NaiveListener.toString()} />
               <Label>I just enjoy listening to music</Label>
               <Description>
                 I do not sing or play an instrument. I have no formal training
@@ -47,7 +47,7 @@ export function SurveyQuestions() {
             </RadioField>
 
             <RadioField>
-              <Radio value="musician" />
+              <Radio value={MusicalBackground.Musician.toString()} />
               <Label>I am a musician</Label>
               <Description>
                 I can compose or perform music. I do it as a hobby or
@@ -56,7 +56,7 @@ export function SurveyQuestions() {
             </RadioField>
 
             <RadioField>
-              <Radio value="microtonalist" />
+              <Radio value={MusicalBackground.Microtonalist.toString()} />
               <Label>I am a microtonalist</Label>
               <Description>
                 I moved beyond 12TET in my musical journey. I frequently listen

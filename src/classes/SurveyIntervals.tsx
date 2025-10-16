@@ -1,17 +1,10 @@
-import type { PlotPoint } from '@/lib'
+import type { IntervalDissonanceScore, PlotPoint } from '@/lib'
 import { centsToRatio } from 'sethares-dissonance'
 
-export type DissonanceRating = {
-  interval: number;
-  rating1: number;
-  rating2: number;
-  rating3: number;
-  minRating: number;
-  maxRating: number;
-  medianRating: number;
-  correlationCoefficient: number;
-  isStatisticallyValid: boolean;
-}
+export type SurveyIntervalScore = Omit<
+  IntervalDissonanceScore,
+  'createdAt' | 'updatedAt' | 'meanFrequency' | 'id'
+>
 export class SurveyIntervals {
   private _data: Map<number, number[]> = new Map()
   private _surveyOrder: number[]
@@ -30,22 +23,27 @@ export class SurveyIntervals {
     return Array.from(this._data.keys()).sort((a, b) => a - b)
   }
 
-  get ratings(): DissonanceRating[] {
+  get scores(): SurveyIntervalScore[] {
     return Array.from(
       this._data.entries().map(([interval, ratings]) => ({
         interval,
-        rating1: ratings[0],
-        rating2: ratings[1],
-        rating3: ratings[2],
-        minRating: Math.min(...ratings),
-        maxRating: Math.max(...ratings),
-        medianRating: Math.sqrt(
-          ratings.reduce((acc, rating) => acc + Math.pow(rating, 2), 0),
-        ),
+        ...this.getRatingStats(ratings),
         correlationCoefficient: this.correlationCoefficient,
         isStatisticallyValid: this.isStatisticallyValid,
       })),
     )
+  }
+
+  private getRatingStats(ratings: number[]) {
+    const sorted = ratings.toSorted((a, b) => a - b)
+
+    return {
+      minRating: sorted[0],
+      maxRating: sorted[2],
+      medianRating: sorted[1],
+      averageRating:
+        ratings.reduce((acc, rating) => acc + rating, 0) / ratings.length,
+    }
   }
 
   get ratingSeries() {
@@ -88,7 +86,9 @@ export class SurveyIntervals {
       0,
     )
 
-    return covariance / Math.sqrt(std1 * std2)
+    const denominator = Math.sqrt(std1 * std2)
+
+    return denominator === 0 ? 0 : covariance / denominator
   }
 
   get valuesAsRatios() {
@@ -120,6 +120,8 @@ export class SurveyIntervals {
     const MIN_DELTA = 50
     let lastInterval = Infinity
 
+    this.set(0, [])
+
     for (let i = 1; i <= 12; i++) {
       const interval12tet = i * 100
       let newInterval
@@ -134,6 +136,8 @@ export class SurveyIntervals {
       this.set(newInterval, [])
       lastInterval = newInterval
     }
+
+    this.set(1200, [])
 
     return this
   }

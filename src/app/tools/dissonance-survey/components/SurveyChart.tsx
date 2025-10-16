@@ -15,10 +15,11 @@ export function SurveyChart() {
       },
     },
   })
+  
   const points = useMemo(() => {
     return data?.intervalDissonanceScores.map((item) => ({
       x: item.interval,
-      y: item.rating1,
+      y: item.averageRating,
     }))
   }, [data])
 
@@ -39,7 +40,7 @@ export function SurveyChart() {
         domain={[0, 1200]}
         tickCount={13}
       />
-      <YAxis dataKey="y" type="number" name="Dissoannce" tickCount={8} domain={[0, 7]} />
+      <YAxis dataKey="y" type="number" name="Dissoannce" tickCount={7} domain={[1, 7]} />
 
       <Line
         type="monotone"

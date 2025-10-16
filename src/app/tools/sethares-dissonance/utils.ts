@@ -1,5 +1,5 @@
-import { adminDb, db, type SetharesDissonancePreset } from '@/db'
-import { debounceTransaction } from '@/lib'
+import { db } from '@/db'
+import { debounceTransaction, type SetharesDissonancePreset } from '@/lib'
 import { id } from '@instantdb/admin'
 
 export const FALLBACK_PRESET: SetharesDissonancePreset = {
@@ -24,7 +24,7 @@ export async function getInitialPreset(userId: string | null) {
 }
 
 export async function getInitPreset(userId: string) {
-  const result = await adminDb.query({
+  const result = await db.queryOnce({
     setharesDissonancePresets: {
       $: {
         where: {
@@ -35,14 +35,14 @@ export async function getInitPreset(userId: string) {
     },
   })
 
-  if (result.setharesDissonancePresets.length === 0) return undefined
+  if (result.data.setharesDissonancePresets.length === 0) return undefined
 
-  return result.setharesDissonancePresets[0]
+  return result.data.setharesDissonancePresets[0]
 }
 
 export async function initializePreset(userId: string) {
-  return adminDb.transact(
-    adminDb.tx.setharesDissonancePresets[id()].create({
+  return db.transact(
+    db.tx.setharesDissonancePresets[id()].create({
       userId,
       name: 'init',
       numberOfPartials: FALLBACK_PRESET.numberOfPartials,

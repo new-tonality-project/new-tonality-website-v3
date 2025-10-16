@@ -1,12 +1,8 @@
 'use client'
 
-import { Button } from '@/components'
 import { Text, TextLink } from '@/components/catalyst/text'
-import { useSurveyMachine } from './useSurveyMachine'
 
 export function SurveyOverview() {
-  const [, send] = useSurveyMachine()
-
   return (
     <div>
       <Text color="black" className="pb-6">

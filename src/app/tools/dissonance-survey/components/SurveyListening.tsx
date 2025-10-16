@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components'
-import { useSurveyMachine } from './useSurveyMachine'
+import { useSurveyMachine } from '@/state/machines'
 import { Text } from '@/components/catalyst/text'
 import { Step } from '@/components/Step'
 import { useState } from 'react'
@@ -39,9 +39,10 @@ export function SurveyListening() {
     for (const interval of shuffled) {
       send({ type: 'playInterval', value: interval })
 
-      await new Promise((resolve) => setTimeout(resolve, 2000))
       index++
       setIntervalsListened(index)
+      
+      await new Promise((resolve) => setTimeout(resolve, 2000))
     }
 
     send({ type: 'releaseAll' })
@@ -82,7 +83,7 @@ export function SurveyListening() {
               ? 'Listen again'
               : 'Listen to intervals'}
         </Button>
-        <Text>{intervalsListened} / 12 intervals listened</Text>
+        <Text>{intervalsListened} / {state.context.intervals?.values.length} intervals listened</Text>
       </Step>
 
       <Step

@@ -1,12 +1,12 @@
 'use client'
 
 import { Button, Spinner } from '@/components'
-import { useSurveyMachine } from './useSurveyMachine'
+import { useSurveyMachine } from '@/state/machines'
 import { useMemo, useRef, useState } from 'react'
 import { Strong, Text } from '@/components/catalyst/text'
 import { Step } from '@/components/Step'
 import { db } from '@/db'
-import { submitSurvey } from './actions'
+import { submitSurvey } from '../actions'
 
 const COLORS = [
   '#E2E8F0',
@@ -54,16 +54,17 @@ export function SurveyExperiment() {
       setSubmitting(true)
 
       await submitSurvey({
-        ratings: state.context.intervals.ratings,
+        scores: state.context.intervals.scores,
         shareDataPrivately: state.context.shareDataPrivately,
         shareDataPublicly: state.context.shareDataPublicly,
         musicalBackground: state.context.musicalBackground,
-        medianFrequency: state.context.medianFrequency,
+        meanFrequency: state.context.meanFrequency,
         userId: user.id,
       })
       send({ type: 'success' })
-    } catch {
+    } catch (error) {
       // TODO: Save survey locally so that it can be submitted later
+      console.error(error)
       send({ type: 'error' })
     }
   }

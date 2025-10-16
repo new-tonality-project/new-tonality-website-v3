@@ -1,24 +1,41 @@
-'use server'
+'use client'
 
-import type { DissonanceRating } from '@/classes'
-import { adminDb } from '@/db'
-import { id } from '@instantdb/admin'
-
+import type { SurveyIntervalScore } from '@/classes'
+import { db } from '@/db'
+import { MusicalBackground } from '@/lib'
+import { id } from '@instantdb/react'
 
 export async function submitSurvey(args: {
-  ratings: DissonanceRating[]
+  scores: SurveyIntervalScore[]
   shareDataPrivately: boolean
   shareDataPublicly: boolean
-  musicalBackground: string
+  musicalBackground: MusicalBackground
   meanFrequency: number
   userId: string
 }) {
-  await adminDb.transact(
-    adminDb.tx.userSettings[id()]
+  console.log('args.userId', args.userId)
+
+  const userSettings = await db.queryOnce({
+    userSettings: {
+      $: {
+        where: {
+          $users: args.userId,
+        },
+      },
+    },
+  })
+
+  const existingUserSettingsId = userSettings.data.userSettings[0]?.id
+  console.log('existingUserSettingsId', existingUserSettingsId)
+
+  await db.transact(
+    db.tx.userSettings[existingUserSettingsId ?? id()]
       .update({
-        isMicrotonalist: args.musicalBackground === 'microtonalist',
-        isMusician: args.musicalBackground === 'musician',
-        isNaiveListener: args.musicalBackground === 'naive-listener',
+        isMicrotonalist:
+          args.musicalBackground === MusicalBackground.Microtonalist,
+        isMusician: args.musicalBackground === MusicalBackground.Musician,
+        isNaiveListener:
+          args.musicalBackground === MusicalBackground.NaiveListener,
         shareDataPrivately: args.shareDataPrivately,
         shareDataPublicly: args.shareDataPublicly,
         createdAt: Date.now(),
@@ -30,19 +47,22 @@ export async function submitSurvey(args: {
   )
 
   const transactionBatch = []
+  console.log('args.scores', args.scores)
 
-  for (const rating of args.ratings) {
+  for (const score of args.scores) {
     transactionBatch.push(
-      adminDb.tx.intervalDissonanceScores[id()].create({
-        ...rating,
-        meanFrequency: args.meanFrequency,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      }).link({
-        $users: args.userId,
-      }),
+      db.tx.intervalDissonanceScores[id()]
+        .create({
+          ...score,
+          meanFrequency: args.meanFrequency,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        })
+        .link({
+          $users: args.userId,
+        }),
     )
   }
 
-  await adminDb.transact(transactionBatch)
+  await db.transact(transactionBatch)
 }

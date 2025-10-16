@@ -40,7 +40,7 @@ export type PlotPoint = {
 }
 
 export enum MusicalBackground {
-  Microtonalist,
+  Microtonalist = 1,
   Musician,
   NaiveListener,
 }
