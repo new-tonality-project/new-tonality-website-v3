@@ -46,8 +46,20 @@ export async function submitSurvey(args: {
       }),
   )
 
+  const dissonanceGraphId = id()
+  
+  await db.transact(
+    db.tx.dissonanceGraphs[dissonanceGraphId]
+      .create({
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      })
+      .link({
+        $users: args.userId,
+      }),
+  )
+
   const transactionBatch = []
-  console.log('args.scores', args.scores)
 
   for (const score of args.scores) {
     transactionBatch.push(
@@ -60,6 +72,9 @@ export async function submitSurvey(args: {
         })
         .link({
           $users: args.userId,
+        })
+        .link({
+          dissonanceGraphs: dissonanceGraphId,
         }),
     )
   }

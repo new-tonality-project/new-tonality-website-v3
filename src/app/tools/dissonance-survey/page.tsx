@@ -6,16 +6,36 @@ import { useState } from 'react'
 import { Survey, SurveyChart } from './components'
 import { SurveyMachineProvider } from '@/state/machines'
 import { db } from '@/db'
-
-const pageIntro =
-  'REWRITE: This tool is a part of the psychoacoustic experiment that was first outlined in 1960s paper by Plomp and Levelt and that is the basis behind modern empirical understanding of dissonance.'
+import { Text, TextLink } from '@/components/catalyst/text'
 
 export default function DissonanceSurveyPage() {
   const { userId } = useAuth()
   const [surveyOpen, setSurveyOpen] = useState(false)
 
   return (
-    <SimpleLayout title="Dissonance survey" intro={pageIntro}>
+    <SimpleLayout
+      title="Dissonance survey"
+      intro={
+        <Text>
+          This survey is a modified recreation of a series of experiments that
+          were conducted in 1960s by R. Plomp and W. J. M. Levelt. Their paper
+          titled as{' '}
+          <TextLink
+            href="https://www.mpi.nl/world/materials/publications/levelt/Plomp_Levelt_Tonal_1965.pdf"
+            target="_blank"
+          >
+            "Tonal Consonance And Critical Bandwidth"
+          </TextLink>{' '}
+          is one of the central pieces of research behind modern empirical
+          understanding of dissonance. The results of their experiments lie in
+          the basis of the William Sethares's idea of dissonance cureves. The
+          purpose of that survey is to replicate the experiments and investigate
+          if the second order beating should be included in the dissonance curve
+          calculation and to popularise that topic among
+          musicians.
+        </Text>
+      }
+    >
       <db.SignedIn>
         <SurveyChart />
       </db.SignedIn>

@@ -13,6 +13,10 @@ const _schema = i.schema({
       imageURL: i.string().optional(),
       type: i.string().optional(),
     }),
+    dissonanceGraphs: i.entity({
+      createdAt: i.date(),
+      updatedAt: i.date().optional(),
+    }),
     intervalDissonanceScores: i.entity({
       averageRating: i.number().indexed(),
       correlationCoefficient: i.number(),
@@ -54,6 +58,31 @@ const _schema = i.schema({
         on: '$users',
         has: 'many',
         label: 'linkedGuestUsers',
+      },
+    },
+    dissonanceGraphs$users: {
+      forward: {
+        on: 'dissonanceGraphs',
+        has: 'one',
+        label: '$users',
+        required: true,
+      },
+      reverse: {
+        on: '$users',
+        has: 'many',
+        label: 'dissonanceGraphs',
+      },
+    },
+    dissonanceGraphsIntervalDissonanceScores: {
+      forward: {
+        on: 'dissonanceGraphs',
+        has: 'many',
+        label: 'intervalDissonanceScores',
+      },
+      reverse: {
+        on: 'intervalDissonanceScores',
+        has: 'one',
+        label: 'dissonanceGraphs',
       },
     },
     intervalDissonanceScores$users: {

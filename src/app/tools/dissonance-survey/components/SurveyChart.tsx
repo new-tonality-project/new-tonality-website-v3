@@ -6,49 +6,122 @@ import { useMemo } from 'react'
 import { XAxis, YAxis, LineChart, Line } from 'recharts'
 
 export function SurveyChart() {
-  const { isLoading, error, data } = db.useQuery({
-    intervalDissonanceScores: {
+  const user = db.useUser()
+  const userGraph = db.useQuery({
+    dissonanceGraphs: {
       $: {
-        order: {
-          interval: 'asc',
+        where: {
+          $users: user.id,
+        },
+      },
+      intervalDissonanceScores: {
+        $: {
+          order: {
+            interval: 'asc',
+          },
         },
       },
     },
   })
-  
-  const points = useMemo(() => {
-    return data?.intervalDissonanceScores.map((item) => ({
-      x: item.interval,
-      y: item.averageRating,
-    }))
-  }, [data])
+  const otherGraphs = db.useQuery({
+    dissonanceGraphs: {
+      $: {
+        where: {
+          $users: { $ne: user.id },
+        },
+      },
+      intervalDissonanceScores: {
+        $: {
+          order: {
+            interval: 'asc',
+          },
+        },
+      },
+    },
+  })
 
-  if (isLoading) {
+  const graphs = useMemo(() => {
+    return {
+      user: userGraph.data?.dissonanceGraphs.map((graph) => ({
+        id: graph.id,
+        points: graph.intervalDissonanceScores.map((item) => ({
+          x: item.interval,
+          y: item.averageRating,
+        })),
+      })),
+      other: otherGraphs.data?.dissonanceGraphs.map((graph) => ({
+        id: graph.id,
+        points: graph.intervalDissonanceScores.map((item) => ({
+          x: item.interval,
+          y: item.averageRating,
+        })),
+      })),
+    }
+  }, [userGraph, otherGraphs])
+
+  if (userGraph.isLoading || otherGraphs.isLoading) {
     return <Spinner />
   }
 
-  if (error) {
+  if (userGraph.error || otherGraphs.error) {
     return <div>Error loading results</div>
   }
 
   return (
-    <LineChart width={900} height={300}>
-      <XAxis
-        dataKey="x"
-        type="number"
-        name="Interval"
-        domain={[0, 1200]}
-        tickCount={13}
-      />
-      <YAxis dataKey="y" type="number" name="Dissoannce" tickCount={7} domain={[1, 7]} />
-
-      <Line
-        type="monotone"
-        dataKey="y"
-        name="Intervals"
-        data={points}
-        stroke="#8884d8"
-      />
-    </LineChart>
+    <div className="flex w-full flex-col items-center">
+      <LineChart
+        width={900}
+        height={300}
+        margin={{ bottom: 20, left: 0, right: 80, top: 20 }}
+      >
+        <XAxis
+          dataKey="x"
+          type="number"
+          name="Interval"
+          label={{
+            value: 'Interval (cents)',
+            angle: 0,
+            position: 'insideBottom',
+            offset: -15,
+          }}
+          domain={[0, 1200]}
+          tickCount={13}
+        />
+        <YAxis
+          dataKey="y"
+          type="number"
+          name="Dissoannce"
+          label={{
+            value: 'Dissonance score',
+            angle: -90,
+            position: 'outsideLeft',
+          }}
+          tickCount={7}
+          domain={[1, 7]}
+        />
+        {graphs.other?.map((graph) => (
+          <Line
+            key={graph.id}
+            type="monotone"
+            dot={false}
+            dataKey="y"
+            name="Intervals"
+            data={graph.points}
+            stroke="#ddd"
+          />
+        ))}
+        {graphs.user?.map((graph) => (
+          <Line
+            key={graph.id}
+            type="monotone"
+            dataKey="y"
+            name="Intervals"
+            data={graph.points}
+            stroke="#000"
+            strokeWidth={2}
+          />
+        ))}
+      </LineChart>
+    </div>
   )
 }
