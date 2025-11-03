@@ -3,7 +3,7 @@
 import { Spinner } from '@/components'
 import { db } from '@/db'
 import { useMemo } from 'react'
-import { XAxis, YAxis, LineChart, Line } from 'recharts'
+import { XAxis, YAxis, LineChart, Line, CartesianGrid, Legend } from 'recharts'
 
 export function SurveyChart() {
   const user = db.useUser()
@@ -90,7 +90,7 @@ export function SurveyChart() {
         <YAxis
           dataKey="y"
           type="number"
-          name="Dissoannce"
+          name="Dissonance"
           label={{
             value: 'Dissonance score',
             angle: -90,
@@ -99,15 +99,18 @@ export function SurveyChart() {
           tickCount={7}
           domain={[1, 7]}
         />
+        <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
         {graphs.other?.map((graph) => (
           <Line
             key={graph.id}
             type="monotone"
             dot={false}
+            activeDot={false}
             dataKey="y"
-            name="Intervals"
             data={graph.points}
-            stroke="#ddd"
+            legendType='none'
+            tooltipType='none'
+            stroke="#ccc"
           />
         ))}
         {graphs.user?.map((graph) => (
@@ -115,12 +118,13 @@ export function SurveyChart() {
             key={graph.id}
             type="monotone"
             dataKey="y"
-            name="Intervals"
+            name="Your result"
             data={graph.points}
             stroke="#000"
             strokeWidth={2}
           />
         ))}
+        <Legend verticalAlign="top" height={36} />
       </LineChart>
     </div>
   )
