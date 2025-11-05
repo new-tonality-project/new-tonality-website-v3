@@ -15,6 +15,7 @@ const _schema = i.schema({
     }),
     dissonanceGraphs: i.entity({
       createdAt: i.date(),
+      meanFrequency: i.number().indexed(),
       updatedAt: i.date().optional(),
     }),
     intervalDissonanceScores: i.entity({

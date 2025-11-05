@@ -1,17 +1,32 @@
 'use client'
 
-import { Spinner } from '@/components'
 import { db } from '@/db'
-import { useMemo } from 'react'
-import { XAxis, YAxis, LineChart, Line, CartesianGrid, Legend } from 'recharts'
+import { useMemo, useState } from 'react'
+import {
+  XAxis,
+  YAxis,
+  LineChart,
+  Line,
+  CartesianGrid,
+  ResponsiveContainer,
+} from 'recharts'
+import { Button } from '@/components'
+import { SurveyMachineProvider } from '@/state/machines'
+import { Survey } from './Survey'
 
-export function SurveyChart() {
+export function SurveyChart(props: { meanFrequency: number }) {
+  const [surveyOpen, setSurveyOpen] = useState(false)
   const user = db.useUser()
   const userGraph = db.useQuery({
     dissonanceGraphs: {
       $: {
         where: {
-          $users: user.id,
+          and: [
+            {
+              $users: user?.id,
+            },
+            { meanFrequency: props.meanFrequency },
+          ],
         },
       },
       intervalDissonanceScores: {
@@ -27,7 +42,10 @@ export function SurveyChart() {
     dissonanceGraphs: {
       $: {
         where: {
-          $users: { $ne: user.id },
+          and: [
+            { $users: { $ne: user?.id } },
+            { meanFrequency: props.meanFrequency },
+          ],
         },
       },
       intervalDissonanceScores: {
@@ -60,7 +78,7 @@ export function SurveyChart() {
   }, [userGraph, otherGraphs])
 
   if (userGraph.isLoading || otherGraphs.isLoading) {
-    return <Spinner />
+    return <div className="h-[300px] w-full rounded bg-neutral-100" />
   }
 
   if (userGraph.error || otherGraphs.error) {
@@ -68,64 +86,74 @@ export function SurveyChart() {
   }
 
   return (
-    <div className="flex w-full flex-col items-center">
-      <LineChart
-        width={900}
-        height={300}
-        margin={{ bottom: 20, left: 0, right: 80, top: 20 }}
-      >
-        <XAxis
-          dataKey="x"
-          type="number"
-          name="Interval"
-          label={{
-            value: 'Interval (cents)',
-            angle: 0,
-            position: 'insideBottom',
-            offset: -15,
-          }}
-          domain={[0, 1200]}
-          tickCount={13}
-        />
-        <YAxis
-          dataKey="y"
-          type="number"
-          name="Dissonance"
-          label={{
-            value: 'Dissonance score',
-            angle: -90,
-            position: 'outsideLeft',
-          }}
-          tickCount={7}
-          domain={[1, 7]}
-        />
-        <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-        {graphs.other?.map((graph) => (
-          <Line
-            key={graph.id}
-            type="monotone"
-            dot={false}
-            activeDot={false}
-            dataKey="y"
-            data={graph.points}
-            legendType='none'
-            tooltipType='none'
-            stroke="#ccc"
+    <div className="relative flex w-full flex-col items-center">
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart
+          height={300}
+          margin={{ bottom: 20, left: 0, right: 10, top: 10 }}
+        >
+          <XAxis
+            dataKey="x"
+            type="number"
+            name="Interval"
+            label={{
+              value: 'Interval (cents)',
+              angle: 0,
+              position: 'insideBottom',
+              offset: -15,
+            }}
+            domain={[0, 1200]}
+            tickCount={13}
           />
-        ))}
-        {graphs.user?.map((graph) => (
-          <Line
-            key={graph.id}
-            type="monotone"
+          <YAxis
             dataKey="y"
-            name="Your result"
-            data={graph.points}
-            stroke="#000"
-            strokeWidth={2}
+            type="number"
+            name="Dissonance"
+            label={{
+              value: 'Dissonance score',
+              angle: -90,
+              position: 'outsideLeft',
+            }}
+            tickCount={7}
+            domain={[1, 7]}
           />
-        ))}
-        <Legend verticalAlign="top" height={36} />
-      </LineChart>
+          <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+          {graphs.other?.map((graph) => (
+            <Line
+              key={graph.id}
+              type="monotone"
+              dot={false}
+              activeDot={false}
+              dataKey="y"
+              data={graph.points}
+              legendType="none"
+              tooltipType="none"
+              stroke="#ccc"
+            />
+          ))}
+          {graphs.user?.map((graph) => (
+            <Line
+              key={graph.id}
+              type="monotone"
+              dataKey="y"
+              name="Your result"
+              data={graph.points}
+              stroke="#000"
+              strokeWidth={2}
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+      <div className="absolute top-6 right-8 max-w-fit">
+        {!userGraph.data?.dissonanceGraphs?.length ? (
+          <Button onClick={() => setSurveyOpen(true)} variant="primary">
+            Take a survey
+          </Button>
+        ) : null}
+      </div>
+      <SurveyMachineProvider>
+        <Survey setSurveyOpen={setSurveyOpen} open={surveyOpen} />
+      </SurveyMachineProvider>
     </div>
   )
 }

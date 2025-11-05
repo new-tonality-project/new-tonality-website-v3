@@ -15,9 +15,6 @@ import { ExitSurveyAlert } from './ExitSurvey'
 import { SurveyOverview } from './SurveyOverview'
 import { SurveyExperiment } from './SurveyExperiment'
 import { SurveyListening } from './SurveyListening'
-import { submitSurvey } from '../actions'
-import { db } from '@/db'
-import { SurveyIntervals } from '@/classes'
 
 export function Survey(props: {
   open: boolean

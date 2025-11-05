@@ -1,5 +1,6 @@
 export * from './Survey'
 export * from './SurveyChart'
+export * from './SurveyChartPublic'
 export * from './SurveyExperiment'
 export * from './SurveyListening'
 export * from './SurveyOverview'
