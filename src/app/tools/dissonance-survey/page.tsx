@@ -38,10 +38,10 @@ export default function DissonanceSurveyPage() {
           <h2 className="mt-10">High register</h2>
           <Divider className="my-4" />
           <db.SignedOut>
-            <SurveyChartPublic meanFrequency={880} />
+            <SurveyChartPublic meanFrequency={1320} />
           </db.SignedOut>
           <db.SignedIn>
-            <SurveyChart meanFrequency={880} />
+            <SurveyChart meanFrequency={1320} />
           </db.SignedIn>
 
           <h2 className="mt-10">Middle register</h2>
@@ -56,10 +56,10 @@ export default function DissonanceSurveyPage() {
           <h2 className="mt-10">Low register</h2>
           <Divider className="my-4" />
           <db.SignedOut>
-            <SurveyChartPublic meanFrequency={220} />
+            <SurveyChartPublic meanFrequency={147} />
           </db.SignedOut>
           <db.SignedIn>
-            <SurveyChart meanFrequency={220} />
+            <SurveyChart meanFrequency={147} />
           </db.SignedIn>
 
           <p>

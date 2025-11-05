@@ -97,13 +97,12 @@ export function SurveyChartPublic(props: { meanFrequency: number }) {
           ))}
         </LineChart>
       </ResponsiveContainer>
-      <div className="absolute top-6 right-8 max-w-fit">
-        <SignInButton>
-          <Button variant="primary" className="ml-auto max-w-fit">
-            Sign in to take a survey
-          </Button>
-        </SignInButton>
-      </div>
+
+      <SignInButton>
+        <Button variant="primary" className="absolute top-6 right-8 max-w-fit">
+          Sign in to take a survey
+        </Button>
+      </SignInButton>
     </div>
   )
 }

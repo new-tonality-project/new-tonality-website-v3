@@ -4,9 +4,11 @@ import { AdditiveSynth } from 'new-tonality-web-synth'
 import { SurveyIntervals } from '@/classes'
 import { getIntervalFrequencies, MusicalBackground } from '@/lib'
 
-
 export const surveyMachine = machineSetup.createMachine({
-  context: defaultContext,
+  context: ({ input }) => ({
+    ...defaultContext,
+    meanFrequency: input.meanFrequency,
+  }),
   initial: 'overview',
   on: {
     exitSurvey: {

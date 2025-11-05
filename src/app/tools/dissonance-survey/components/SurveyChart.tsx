@@ -144,14 +144,18 @@ export function SurveyChart(props: { meanFrequency: number }) {
           ))}
         </LineChart>
       </ResponsiveContainer>
-      <div className="absolute top-6 right-8 max-w-fit">
-        {!userGraph.data?.dissonanceGraphs?.length ? (
-          <Button onClick={() => setSurveyOpen(true)} variant="primary">
-            Take a survey
-          </Button>
-        ) : null}
-      </div>
-      <SurveyMachineProvider>
+
+      {!userGraph.data?.dissonanceGraphs?.length ? (
+        <Button
+          onClick={() => setSurveyOpen(true)}
+          variant="primary"
+          className="absolute top-6 right-8 max-w-fit"
+        >
+          Take a survey
+        </Button>
+      ) : null}
+
+      <SurveyMachineProvider meanFrequency={props.meanFrequency}>
         <Survey setSurveyOpen={setSurveyOpen} open={surveyOpen} />
       </SurveyMachineProvider>
     </div>

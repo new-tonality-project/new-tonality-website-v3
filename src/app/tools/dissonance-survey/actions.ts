@@ -53,6 +53,7 @@ export async function submitSurvey(args: {
       .create({
         createdAt: Date.now(),
         updatedAt: Date.now(),
+        meanFrequency: args.meanFrequency,
       })
       .link({
         $users: args.userId,

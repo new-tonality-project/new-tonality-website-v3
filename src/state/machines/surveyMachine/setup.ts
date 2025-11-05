@@ -21,6 +21,9 @@ export const defaultContext = {
 
 export const machineSetup = setup({
   types: {
+    input: {} as {
+      meanFrequency: number
+    },
     context: {} as {
       title: string
       description: string
