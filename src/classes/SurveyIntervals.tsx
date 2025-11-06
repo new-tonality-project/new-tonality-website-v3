@@ -143,28 +143,44 @@ export class SurveyIntervals {
   }
 
   private getSurveyOrder() {
+    const allIntervals = this.values
+    const evenIndexedIntervals: number[] = []
+    const oddIndexedIntervals: number[] = []
+
+    for (let i = 0; i < allIntervals.length; i++) {
+      if (i % 2 === 0) {
+        evenIndexedIntervals.push(allIntervals[i])
+      } else {
+        oddIndexedIntervals.push(allIntervals[i])
+      }
+    }
+
     const result: number[] = []
-    const numberOfIterations = 3
+    const numberOfBatches = 6
 
-    for (let i = 0; i < numberOfIterations; i++) {
-      const lastEl = this._surveyOrder?.at(-1)
-      const shuffledIntervals = this.getShuffledIntervals(lastEl)
+    for (let i = 0; i < numberOfBatches; i++) {
+      const isEvenBatch = i % 2 === 0
+      const sourceArray = isEvenBatch ? evenIndexedIntervals : oddIndexedIntervals
 
-      result.push(...shuffledIntervals)
+      const shuffledBatch = [...sourceArray].sort(() => Math.random() - 0.5)
+
+      const lastInterval = result.at(-1)
+      const firstInterval = shuffledBatch[0]
+
+      if (
+        lastInterval !== undefined &&
+        ((lastInterval === 0 && firstInterval === 1200) ||
+          (lastInterval === 1200 && firstInterval === 0))
+      ) {
+        shuffledBatch.shift()
+        const middleIndex = Math.floor(shuffledBatch.length / 2)
+        shuffledBatch.splice(middleIndex, 0, firstInterval)
+      }
+
+      result.push(...shuffledBatch)
     }
 
     return result
-  }
-
-  public getShuffledIntervals(lastEl?: number) {
-    if (!lastEl) {
-      return this.values.toSorted(() => Math.random() - 0.5)
-    }
-
-    return this.values
-      .filter((el) => el !== lastEl)
-      .toSorted(() => Math.random() - 0.5)
-      .toSpliced(Math.floor(this.values.length / 2), 0, lastEl)
   }
 
   private set(key: number, value: number[]) {
