@@ -8,6 +8,7 @@ export type SurveyIntervalScore = Omit<
 export class SurveyIntervals {
   private _data: Map<number, number[]> = new Map()
   private _surveyOrder: number[]
+  private readonly MAX_INTERVAL_DIFFERENCE = 200
 
   constructor() {
     this.setRandomIntervalsBasedOn12TET()
@@ -142,6 +143,54 @@ export class SurveyIntervals {
     return this
   }
 
+  public getShuffledBatch(sourceArray: number[]): number[] {
+    let shuffledBatch = [...sourceArray].sort(() => Math.random() - 0.5)
+    let iterations = 0
+    const maxIterations = 1000
+
+    while (
+      (this.hasConsecutiveUnisonAndOctave(shuffledBatch) ||
+        this.hasTooCloseConsecutiveIntervals(shuffledBatch)) &&
+      iterations < maxIterations
+    ) {
+      shuffledBatch = [...sourceArray].sort(() => Math.random() - 0.5)
+      iterations++
+    }
+
+    if (iterations >= maxIterations) {
+      throw new Error(
+        'Failed to find valid batch without consecutive 0/1200 after maximum iterations',
+      )
+    }
+
+    return shuffledBatch
+  }
+
+  private hasConsecutiveUnisonAndOctave(batch: number[]): boolean {
+    for (let j = 0; j < batch.length - 1; j++) {
+      const current = batch[j]
+      const next = batch[j + 1]
+      if (
+        (current === 0 && next === 1200) ||
+        (current === 1200 && next === 0)
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
+  private hasTooCloseConsecutiveIntervals(batch: number[]): boolean {
+    for (let j = 0; j < batch.length - 1; j++) {
+      const current = batch[j]
+      const next = batch[j + 1]
+      if (Math.abs(current - next) < this.MAX_INTERVAL_DIFFERENCE) {
+        return true
+      }
+    }
+    return false
+  }
+
   private getSurveyOrder() {
     const allIntervals = this.values
     const evenIndexedIntervals: number[] = []
@@ -160,21 +209,41 @@ export class SurveyIntervals {
 
     for (let i = 0; i < numberOfBatches; i++) {
       const isEvenBatch = i % 2 === 0
-      const sourceArray = isEvenBatch ? evenIndexedIntervals : oddIndexedIntervals
-
-      const shuffledBatch = [...sourceArray].sort(() => Math.random() - 0.5)
+      const sourceArray = isEvenBatch
+        ? evenIndexedIntervals
+        : oddIndexedIntervals
 
       const lastInterval = result.at(-1)
-      const firstInterval = shuffledBatch[0]
 
-      if (
-        lastInterval !== undefined &&
-        ((lastInterval === 0 && firstInterval === 1200) ||
-          (lastInterval === 1200 && firstInterval === 0))
-      ) {
-        shuffledBatch.shift()
-        const middleIndex = Math.floor(shuffledBatch.length / 2)
-        shuffledBatch.splice(middleIndex, 0, firstInterval)
+      let shuffledBatch = this.getShuffledBatch(sourceArray)
+
+      if (lastInterval !== undefined) {
+        let needsReshuffle = true
+        let iterations = 0
+        const maxIterations = 1000
+
+        while (needsReshuffle && iterations < maxIterations) {
+          const firstInterval = shuffledBatch[0]
+          const difference = Math.abs(lastInterval - firstInterval)
+
+          const boundaryViolation =
+            (lastInterval === 0 && firstInterval === 1200) ||
+            (lastInterval === 1200 && firstInterval === 0) ||
+            difference <= this.MAX_INTERVAL_DIFFERENCE
+
+          needsReshuffle = boundaryViolation
+
+          if (needsReshuffle) {
+            shuffledBatch = this.getShuffledBatch(sourceArray)
+            iterations++
+          }
+        }
+
+        if (iterations >= maxIterations) {
+          throw new Error(
+            'Failed to find valid shuffle after maximum iterations',
+          )
+        }
       }
 
       result.push(...shuffledBatch)

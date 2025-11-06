@@ -31,8 +31,8 @@ export function SurveyListening() {
       return
     }
     setIsListening(true)
-    const shuffled = state.context.intervals.getShuffledIntervals(
-      state.context.intervals.surveyOrder[0],
+    const shuffled = state.context.intervals.getShuffledBatch(
+      state.context.intervals.values,
     )
 
     let index = 0
