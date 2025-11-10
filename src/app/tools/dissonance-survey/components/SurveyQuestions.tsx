@@ -29,6 +29,7 @@ export function SurveyQuestions() {
           <RadioGroup
             name="musical-background"
             className="pb-12"
+            value={state.context.musicalBackground.toString()}
             onChange={(e) => {
               send({
                 type: 'setMusicalBackground',
@@ -36,7 +37,7 @@ export function SurveyQuestions() {
               })
             }}
           >
-            <RadioField>
+            <RadioField >
               <Radio value={MusicalBackground.NaiveListener.toString()} />
               <Label>I just enjoy listening to music</Label>
               <Description>
@@ -46,7 +47,7 @@ export function SurveyQuestions() {
               </Description>
             </RadioField>
 
-            <RadioField>
+            <RadioField >
               <Radio value={MusicalBackground.Musician.toString()} />
               <Label>I am a musician</Label>
               <Description>

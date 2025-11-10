@@ -1,7 +1,7 @@
 import { SurveyIntervals } from '@/classes'
 import { AdditiveSynth } from 'new-tonality-web-synth'
 import { setup } from 'xstate'
-import { MusicalBackground } from '@/lib'
+import { MusicalBackground, type UserSettings } from '@/lib'
 
 export const defaultContext = {
   title: '',
@@ -23,6 +23,7 @@ export const machineSetup = setup({
   types: {
     input: {} as {
       meanFrequency: number
+      userSettings: UserSettings | undefined
     },
     context: {} as {
       title: string

@@ -3,6 +3,8 @@
 import { createContext, useContext, type ReactNode } from 'react'
 import { useMachine } from '@xstate/react'
 import { surveyMachine } from './machine'
+import { db } from '@/db'
+import type { UserSettings } from '@/lib'
 
 const SurveyMachineContext = createContext<ReturnType<
   typeof useMachine<typeof surveyMachine>
@@ -11,13 +13,16 @@ const SurveyMachineContext = createContext<ReturnType<
 export function SurveyMachineProvider({
   children,
   meanFrequency,
+  userSettings,
 }: {
   children: ReactNode
   meanFrequency: number
+  userSettings: UserSettings
 }) {
   const machine = useMachine(surveyMachine, {
     input: {
       meanFrequency,
+      userSettings
     },
   })
 

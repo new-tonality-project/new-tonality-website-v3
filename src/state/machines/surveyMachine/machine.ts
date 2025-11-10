@@ -2,12 +2,31 @@ import { assign } from 'xstate'
 import { defaultContext, machineSetup } from './setup'
 import { AdditiveSynth } from 'new-tonality-web-synth'
 import { SurveyIntervals } from '@/classes'
-import { getIntervalFrequencies, MusicalBackground } from '@/lib'
+import {
+  getIntervalFrequencies,
+  MusicalBackground,
+  type UserSettings,
+} from '@/lib'
+
+function getMusicalBackground(userSettings?: UserSettings): MusicalBackground | undefined {
+  if (userSettings?.isMicrotonalist) return MusicalBackground.Microtonalist
+  if (userSettings?.isMusician) return MusicalBackground.Musician
+  if (userSettings?.isNaiveListener) return MusicalBackground.NaiveListener
+  return
+}
 
 export const surveyMachine = machineSetup.createMachine({
   context: ({ input }) => ({
     ...defaultContext,
     meanFrequency: input.meanFrequency,
+    shareDataPrivately:
+      input.userSettings?.shareDataPrivately ??
+      defaultContext.shareDataPrivately,
+    shareDataPublicly:
+      input.userSettings?.shareDataPublicly ?? defaultContext.shareDataPublicly,
+    musicalBackground:
+      getMusicalBackground(input.userSettings) ??
+      defaultContext.musicalBackground,
   }),
   initial: 'overview',
   on: {

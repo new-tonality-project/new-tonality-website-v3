@@ -15,6 +15,7 @@ import { ExitSurveyAlert } from './ExitSurvey'
 import { SurveyOverview } from './SurveyOverview'
 import { SurveyExperiment } from './SurveyExperiment'
 import { SurveyListening } from './SurveyListening'
+import { useRouter } from 'next/navigation'
 
 export function Survey(props: {
   open: boolean
@@ -22,6 +23,7 @@ export function Survey(props: {
 }) {
   const [state, send] = useSurveyMachine()
   const [alertOpen, setAlertOpen] = useState(false)
+  const router = useRouter()
 
   return (
     <Dialog
@@ -51,6 +53,7 @@ export function Survey(props: {
 
             setTimeout(() => {
               send({ type: 'exitSurvey' })
+              router.refresh()
             }, 250)
           }}
         />
@@ -60,10 +63,18 @@ export function Survey(props: {
         <Button
           variant="secondary"
           onClick={() => {
-            setAlertOpen(true)
+            if (state.matches('success') || state.matches('error')) {
+              props.setSurveyOpen(false)
+
+              setTimeout(() => {
+                send({ type: 'exitSurvey' })
+              }, 250)
+            } else {
+              setAlertOpen(true)
+            }
           }}
         >
-          Exit survey
+          {state.matches('success') ? 'Look results' : 'Exit survey'}
         </Button>
 
         {state.matches('overview') && (
@@ -80,7 +91,7 @@ export function Survey(props: {
           <Button
             variant="primary"
             disabled={
-              !state.context.musicalBackground ||
+              state.context.musicalBackground === undefined ||
               (!state.context.shareDataPrivately &&
                 !state.context.shareDataPublicly)
             }

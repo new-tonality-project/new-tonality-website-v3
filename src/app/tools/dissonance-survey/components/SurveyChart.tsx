@@ -17,6 +17,15 @@ import { Survey } from './Survey'
 export function SurveyChart(props: { meanFrequency: number }) {
   const [surveyOpen, setSurveyOpen] = useState(false)
   const user = db.useUser()
+  const userSettings = db.useQuery({
+    userSettings: {
+      $: {
+        where: {
+          $users: user.id,
+        },
+      },
+    },
+  })
   const userGraph = db.useQuery({
     dissonanceGraphs: {
       $: {
@@ -77,11 +86,11 @@ export function SurveyChart(props: { meanFrequency: number }) {
     }
   }, [userGraph, otherGraphs])
 
-  if (userGraph.isLoading || otherGraphs.isLoading) {
+  if (userGraph.isLoading || otherGraphs.isLoading || userSettings.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />
   }
 
-  if (userGraph.error || otherGraphs.error) {
+  if (userGraph.error || otherGraphs.error || userSettings.error) {
     return <div>Error loading results</div>
   }
 
@@ -155,7 +164,7 @@ export function SurveyChart(props: { meanFrequency: number }) {
         </Button>
       ) : null}
 
-      <SurveyMachineProvider meanFrequency={props.meanFrequency}>
+      <SurveyMachineProvider meanFrequency={props.meanFrequency} userSettings={userSettings.data.userSettings[0]}>
         <Survey setSurveyOpen={setSurveyOpen} open={surveyOpen} />
       </SurveyMachineProvider>
     </div>
