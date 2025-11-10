@@ -1,4 +1,4 @@
-import { BasicLink } from './types'
+import { type BasicLink } from './types'
 
 export const NAV_ITEMS: BasicLink[] = [
   { label: 'Home', href: '/' },

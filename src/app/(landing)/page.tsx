@@ -67,7 +67,7 @@ export default async function Home() {
                 basis behind modern empirical understanding of dissoannce.
               </p>
               <Link
-                href="/"
+                href="/tools/dissonance-survey"
                 className="mt-2 flex items-center gap-1 text-amber-600"
               >
                 Explore

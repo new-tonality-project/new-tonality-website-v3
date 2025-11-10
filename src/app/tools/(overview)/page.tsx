@@ -1,7 +1,7 @@
 import { SimpleLayout } from '@/components'
 import setharesDissonanceImage from '@/images/tools/sethares-dissonance.png'
 import { ToolCard } from './ToolCard'
-import { Tool } from '@/lib'
+import { type Tool } from '@/lib'
 
 const tools: Tool[] = [
   {

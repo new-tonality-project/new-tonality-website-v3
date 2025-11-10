@@ -10,6 +10,7 @@ const variantStyles = {
 
 type ButtonProps = {
   variant?: keyof typeof variantStyles
+  disabled?: boolean
 } & (
   | (React.ComponentPropsWithoutRef<'button'> & { href?: undefined })
   | React.ComponentPropsWithoutRef<typeof Link>
@@ -23,6 +24,7 @@ export function Button({
   className = clsx(
     'inline-flex items-center gap-2 justify-center rounded-md py-2 px-3 text-sm outline-offset-2 transition active:transition-none',
     variantStyles[variant],
+    props.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
     className,
   )
 

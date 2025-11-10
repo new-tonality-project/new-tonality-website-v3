@@ -1,6 +1,6 @@
 'use client'
 
-import { SetharesDissonancePreset } from '@/db'
+import { type SetharesDissonancePreset } from '@/lib'
 import { usePreset } from './usePreset'
 import { FALLBACK_PRESET } from './utils'
 

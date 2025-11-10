@@ -8,7 +8,7 @@ import {
   PopoverPanel,
 } from '@headlessui/react'
 import { ChevronDownIcon, CloseIcon } from '../Icons'
-import { BasicLink } from '@/lib'
+import { type BasicLink } from '@/lib'
 
 export function MobileNavItem({
   href,

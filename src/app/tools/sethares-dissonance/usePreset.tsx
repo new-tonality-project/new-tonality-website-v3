@@ -1,6 +1,6 @@
 'use client'
 
-import { SetharesDissonancePreset } from '@/db'
+import type { SetharesDissonancePreset } from '@/lib'
 import { useState } from 'react'
 import { updatePreset } from './utils'
 
