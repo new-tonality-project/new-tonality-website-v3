@@ -5,28 +5,7 @@ import { Text, TextLink } from '@/components/catalyst/text'
 export function SurveyOverview() {
   return (
     <div>
-      <Text color="black" className="pb-6">
-        Before we start, let's have a quick overview of what we will be doing.
-        This survey is based on the classic work by{' '}
-        <TextLink
-          href="https://www.mpi.nl/world/materials/publications/levelt/Plomp_Levelt_Tonal_1965.pdf"
-          target="_blank"
-        >
-          Plomp & Levelt
-        </TextLink>
-        , which introduces the concept of sensory dissonance, setting the
-        foundation for modern psychoacoustic research in the field. Their
-        research was conducted in 1960s and since then found its practical
-        application in the work of{' '}
-        <TextLink
-          href="https://www.mpi.nl/world/materials/publications/levelt/Plomp_Levelt_Tonal_1965.pdf"
-          target="_blank"
-        >
-          William Sethares
-        </TextLink>{' '}
-        by serving as a foundation for caculation of dissonance curves and
-        establishing connection between tuning and timbre of the instrument.
-      </Text>
+      
 
       <Text color="black" className="pb-6">
         The main achievement of the work was the discovery that the sensation of
