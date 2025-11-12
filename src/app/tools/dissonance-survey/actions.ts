@@ -13,8 +13,6 @@ export async function submitSurvey(args: {
   meanFrequency: number
   userId: string
 }) {
-  console.log('args.userId', args.userId)
-
   const userSettings = await db.queryOnce({
     userSettings: {
       $: {
@@ -26,7 +24,6 @@ export async function submitSurvey(args: {
   })
 
   const existingUserSettingsId = userSettings.data.userSettings[0]?.id
-  console.log('existingUserSettingsId', existingUserSettingsId)
 
   await db.transact(
     db.tx.userSettings[existingUserSettingsId ?? id()]
