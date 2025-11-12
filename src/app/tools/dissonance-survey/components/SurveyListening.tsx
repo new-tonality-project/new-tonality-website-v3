@@ -41,7 +41,7 @@ export function SurveyListening() {
 
       index++
       setIntervalsListened(index)
-      
+
       await new Promise((resolve) => setTimeout(resolve, 2000))
     }
 
@@ -54,9 +54,11 @@ export function SurveyListening() {
     <div>
       <Step className="mb-8" title="Step" number={1} disabled={false}>
         <Text>
-          We almost ready to start the survey. Make sure you use headphones or
-          decent speakers. Press "Test volume" to make sure you can hear the
-          intervals clearly at a comfortable volume.
+          Make sure you use headphones or monitoring speakers. Laptop or phone
+          speakers, even good Macbook Pro ones, produce a lot of distorion and
+          are introducing new harmonics that will impact the results of the
+          survey. Press "Test volume" to make sure you can hear the interval
+          clearly at a comfortable volume.
         </Text>
         <Button
           className="my-6"
@@ -66,11 +68,18 @@ export function SurveyListening() {
           Test volume
         </Button>
       </Step>
-      <Step className="mb-8" title="Step" number={2} disabled={!state.context.canListen}>
+      <Step
+        className="mb-8"
+        title="Step"
+        number={2}
+        disabled={!state.context.canListen}
+      >
         <Text>
-          Once you've confirmed you can hear the intervals clearly, press
-          "Listen to intervals" to get the idea how rough they sound to you so
-          you can rate them correctly in the survey.
+          Before you start rating the intervals you need to have the relative
+          idea of what intervals sound very rough and should be rated as 7 or
+          very smooth and should be rated as 1. Press "Listen to intervals" to
+          hear the 14 intervals that will be used in the survey and understand
+          how they sound to you.
         </Text>
         <Button
           className="my-6"
@@ -83,7 +92,10 @@ export function SurveyListening() {
               ? 'Listen again'
               : 'Listen to intervals'}
         </Button>
-        <Text>{intervalsListened} / {state.context.intervals?.values.length} intervals listened</Text>
+        <Text>
+          {intervalsListened} / {state.context.intervals?.values.length}{' '}
+          intervals listened
+        </Text>
       </Step>
 
       <Step
@@ -91,7 +103,10 @@ export function SurveyListening() {
         number={3}
         disabled={!state.context.canStartExperiment}
       >
-        <Text>Press "Continue" to proceed to the survey.</Text>
+        <Text>
+          Press "Continue" to proceed to the survey where you will rate the
+          intervals that you have just heard.
+        </Text>
       </Step>
     </div>
   )

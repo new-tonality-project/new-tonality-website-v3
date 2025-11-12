@@ -8,12 +8,16 @@ import {
   type UserSettings,
 } from '@/lib'
 
-function getMusicalBackground(userSettings?: UserSettings): MusicalBackground | undefined {
+function getMusicalBackground(
+  userSettings?: UserSettings,
+): MusicalBackground | undefined {
   if (userSettings?.isMicrotonalist) return MusicalBackground.Microtonalist
   if (userSettings?.isMusician) return MusicalBackground.Musician
   if (userSettings?.isNaiveListener) return MusicalBackground.NaiveListener
   return
 }
+
+// TODO: when exiting survey we get questions reset to defaultContext rather than data from BE. Need to fix this.
 
 export const surveyMachine = machineSetup.createMachine({
   context: ({ input }) => ({
@@ -91,7 +95,7 @@ export const surveyMachine = machineSetup.createMachine({
       entry: assign(() => ({
         title: 'Preliminary listening',
         description:
-          'Now you will be presented with a set of intervals that you will have to rate so you have the idea on show rough do they sound.',
+          'We are almost ready to start the survey. But before rating the intervals, we need to make sure your sound is ok and you have the idea how the intervals that will be used in the survey sound to you.',
         intervals: new SurveyIntervals(),
         synth:
           typeof AudioContext !== 'undefined'
@@ -154,9 +158,9 @@ export const surveyMachine = machineSetup.createMachine({
     experiment: {
       entry: assign(() => {
         return {
-          title: 'Experiment',
+          title: 'Rating the intervals',
           description:
-            'Now you will be presented with 42 intervals that you will have to rate on show rough do they sound.',
+            "It is time to rate the intervals! Each of the 14 intervals that you've heard in a previous step will be played 3 times in a random order. So in total you will rate 42 intervals.",
         }
       }),
 
