@@ -50,13 +50,27 @@ export default async function Home() {
       <ToolsSection
         className="my-24 md:my-28"
         title="Microtonal web apps"
-        description="Educate yourself on different concepts in psychoacoustics and microtonality by playing with a set of tools that run on your browser. Consider creating an account for the best experience."
+        description="A collection of browser-based tools that explore microtonality through the lens of modern psycho acoustic research. Investigate the relationship between instrumental timbre, spectral characteristics, and tuning systems."
         tools={[
           {
             title: 'Dissonance perception survey',
             description:
               'Go thorugh the actual psychoacoustic experiment that was first outlined in 1960s paper by Plomp and Levelt and that is the basis behind modern empirical understanding of dissoannce.',
             href: '/tools/dissonance-survey',
+            linkText: 'Explore',
+          },
+          {
+            title: 'Legacy Synth V1',
+            description:
+              'Generate and download your own microtonal and inharmonic samples compatible with arbitrary EDO tuning systems.',
+            href: 'https://v1.newtonality.net',
+            linkText: 'Explore',
+          },
+          {
+            title: 'Legacy Synth V2',
+            description:
+              'Version 2 microtonal synth with ability to add multiple spectral layers and a playable board that is tuned to the related tuning system.',
+            href: 'https://v2.newtonality.net',
             linkText: 'Explore',
           },
         ]}
