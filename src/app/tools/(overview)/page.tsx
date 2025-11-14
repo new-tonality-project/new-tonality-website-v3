@@ -1,22 +1,12 @@
 import { SimpleLayout } from '@/components'
-import setharesDissonanceImage from '@/images/tools/sethares-dissonance.png'
 import { ToolCard } from '@/components'
-import { type Tool } from '@/lib'
-
-const tools: Tool[] = [
-  {
-    name: 'Dissonance survey',
-    logo: setharesDissonanceImage,
-    link: { href: '/tools/dissonance-survey', label: 'Explore' },
-    description: 'Take part in survey of how people percieve dissonance',
-  },
-]
+import { tools } from '@/lib'
 
 export default function ToolsPage() {
   return (
     <SimpleLayout
-      title="Tools overview"
-      intro="Explore the word of inharmonicity and dynamic tuning systems."
+      title="Microtonal web apps"
+      intro="A collection of browser-based tools that explore microtonality through the lens of modern psycho acoustic research. Investigate the relationship between instrumental timbre, spectral characteristics, and tuning systems."
     >
       <ul
         role="list"
