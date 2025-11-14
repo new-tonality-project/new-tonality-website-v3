@@ -9,35 +9,38 @@ export default async function Home() {
   return (
     <>
       <Container className="pt-30">
-        <div className="flex w-full flex-col justify-between gap-16 md:flex-row">
-          <div className="flex max-w-md flex-grow flex-col justify-center px-7">
-            <h1 className="text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
+        <div className="flex w-full flex-col justify-between gap-12 md:flex-row">
+          <div className="flex max-w-md flex-grow flex-col justify-center px-7 text-end">
+            <h1 className="text-4xl font-thin tracking-widest text-zinc-800 sm:text-6xl dark:text-zinc-100">
               New Tonality
             </h1>
-            <p className="py-6 text-base text-zinc-600 dark:text-zinc-400">
-              Musical tuning is more than just simple ratios and tempering. Dive
-              deep into the world on microtonality inspired by research in
-              psychoacoustics and mathematics.
+            <p className="pt-12 pr-2 pb-8 text-base text-zinc-600 dark:text-zinc-400">
+              Musical tuning is more than simple ratios and tempering. Dive into
+              the psychoacoustical and mathematical world of microtonality.
             </p>
 
-            <Link
-              href={SOCIAL_MEDIA_LINKS.youtube}
-              className="mt-1 flex items-center gap-1 text-sky-600"
-            >
-              YouTube Videos
-              <ChevronRightIcon className="h-4 w-4 stroke-current" />
-            </Link>
+            <div className="flex flex-col items-end gap-1">
+              <Link
+                href={SOCIAL_MEDIA_LINKS.youtube}
+                className="flex items-center gap-1 text-sky-600"
+              >
+                YouTube Videos
+                <ChevronRightIcon className="h-4 w-4 stroke-current" />
+              </Link>
 
-            <Link
-              href="/tools"
-              className="mt-1 flex items-center gap-1 text-sky-600"
-            >
-              Microtonal web apps
-              <ChevronRightIcon className="h-4 w-4 stroke-current" />
-            </Link>
+              <Link
+                href="/tools"
+                className="flex items-center gap-1 text-sky-600"
+              >
+                Microtonal web apps
+                <ChevronRightIcon className="h-4 w-4 stroke-current" />
+              </Link>
+            </div>
           </div>
 
-          <LatestUpdate />
+          <div className="flex w-full justify-center">
+            <LatestUpdate />
+          </div>
         </div>
       </Container>
       <ToolsSection
