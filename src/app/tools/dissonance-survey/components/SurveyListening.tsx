@@ -51,8 +51,8 @@ export function SurveyListening() {
   }
 
   return (
-    <div>
-      <Step className="mb-8" title="Step" number={1} disabled={false}>
+    <div className='pt-8 lg:pt-0'>
+      <Step className="pt-8" title="Step" number={1} disabled={false}>
         <Text>
           Make sure you use headphones or monitoring speakers. Laptop or phone
           speakers, even good Macbook Pro ones, produce a lot of distorion and

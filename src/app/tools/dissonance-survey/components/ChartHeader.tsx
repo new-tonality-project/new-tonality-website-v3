@@ -12,10 +12,10 @@ export function ChartHeader({
   button?: ReactNode
 }) {
   return (
-    <div className="flex w-full flex-wrap items-center gap-4 justify-between md:justify-start border-b border-zinc-950/10 pb-6 dark:border-white/10">
+    <div className="flex w-full flex-wrap items-center gap-4 justify-start border-b border-zinc-950/10 pb-6 dark:border-white/10">
       <Heading>{title}</Heading>
       {button || (onTakeSurvey && (
-        <Button onClick={onTakeSurvey} variant="secondary">Start experiment</Button>
+        <Button onClick={onTakeSurvey} variant="primary">Start experiment</Button>
       ))}
     </div>
   )

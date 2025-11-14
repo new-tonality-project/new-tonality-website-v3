@@ -131,7 +131,7 @@ export function SurveyExperiment() {
           Choose the number between 1 and 7 to rate how rough the interval
           sounds to you, where 7 is the roughest and 1 is the smoothest.
         </Text>
-        <div className="w-sm pt-6 pb-4">
+        <div className="md:w-sm pt-6 pb-4">
           <div className="flex justify-between pb-2">
             <Text>Smooth</Text>
             <Text>Rough</Text>
