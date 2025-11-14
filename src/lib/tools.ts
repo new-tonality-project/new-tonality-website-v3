@@ -4,13 +4,13 @@ import legacyV2Image from '@/images/tools/legacy-v2.png'
 import { type Tool } from './types'
 
 export const tools: Tool[] = [
-  {
-    name: 'Dissonance perception survey',
-    description:
-      'Take part in an interactive psychoacoustic experiment to measure your personal perception of dissonance and compare your results with others.',
-    logo: dissonanceSurveyImage,
-    link: { href: '/tools/dissonance-survey', label: 'Explore' },
-  },
+  // {
+  //   name: 'Dissonance perception survey',
+  //   description:
+  //     'Take part in an interactive psychoacoustic experiment to measure your personal perception of dissonance and compare your results with others.',
+  //   logo: dissonanceSurveyImage,
+  //   link: { href: '/tools/dissonance-survey', label: 'Explore' },
+  // },
   {
     name: 'Legacy Additive Synth V1',
     description:

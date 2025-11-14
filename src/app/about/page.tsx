@@ -41,7 +41,7 @@ export default function AboutPage() {
     <Container className="mt-16 sm:mt-32">
       <div className="max-w-3xl px-6 lg:px-0 mx-auto grid grid-cols-1 gap-y-16 lg:grid-cols-[1fr_auto] lg:grid-rows-[1fr_auto] lg:gap-y-12">
         <div className="lg:order-first lg:row-span-2">
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
+          <h1 className="text-4xl font-light tracking-wide text-zinc-800 sm:text-5xl dark:text-zinc-100">
             About New Tonality
           </h1>
           <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">

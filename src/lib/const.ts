@@ -8,6 +8,7 @@ export const EBOOK_LINKS = {
 export const NAV_ITEMS: BasicLink[] = [
   { label: 'Home', href: '/' },
   { label: 'Tools', href: '/tools' },
+  { label: 'About', href: '/about' },
   { label: 'eBook', href: EBOOK_LINKS.payhip },
 ]
 
