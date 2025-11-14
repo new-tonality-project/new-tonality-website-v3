@@ -136,8 +136,12 @@ export const surveyMachine = machineSetup.createMachine({
 
               context.synth.releaseAll()
 
-              context.synth.play({ pitch: f1, velocity: 0.5 })
-              context.synth.play({ pitch: f2, velocity: 0.5 })
+              if (f1 !== f2) {
+                context.synth.play({ pitch: f1, velocity: 0.5 })
+                context.synth.play({ pitch: f2, velocity: 0.5 })
+              } else {
+                context.synth.play({ pitch: f1, velocity: 0.5 })
+              }
             },
           ],
         },
@@ -198,8 +202,12 @@ export const surveyMachine = machineSetup.createMachine({
 
               context.synth.releaseAll()
 
-              context.synth.play({ pitch: f1, velocity: 0.5 })
-              context.synth.play({ pitch: f2, velocity: 0.5 })
+              if (f1 !== f2) {
+                context.synth.play({ pitch: f1, velocity: 0.5 })
+                context.synth.play({ pitch: f2, velocity: 0.5 })
+              } else {
+                context.synth.play({ pitch: f1, velocity: 0.5 })
+              }
             },
           ],
         },
