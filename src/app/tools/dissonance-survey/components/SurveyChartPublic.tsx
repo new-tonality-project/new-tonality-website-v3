@@ -10,10 +10,11 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from 'recharts'
-import { Button } from '@/components'
 import { SignInButton } from '@clerk/nextjs'
+import { ChartHeader } from './ChartHeader'
+import { Button } from '@/components'
 
-export function SurveyChartPublic(props: { meanFrequency: number }) {
+export function SurveyChartPublic(props: { meanFrequency: number; title: string }) {
   const allGraphs = db.useQuery({
     dissonanceGraphs: {
       $: {
@@ -51,7 +52,15 @@ export function SurveyChartPublic(props: { meanFrequency: number }) {
 
   return (
     <div className="relative flex w-full flex-col items-center">
-      <ResponsiveContainer width="100%" height={300}>
+      <ChartHeader 
+        title={props.title}
+        button={
+          <SignInButton>
+            <Button variant="secondary">Discover your curve</Button>
+          </SignInButton>
+        }
+      />
+      <ResponsiveContainer width="100%" height={300} className="mt-6">
         <LineChart
           height={300}
           margin={{ bottom: 20, left: 0, right: 10, top: 10 }}
@@ -97,12 +106,6 @@ export function SurveyChartPublic(props: { meanFrequency: number }) {
           ))}
         </LineChart>
       </ResponsiveContainer>
-
-      <SignInButton>
-        <Button variant="primary" className="absolute top-6 right-8 max-w-fit">
-          Sign in to take a survey
-        </Button>
-      </SignInButton>
     </div>
   )
 }

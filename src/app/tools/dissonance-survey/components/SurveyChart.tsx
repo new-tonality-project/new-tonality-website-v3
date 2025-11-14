@@ -10,11 +10,11 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from 'recharts'
-import { Button } from '@/components'
 import { SurveyMachineProvider } from '@/state/machines'
 import { Survey } from './Survey'
+import { ChartHeader } from './ChartHeader'
 
-export function SurveyChart(props: { meanFrequency: number }) {
+export function SurveyChart(props: { meanFrequency: number; title: string }) {
   const [surveyOpen, setSurveyOpen] = useState(false)
   const user = db.useUser()
   const userSettings = db.useQuery({
@@ -96,7 +96,11 @@ export function SurveyChart(props: { meanFrequency: number }) {
 
   return (
     <div className="relative flex w-full flex-col items-center">
-      <ResponsiveContainer width="100%" height={300}>
+      <ChartHeader 
+        title={props.title} 
+        onTakeSurvey={!userGraph.data?.dissonanceGraphs?.length ? () => setSurveyOpen(true) : undefined}
+      />
+      <ResponsiveContainer width="100%" height={300} className="mt-6">
         <LineChart
           height={300}
           margin={{ bottom: 20, left: 0, right: 10, top: 10 }}
@@ -153,16 +157,6 @@ export function SurveyChart(props: { meanFrequency: number }) {
           ))}
         </LineChart>
       </ResponsiveContainer>
-
-      {!userGraph.data?.dissonanceGraphs?.length ? (
-        <Button
-          onClick={() => setSurveyOpen(true)}
-          variant="primary"
-          className="absolute top-6 right-8 max-w-fit"
-        >
-          Take a survey
-        </Button>
-      ) : null}
 
       <SurveyMachineProvider meanFrequency={props.meanFrequency} userSettings={userSettings.data.userSettings[0]}>
         <Survey setSurveyOpen={setSurveyOpen} open={surveyOpen} />

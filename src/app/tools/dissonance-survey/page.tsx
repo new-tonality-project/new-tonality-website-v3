@@ -3,7 +3,6 @@
 import { Container, Prose } from '@/components'
 import { SurveyChart, SurveyChartPublic } from './components'
 import { db } from '@/db'
-import Link from 'next/link'
 import { Divider } from '@/components/catalyst/divider'
 import { TextLink } from '@/components/catalyst/text'
 
@@ -53,37 +52,25 @@ export default function DissonanceSurveyPage() {
             part in it.
           </p>
 
-          <div className="flex items-center gap-8">
-            <h2 className="my-2 shrink-0">High register</h2>
-            <Divider className="my-2" />
-          </div>
           <db.SignedOut>
-            <SurveyChartPublic meanFrequency={1320} />
+            <SurveyChartPublic meanFrequency={1320} title="High frequencies" />
           </db.SignedOut>
           <db.SignedIn>
-            <SurveyChart meanFrequency={1320} />
+            <SurveyChart meanFrequency={1320} title="High frequencies" />
           </db.SignedIn>
 
-          <div className="flex items-center gap-8">
-            <h2 className="my-2 shrink-0">Middle register</h2>
-            <Divider className="my-2" />
-          </div>
           <db.SignedOut>
-            <SurveyChartPublic meanFrequency={440} />
+            <SurveyChartPublic meanFrequency={440} title="Middle frequencies" />
           </db.SignedOut>
           <db.SignedIn>
-            <SurveyChart meanFrequency={440} />
+            <SurveyChart meanFrequency={440} title="Middle frequencies" />
           </db.SignedIn>
 
-          <div className="flex items-center gap-8">
-            <h2 className="my-2 shrink-0">Low register</h2>
-            <Divider className="my-2" />
-          </div>
           <db.SignedOut>
-            <SurveyChartPublic meanFrequency={147} />
+            <SurveyChartPublic meanFrequency={147} title="Low frequencies" />
           </db.SignedOut>
           <db.SignedIn>
-            <SurveyChart meanFrequency={147} />
+            <SurveyChart meanFrequency={147} title="Low frequencies" />
           </db.SignedIn>
 
           <h2>Some more background</h2>
