@@ -1,8 +1,8 @@
 import { Strong, Text } from '@/components/catalyst/text'
 import clsx from 'clsx'
 
-export function VerticalDivider() {
-  return <div className="border-l border-zinc-200 p-1" />
+export function VerticalDivider({ className }: { className?: string }) {
+  return <div className={clsx('border-l border-zinc-200 p-1', className)} />
 }
 
 export function Step({
@@ -21,18 +21,18 @@ export function Step({
   return (
     <div
       className={clsx(
-        'flex w-full items-stretch gap-4',
+        'flex w-full flex-col gap-4 lg:flex-row lg:items-stretch',
         disabled && 'cursor-not-allowed opacity-50',
         className,
       )}
     >
-      <div className="min-w-22">
-        <Text className="whitespace-nowrap w-full text-center">
+      <div className="lg:min-w-22">
+        <Text className="whitespace-nowrap w-full text-center lg:text-center">
           <Strong>{title} {number}.</Strong>
         </Text>
       </div>
-      <VerticalDivider />
-      <div className="flex-grow pb-2">{children}</div>
+      <VerticalDivider className="hidden lg:block" />
+      <div className="flex-grow pb-2 lg:pb-2">{children}</div>
     </div>
   )
 }
