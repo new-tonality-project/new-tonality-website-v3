@@ -128,7 +128,12 @@ export class SurveyIntervals {
       let newInterval
       let iteration = 1
 
-      while (!newInterval || Math.abs(lastInterval - newInterval) < MIN_DELTA) {
+      while (
+        newInterval === undefined ||
+        newInterval === 0 ||
+        newInterval === 1200 ||
+        Math.abs(lastInterval - newInterval) < MIN_DELTA
+      ) {
         if (iteration > 100) throw new Error('Infinite loop')
         newInterval = interval12tet - Math.floor(Math.random() * 100)
         iteration++
