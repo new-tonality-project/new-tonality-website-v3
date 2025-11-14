@@ -11,7 +11,7 @@ export default async function Home() {
       <Container className="pt-30">
         <div className="flex w-full flex-col justify-between gap-12 md:flex-row">
           <div className="flex max-w-md flex-grow flex-col justify-center px-7 text-end">
-            <h1 className="text-4xl font-thin tracking-widest text-zinc-800 sm:text-6xl dark:text-zinc-100">
+            <h1 className="text-4xl font-normal tracking-wide text-zinc-800 sm:text-6xl dark:text-zinc-100">
               New Tonality
             </h1>
             <p className="pt-12 pr-2 pb-8 text-base text-zinc-600 dark:text-zinc-400">
@@ -44,7 +44,7 @@ export default async function Home() {
         </div>
       </Container>
       <ToolsSection
-        className="my-24 md:my-28"
+        className="my-24 md:mt-28 md:mb-32"
         title="Microtonal web apps"
         description="A collection of browser-based tools that explore microtonality through the lens of modern psycho acoustic research. Investigate the relationship between instrumental timbre, spectral characteristics, and tuning systems."
         tools={tools}
@@ -52,7 +52,7 @@ export default async function Home() {
 
       <Container className="my-24 md:my-28">
         <div className="mx-auto flex max-w-4xl flex-grow flex-col px-9 md:flex-row md:gap-20">
-          <div className="relative hidden aspect-10/16 py-8 md:order-1 md:block md:w-full md:basis-1/2">
+          <div className="relative hidden aspect-10/16 py-8 md:order-1 md:block md:w-full md:basis-1/2 rounded-lg overflow-hidden">
             <Image src={frontCover} fill alt="" objectFit="cover" />
           </div>
 
@@ -90,7 +90,7 @@ export default async function Home() {
             </div>
           </Prose>
 
-          <div className="relative aspect-10/16 w-full md:hidden">
+          <div className="relative aspect-10/16 w-full md:hidden rounded-lg overflow-hidden">
             <Image src={frontCover} fill alt="" objectFit="cover" />
           </div>
         </div>

@@ -19,7 +19,7 @@ export function ToolsSection({
     <Container className={className}>
       <div className="mx-auto max-w-xl lg:max-w-none px-6">
         <Prose className='pb-8'>
-          <h2 className="text-4xl pb-8 font-bold">{title}</h2>
+          <h2 className="text-4xl pb-6 font-normal tracking-wide">{title}</h2>
           <p className="max-w-2xl">{description}</p>
         </Prose>
 

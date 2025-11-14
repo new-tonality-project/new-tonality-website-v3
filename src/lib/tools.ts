@@ -7,23 +7,22 @@ export const tools: Tool[] = [
   {
     name: 'Dissonance perception survey',
     description:
-      'Go thorugh the actual psychoacoustic experiment that was first outlined in 1960s paper by Plomp and Levelt and that is the basis behind modern empirical understanding of dissoannce.',
+      'Take part in an interactive psychoacoustic experiment to measure your personal perception of dissonance and compare your results with others.',
     logo: dissonanceSurveyImage,
     link: { href: '/tools/dissonance-survey', label: 'Explore' },
   },
   {
-    name: 'Legacy Synth V1',
+    name: 'Legacy Additive Synth V1',
     description:
-      'Generate and download your own microtonal and inharmonic samples compatible with arbitrary EDO tuning systems.',
+      'Generate inharmonic samples and see its dissonance curve that marks related tuning. Geberate sounds that are compatible with arbitrary EDO tuning systems.',
     logo: legacyV1Image,
     link: { href: 'https://v1.newtonality.net', label: 'Explore' },
   },
   {
-    name: 'Legacy Synth V2',
+    name: 'Legacy Additive Synth V2',
     description:
-      'Version 2 microtonal synth with ability to add multiple spectral layers and a playable board that is tuned to the related tuning system.',
+      'A different version of additive synth with ability to stack multiple inharmonic layers. Instead of dissonance curve is has aplayable board tuned to the related tuning system.',
     logo: legacyV2Image,
     link: { href: 'https://v2.newtonality.net', label: 'Explore' },
   },
 ]
-
