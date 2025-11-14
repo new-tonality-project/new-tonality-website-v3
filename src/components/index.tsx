@@ -1,6 +1,7 @@
 export * from "./ArticleLayout"
 export * from "./Button"
 export * from "./Card"
+export * from "./CollapsibleDescription"
 export * from "./Container"
 export * from "./Footer"
 export * from "./Header"

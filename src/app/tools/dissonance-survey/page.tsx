@@ -1,9 +1,8 @@
 'use client'
 
-import { Container, Prose } from '@/components'
+import { Container, Prose, CollapsibleDescription } from '@/components'
 import { SurveyChart, SurveyChartPublic } from './components'
 import { db } from '@/db'
-import { Divider } from '@/components/catalyst/divider'
 import { TextLink } from '@/components/catalyst/text'
 
 export default function DissonanceSurveyPage() {
@@ -16,41 +15,45 @@ export default function DissonanceSurveyPage() {
           </h1>
         </header>
         <Prose>
-          <p>
-            This survey is based on the classic work by{' '}
-            <TextLink
-              href="https://www.mpi.nl/world/materials/publications/levelt/Plomp_Levelt_Tonal_1965.pdf"
-              target="_blank"
-            >
-              Plomp & Levelt
-            </TextLink>
-            , that made an important contribution to the modern psychoacoustic
-            research by introducing the concept of sensory dissonance of pure
-            sinewaves and its dependency on musical intervals. That discovery
-            found its practical application in the work of William Sethares{' '}
-            <TextLink
-              href="https://www.r-5.org/files/books/rx-music/tuning/William_A_Sethares-Tuning_Timbre_Spectrum_Scale-EN.pdf"
-              target="_blank"
-            >
-              Tuning, Timbre, Spectrum, Scale
-            </TextLink>
-            . He used it to calculate dissonance curves which can be used to
-            extract tuning from the timbre of musical instruments. He showed how
-            dissonance curves predict most common musical chords, how they can
-            be used to build dynamic tuning systems or to tune inharmonic
-            instruments.
-          </p>
+          <CollapsibleDescription>
+            <p>
+              This survey is based on the classic work by{' '}
+              <TextLink
+                href="https://www.mpi.nl/world/materials/publications/levelt/Plomp_Levelt_Tonal_1965.pdf"
+                target="_blank"
+              >
+                Plomp & Levelt
+              </TextLink>
+              , that made an important contribution to the modern psychoacoustic
+              research by introducing the concept of sensory dissonance of pure
+              sinewaves and its dependency on musical intervals. That discovery
+              found its practical application in the work of William Sethares{' '}
+              <TextLink
+                href="https://www.r-5.org/files/books/rx-music/tuning/William_A_Sethares-Tuning_Timbre_Spectrum_Scale-EN.pdf"
+                target="_blank"
+              >
+                Tuning, Timbre, Spectrum, Scale
+              </TextLink>
+              . He used it to calculate dissonance curves which can be used to
+              extract tuning from the timbre of musical instruments. He showed
+              how dissonance curves predict most common musical chords, how they
+              can be used to build dynamic tuning systems or to tune inharmonic
+              instruments.
+            </p>
 
-          <p>
-            Below you can see a set of graphs that show that dependency of
-            sensory dissonance vs musical interval for different registers. Each
-            line on the graph is the result of a real person listening to
-            intervals and rating how dissonant those intervals sound to them.
-            You can take part in that experiment too! Sign in and find out your
-            own dissonance preference and compare it with others. It takes only
-            5 minutes to complete and you dont need to be a musician to take
-            part in it.
-          </p>
+            <p>
+              Below you can see a set of graphs that show that dependency of
+              sensory dissonance vs musical interval for different registers.
+              Each line on the graph is the result of a real person listening to
+              intervals and rating how dissonant those intervals sound to them.
+              You can take part in that experiment too! Sign in and find out
+              your own dissonance preference and compare it with others. It
+              takes only 5 minutes to complete and you dont need to be a
+              musician to take part in it.
+            </p>
+          </CollapsibleDescription>
+
+          <div className="h-4 md:h-2" />
 
           <db.SignedOut>
             <SurveyChartPublic meanFrequency={1320} title="High frequencies" />

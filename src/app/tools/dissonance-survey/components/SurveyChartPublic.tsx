@@ -60,7 +60,9 @@ export function SurveyChartPublic(props: { meanFrequency: number; title: string 
           </SignInButton>
         }
       />
-      <ResponsiveContainer width="100%" height={300} className="mt-6">
+      <div className="mt-6 w-full overflow-x-auto lg:overflow-x-visible">
+        <div className="min-w-[600px] lg:min-w-0 lg:w-full">
+          <ResponsiveContainer width="100%" height={300}>
         <LineChart
           height={300}
           margin={{ bottom: 20, left: 0, right: 10, top: 10 }}
@@ -105,7 +107,9 @@ export function SurveyChartPublic(props: { meanFrequency: number; title: string 
             />
           ))}
         </LineChart>
-      </ResponsiveContainer>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </div>
   )
 }
