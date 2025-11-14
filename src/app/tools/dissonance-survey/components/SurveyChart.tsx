@@ -9,6 +9,7 @@ import {
   Line,
   CartesianGrid,
   ResponsiveContainer,
+  Tooltip,
 } from 'recharts'
 import { SurveyMachineProvider } from '@/state/machines'
 import { Survey } from './Survey'
@@ -133,6 +134,25 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
             domain={[1, 7]}
           />
           <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+          <Tooltip
+            content={({ active, payload }) => {
+              if (active && payload && payload.length > 0) {
+                const data = payload[0].payload
+                // Only show tooltip for user's line (black line)
+                if (payload[0].dataKey === 'y' && payload[0].stroke === '#000') {
+                  return (
+                    <div className="rounded-lg border border-zinc-200 p-2 bg-white shadow-lg dark:border-zinc-700 dark:bg-zinc-800">
+                      <p className="font-semibold text-sm leading-tight m-0">{data.x} cents</p>
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-tight m-0">
+                        Score: {data.y.toFixed(2)}
+                      </p>
+                    </div>
+                  )
+                }
+              }
+              return null
+            }}
+          />
           {graphs.other?.map((graph) => (
             <Line
               key={graph.id}
@@ -150,6 +170,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
             <Line
               key={graph.id}
               type="monotone"
+              activeDot={{ r: 6, fill: '#000' }}
               dataKey="y"
               name="Your result"
               data={graph.points}
