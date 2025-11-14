@@ -1,4 +1,4 @@
-import { Container, ChevronRightIcon } from '@/components'
+import { Container, ChevronRightIcon, ToolsSection } from '@/components'
 import Link from 'next/link'
 import { LatestUpdate } from './LatestUpdate'
 import Image from 'next/image'
@@ -47,36 +47,20 @@ export default async function Home() {
           <LatestUpdate />
         </div>
       </Container>
-      <Container className="my-24 md:my-28">
-        <div className="mx-auto grid max-w-xl grid-cols-1 gap-x-10 gap-y-20 lg:max-w-none lg:grid-cols-3">
-          <div className="py-8">
-            <h2 className="text-xl font-bold">Microtonal web apps</h2>
-            <p className="py-8">
-              Educate yourself on different concepts in psychoacoustics and
-              microtonality by playing with a set of tools that run on your
-              browser. Consider creating an account for the best experience.
-            </p>
-          </div>
-
-          <div>
-            <article className="rounded-lg border-1 border-zinc-100 px-6 py-8 shadow-lg shadow-zinc-800/5 md:mx-0 md:max-w-xs">
-              <h3 className="pb-4 text-xl">Dissonance perception survey</h3>
-              <p className="pb-2 font-thin">
-                Go thorugh the actual psychoacoustic experiment that was first
-                outlined in 1960s paper by Plomp and Levelt and that is the
-                basis behind modern empirical understanding of dissoannce.
-              </p>
-              <Link
-                href="/tools/dissonance-survey"
-                className="mt-2 flex items-center gap-1 text-amber-600"
-              >
-                Explore
-                <ChevronRightIcon className="h-4 w-4 stroke-current" />
-              </Link>
-            </article>
-          </div>
-        </div>
-      </Container>
+      <ToolsSection
+        className="my-24 md:my-28"
+        title="Microtonal web apps"
+        description="Educate yourself on different concepts in psychoacoustics and microtonality by playing with a set of tools that run on your browser. Consider creating an account for the best experience."
+        tools={[
+          {
+            title: 'Dissonance perception survey',
+            description:
+              'Go thorugh the actual psychoacoustic experiment that was first outlined in 1960s paper by Plomp and Levelt and that is the basis behind modern empirical understanding of dissoannce.',
+            href: '/tools/dissonance-survey',
+            linkText: 'Explore',
+          },
+        ]}
+      />
 
       <Container className="my-24 md:my-28">
         <div className="mx-auto flex max-w-4xl flex-grow gap-20">
