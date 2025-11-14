@@ -1,9 +1,10 @@
 import { ChevronRightIcon } from '@/components'
+import { EBOOK_LINKS } from '@/lib'
 import Link from 'next/link'
 
 export function LatestUpdate() {
   return (
-    <article className="max-w-full md:max-w-xs mx-auto md:mx-0">
+    <article className="mx-auto max-w-full md:mx-0 md:max-w-xs">
       <h2 className="mr-6 w-fit rounded-t-lg bg-amber-400 px-8 py-1 font-bold text-white">
         Latest update
       </h2>
@@ -17,12 +18,18 @@ export function LatestUpdate() {
           today’s most compelling theories and introduce a new approach rooted
           in mathematical set theory.
         </p>
-        <Link href="/" className="mt-2 flex items-center gap-1 text-amber-600">
-          Buy on Payhip
+        <Link
+          href={EBOOK_LINKS.payhip}
+          className="mt-2 flex items-center gap-1 text-amber-600"
+        >
+          Support on Payhip
           <ChevronRightIcon className="h-4 w-4 stroke-current" />
         </Link>
 
-        <Link href="/" className="mt-1 flex items-center gap-1 text-amber-600">
+        <Link
+          href={EBOOK_LINKS.arxiv}
+          className="mt-1 flex items-center gap-1 text-amber-600"
+        >
           Download on Arxiv
           <ChevronRightIcon className="h-4 w-4 stroke-current" />
         </Link>
