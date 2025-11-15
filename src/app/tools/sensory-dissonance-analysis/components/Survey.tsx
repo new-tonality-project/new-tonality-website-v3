@@ -74,7 +74,7 @@ export function Survey(props: {
             }
           }}
         >
-          {state.matches('success') ? 'Look results' : 'Exit survey'}
+          {state.matches('success') ? 'See the results!' : 'Exit experiment'}
         </Button>
 
         {state.matches('overview') && (

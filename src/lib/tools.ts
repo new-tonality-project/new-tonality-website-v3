@@ -5,11 +5,11 @@ import { type Tool } from './types'
 
 export const tools: Tool[] = [
   // {
-  //   name: 'Dissonance perception survey',
+  //   name: 'Sensory dissonance analysis',
   //   description:
   //     'Take part in an interactive psychoacoustic experiment to measure your personal perception of dissonance and compare your results with others.',
   //   logo: dissonanceSurveyImage,
-  //   link: { href: '/tools/dissonance-survey', label: 'Explore' },
+  //   link: { href: '/tools/sensory-dissonance-analysis', label: 'Explore' },
   // },
   {
     name: 'Legacy Additive Synth V1',

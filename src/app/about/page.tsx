@@ -55,7 +55,7 @@ export default function AboutPage() {
             <p>
               Our mission is to make microtonality accessible and
               understandable, providing browser-based tools for experimentation
-              and learning. We offer interactive surveys, synthesizers, and
+              and learning. We offer interactive experiments, synthesizers, and
               educational resources to help musicians, researchers, and
               enthusiasts explore the fascinating world of alternative tuning
               systems.

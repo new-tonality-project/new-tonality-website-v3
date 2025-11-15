@@ -3,7 +3,6 @@
 import { createContext, useContext, type ReactNode } from 'react'
 import { useMachine } from '@xstate/react'
 import { surveyMachine } from './machine'
-import { db } from '@/db'
 import type { UserSettings } from '@/lib'
 
 const SurveyMachineContext = createContext<ReturnType<

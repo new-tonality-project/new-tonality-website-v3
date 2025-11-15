@@ -11,13 +11,13 @@ export default function DissonanceSurveyPage() {
       <Container>
         <header>
           <h1 className="mt-6 text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
-            Dissonance survey
+            Sensory dissonance analysis
           </h1>
         </header>
         <Prose>
           <CollapsibleDescription>
             <p>
-              This survey is based on the classic work by{' '}
+              This experiment is based on the classic work by{' '}
               <TextLink
                 href="https://www.mpi.nl/world/materials/publications/levelt/Plomp_Levelt_Tonal_1965.pdf"
                 target="_blank"
@@ -94,7 +94,7 @@ export default function DissonanceSurveyPage() {
           </p>
 
           <p>
-            In this survey we attempt to replicate the experiments of Plomp and
+            In this experiment we attempt to replicate the approach of Plomp and
             Levelt. They results will not bear the same scientific rigor as the
             experiments are not conducted in controlled laboratory environment,
             but it is still interesting to see how it will compare to the

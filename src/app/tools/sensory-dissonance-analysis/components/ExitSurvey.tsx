@@ -15,14 +15,14 @@ export function ExitSurveyAlert(props: {
 }) {
   return (
     <Alert open={props.open} onClose={props.setOpen}>
-      <AlertTitle>Are you sure you want to exit the survey?</AlertTitle>
+      <AlertTitle>Are you sure you want to exit the experiment?</AlertTitle>
       <AlertDescription>
         You will loose all your progress if you exit now. You can start from the
         beginning later.
       </AlertDescription>
       <AlertActions>
         <Button variant="secondary" onClick={() => props.setOpen(false)}>
-          Back to survey
+          Back to experiment
         </Button>
         <Button
           variant="primary"
@@ -31,7 +31,7 @@ export function ExitSurveyAlert(props: {
             props.exitSurvey()
           }}
         >
-          Exit survey
+          Exit experiment
         </Button>
       </AlertActions>
     </Alert>

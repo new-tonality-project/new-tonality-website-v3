@@ -49,7 +49,7 @@ export function SurveyExperiment() {
   async function submit() {
     try {
       if (!state.context.intervals)
-        throw new Error('Cannot submit survey: no intervals found')
+        throw new Error('Cannot submit experiment: no intervals found')
 
       setSubmitting(true)
 
@@ -184,7 +184,7 @@ export function SurveyExperiment() {
               submit()
             }}
           >
-            Finish the Survey!
+            Finish the experiment!
           </Button>
         ) : (
           <Button

@@ -7,25 +7,25 @@ export function SurveyOverview() {
   return (
     <Prose>
       <p>
-        Thank You for taking part in the survey! Our goal it to determine how
+        Thank You for taking part in the experiment! Our goal it to determine how
         dissonant do you percieve different intervals on the scale from 1 to 7,
         where 1 is the least and 7 is the most dissonant. You will have to rate
         14 random intervals that are chosen to be within the range of 1 octave.
-        The survey should not take more than 5 minutes to complete and is done
+        The experiment should not take more than 5 minutes to complete and is done
         in several steps:
       </p>
       <ol>
         <li>
           <strong>Answer couple of questions:</strong> We need to know your
           musical background and have your permission to share the results of
-          the survey within New Tonality project.
+          the experiment within New Tonality project.
         </li>
         <li>
           <strong>Test volume and speakers:</strong> You have to make sure that
           you can hear the intervals clearly at a comfortable volume. Please use
           headphones or monitoring speakers. Laptop or phone speakers, even good
           Macbook Pro ones, produce a lot of distorion and are introducing new
-          harmonics that will impact the results of the survey.
+          harmonics that will impact the results of the experiment.
         </li>
         <li>
           <strong>Preliminary listening:</strong> Before rating the intervals,
@@ -45,10 +45,10 @@ export function SurveyOverview() {
       </ol>
       <p>
         After you rate all the intervals, the results will be sent to our server
-        to be shared on the results page. You can exit the survey at any time,
+        to be shared on the results page. You can exit the experiment at any time,
         but you will loose all your progress.
       </p>
-      <p>Let's start the survey!</p>
+      <p>Let's start the experiment!</p>
     </Prose>
   )
 }

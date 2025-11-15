@@ -95,7 +95,7 @@ export const surveyMachine = machineSetup.createMachine({
       entry: assign(() => ({
         title: 'Preliminary listening',
         description:
-          'We are almost ready to start the survey. But before rating the intervals, we need to make sure your sound is ok and you have the idea how the intervals that will be used in the survey sound to you.',
+          'We are almost ready to start the experiment. But before rating the intervals, we need to make sure your sound is ok and you have the idea how the intervals that will be used in the experiment sound to you.',
         intervals: new SurveyIntervals(),
         synth:
           typeof AudioContext !== 'undefined'
@@ -234,14 +234,14 @@ export const surveyMachine = machineSetup.createMachine({
 
     success: {
       entry: assign({
-        title: 'Success',
-        description: 'Thank you for your time.',
+        title: 'Thank you!',
+        description: 'Your results have been submitted and will be shared on the results page. You can exit the experiment now.',
       }),
     },
     error: {
       entry: assign({
         title: 'Error',
-        description: 'There was an error submitting your survey.',
+        description: 'There was an error submitting your results. Copy the data below and send it to the info@newtonality.net so we can investigate the issue.',
       }),
     },
   },
