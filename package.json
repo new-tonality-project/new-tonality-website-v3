@@ -9,8 +9,8 @@
     "lint": "next lint",
     "tscheck": "tsc",
     "test": "bun test",
-    "push-schema-prod": "npx instant-cli@latest push schema --env .env.prod",
-    "pull-schema-prod": "npx instant-cli@latest pull schema --env .env.prod",
+    "push-schema-prod": "npx instant-cli@latest push schema --env .env.production",
+    "pull-schema-prod": "npx instant-cli@latest pull schema --env .env.production",
     "push-schema-dev": "npx instant-cli@latest push schema --env .env",
     "pull-schema-dev": "npx instant-cli@latest pull schema --env .env"
   },

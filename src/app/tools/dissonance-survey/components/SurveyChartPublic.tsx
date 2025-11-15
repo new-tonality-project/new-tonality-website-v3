@@ -56,7 +56,7 @@ export function SurveyChartPublic(props: { meanFrequency: number; title: string 
         title={props.title}
         button={
           <SignInButton>
-            <Button variant="secondary">Discover your curve</Button>
+            <Button variant="secondary">Login to participate</Button>
           </SignInButton>
         }
       />

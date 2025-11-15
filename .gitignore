@@ -2,7 +2,8 @@ node_modules
 .next
 .env
 .env.local
-.env.prod
+.env.production
+.env.development
 
 spotlite_unused
 tsconfig.tsbuildinfo
