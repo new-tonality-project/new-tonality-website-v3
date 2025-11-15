@@ -58,6 +58,7 @@ export function Survey(props: {
           setOpen={setAlertOpen}
           exitSurvey={() => {
             props.setSurveyOpen(false)
+            state.context.synth?.releaseAll()
 
             setTimeout(() => {
               send({ type: 'exitSurvey' })
@@ -73,6 +74,7 @@ export function Survey(props: {
           onClick={() => {
             if (state.matches('success') || state.matches('error')) {
               props.setSurveyOpen(false)
+              state.context.synth?.releaseAll()
 
               setTimeout(() => {
                 send({ type: 'exitSurvey' })
