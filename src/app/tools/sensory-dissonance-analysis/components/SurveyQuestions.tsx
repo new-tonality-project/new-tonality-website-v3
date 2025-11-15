@@ -12,7 +12,7 @@ import {
   Legend,
 } from '@/components/catalyst/fieldset'
 import { useSurveyMachine } from '@/state/machines'
-import { Text } from '@/components/catalyst/text'
+import { Text, TextLink } from '@/components/catalyst/text'
 import { Radio, RadioField, RadioGroup } from '@/components/catalyst/radio'
 import { Step } from '@/components/Step'
 import { MusicalBackground } from '@/lib'
@@ -72,10 +72,13 @@ export function SurveyQuestions() {
 
       <Step className="mb-8" title="Question" number={2} disabled={false}>
         <Fieldset>
-          <Legend>How do you want to share your results?</Legend>
+          <Legend>Do you allow us to store and share your data?</Legend>
           <Text>
-            We never share your data with 3rd party data brokers. Your data will
-            be used only in scope of New Tonality project.
+            By accepting this option you agree that your results will be stored and
+            processed by us and 3rd party database providers. You also agree
+            that your results can be shared publicly on the New Tonality website
+            and social media. If you have questions feel free to contact us
+            at <TextLink href="mailto:support@newtonality.net">support@newtonality.net</TextLink>
           </Text>
           <CheckboxGroup>
             <CheckboxField>
@@ -90,14 +93,9 @@ export function SurveyQuestions() {
                   })
                 }}
               />
-              <Label>I agree</Label>
-              <Description>
-                By accepting this option you agree that your data will be stored
-                and processed by us and 3rd party database providers (Clerk and
-                InstantDB). You also agree that your data can be shared publicly
-                on the New Tonality website and social media. If you have
-                questions feel free to contact us at support@newtonality.net
-              </Description>
+              <Label>
+                Yes, I agree to collect and share my results with New Tonality project
+              </Label>
             </CheckboxField>
           </CheckboxGroup>
         </Fieldset>
