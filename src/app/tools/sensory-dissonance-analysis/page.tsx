@@ -34,7 +34,7 @@ export default function DissonanceSurveyPage() {
               >
                 Tuning, Timbre, Spectrum, Scale
               </TextLink>
-              . He used it to calculate dissonance curves which can be used to
+              . He used it to calculate dissonance curves, which can be used to
               extract tuning from the timbre of musical instruments. He showed
               how dissonance curves predict most common musical chords, how they
               can be used to build dynamic tuning systems or to tune inharmonic
@@ -48,8 +48,8 @@ export default function DissonanceSurveyPage() {
               intervals and rating how dissonant those intervals sound to them.
               You can take part in that experiment too! Sign in and find out
               your own dissonance preference and compare it with others. It
-              takes only 5 minutes to complete and you dont need to be a
-              musician to take part in it.
+              takes only 5 minutes to complete and both musicians and
+              non-musicians are welcome to participate.
             </p>
           </CollapsibleDescription>
 

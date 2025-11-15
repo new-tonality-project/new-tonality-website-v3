@@ -235,13 +235,11 @@ export const surveyMachine = machineSetup.createMachine({
     success: {
       entry: assign({
         title: 'Thank you!',
-        description: 'Your results have been submitted and will be shared on the results page. You can exit the experiment now.',
       }),
     },
     error: {
       entry: assign({
-        title: 'Error',
-        description: 'There was an error submitting your results. Copy the data below and send it to the info@newtonality.net so we can investigate the issue.',
+        title: 'Something went wrong',
       }),
     },
   },

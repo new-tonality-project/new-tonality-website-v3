@@ -9,9 +9,9 @@ export function SurveyOverview() {
       <p>
         Thank You for taking part in the experiment! Our goal it to determine how
         dissonant do you percieve different intervals on the scale from 1 to 7,
-        where 1 is the least and 7 is the most dissonant. You will have to rate
+        where 1 is the least and 7 is the most dissonant. You will rate
         14 random intervals that are chosen to be within the range of 1 octave.
-        The experiment should not take more than 5 minutes to complete and is done
+        The experiment usually takes less that 5 minutes to complete and is done
         in several steps:
       </p>
       <ol>
@@ -36,7 +36,7 @@ export function SurveyOverview() {
         </li>
         <li>
           <strong>Rating intervals:</strong> Finnaly you will be presented with
-          a set of intervals that you will have to listen and rate. There only
+          a set of intervals that you will need to listen and rate. There only
           will be the same 14 intervals that you have listened to in the
           previous step. However, to make sure the results are statistically
           valid, each interval will played 3 times in a random order, so in

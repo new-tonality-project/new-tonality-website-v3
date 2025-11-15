@@ -88,11 +88,11 @@ export default function AboutPage() {
                 question? <br /> Contact us:
               </p>
               <Link
-                href="mailto:info@newtonality.net"
+                href="mailto:support@newtonality.net"
                 className="group flex text-sm font-medium text-zinc-800 transition hover:text-sky-500 dark:text-zinc-200 dark:hover:text-sky-500"
               >
                 <MailIcon className="h-6 w-6 flex-none fill-zinc-500 transition group-hover:fill-sky-500" />
-                <span className="ml-4">info@newtonality.net</span>
+                <span className="ml-4">support@newtonality.net</span>
               </Link>
             </li>
           </ul>

@@ -37,7 +37,7 @@ export function SurveyQuestions() {
               })
             }}
           >
-            <RadioField >
+            <RadioField>
               <Radio value={MusicalBackground.NaiveListener.toString()} />
               <Label>I just enjoy listening to music</Label>
               <Description>
@@ -47,7 +47,7 @@ export function SurveyQuestions() {
               </Description>
             </RadioField>
 
-            <RadioField >
+            <RadioField>
               <Radio value={MusicalBackground.Musician.toString()} />
               <Label>I am a musician</Label>
               <Description>
@@ -81,29 +81,6 @@ export function SurveyQuestions() {
             <CheckboxField>
               <Checkbox
                 name="disclamer"
-                value="share_anonymously"
-                checked={
-                  state.context.shareDataPrivately
-                }
-                onChange={(e) =>
-                  send({
-                    type: 'setshareDataPrivately',
-                    value: e.valueOf(),
-                  })
-                }
-                disabled={state.context.shareDataPublicly}
-              />
-              <Label>Allow to share anonymously</Label>
-              <Description>
-                We have to share your results as part of aggregated dataset
-                without exposing your username. You will be able to see your
-                result if you log in, but you will not be able to share it with
-                others by linking to it.
-              </Description>
-            </CheckboxField>
-            <CheckboxField>
-              <Checkbox
-                name="disclamer"
                 value="share_publicly"
                 checked={state.context.shareDataPublicly}
                 onChange={(e) => {
@@ -113,11 +90,13 @@ export function SurveyQuestions() {
                   })
                 }}
               />
-              <Label>Allow to share publicly</Label>
+              <Label>I agree</Label>
               <Description>
-                By accepting this option you agree that your results may be
-                shared publicly under your username. You will be able to share
-                your result with others by linking to it.
+                By accepting this option you agree that your data will be stored
+                and processed by us and 3rd party database providers (Clerk and
+                InstantDB). You also agree that your data can be shared publicly
+                on the New Tonality website and social media. If you have
+                questions feel free to contact us at support@newtonality.net
               </Description>
             </CheckboxField>
           </CheckboxGroup>

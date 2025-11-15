@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components'
+import { Button, Prose } from '@/components'
 import {
   Dialog,
   DialogTitle,
@@ -16,6 +16,7 @@ import { SurveyOverview } from './SurveyOverview'
 import { SurveyExperiment } from './SurveyExperiment'
 import { SurveyListening } from './SurveyListening'
 import { useRouter } from 'next/navigation'
+import { SurveyError } from './SurveyError'
 
 export function Survey(props: {
   open: boolean
@@ -42,8 +43,15 @@ export function Survey(props: {
         {state.matches('questions') && <SurveyQuestions />}
         {state.matches('listening') && <SurveyListening />}
         {state.matches('experiment') && <SurveyExperiment />}
-        {state.matches('success') && <div>All good!</div>}
-        {state.matches('error') && <div>Something went wrong!</div>}
+        {state.matches('success') && (
+          <Prose>
+            <p>
+              Your results have been submitted and will be shared on the results
+              page. You can exit the experiment now.
+            </p>
+          </Prose>
+        )}
+        {state.matches('error') && <SurveyError />}
 
         <ExitSurveyAlert
           open={alertOpen}
