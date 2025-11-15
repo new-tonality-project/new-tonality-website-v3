@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "tscheck": "tsc",
-    "test": "bun test"
+    "test": "bun test",
+    "push-schema-prod": "npx instant-cli@latest push schema --env .env.prod",
+    "pull-schema-prod": "npx instant-cli@latest pull schema --env .env.prod",
+    "push-schema-dev": "npx instant-cli@latest push schema --env .env",
+    "pull-schema-dev": "npx instant-cli@latest pull schema --env .env"
   },
   "browserslist": "defaults, not ie <= 11",
   "dependencies": {
