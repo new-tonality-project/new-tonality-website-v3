@@ -10,7 +10,9 @@ import { ChartHeader } from './ChartHeader'
 
 export function SurveyChart(props: { meanFrequency: number; title: string }) {
   const [surveyOpen, setSurveyOpen] = useState(false)
-  const [selectedPoint, setSelectedPoint] = useState<Highcharts.Point | null>(null);
+  const [selectedPoint, setSelectedPoint] = useState<Highcharts.Point | null>(
+    null,
+  )
   const user = db.useUser()
   const userSettings = db.useQuery({
     userSettings: {
@@ -81,25 +83,33 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
     }
   }, [userGraph, otherGraphs])
 
-  const handlePointClick = useCallback((point: Highcharts.Point) => {
-    if (selectedPoint && selectedPoint.x === point.x && selectedPoint.y === point.y) {
-      setSelectedPoint(null)
-      return
-    }
-    setSelectedPoint(point)
-  }, [selectedPoint])
+  const handlePointClick = useCallback(
+    (point: Highcharts.Point) => {
+      if (
+        selectedPoint &&
+        selectedPoint.x === point.x &&
+        selectedPoint.y === point.y
+      ) {
+        setSelectedPoint(null)
+        return
+      }
+      setSelectedPoint(point)
+    },
+    [selectedPoint],
+  )
 
   const chartOptions = useMemo(() => {
     const series: Highcharts.SeriesOptionsType[] = []
 
-    graphs.other?.forEach((graph) => {
+    graphs.other?.forEach((graph, index) => {
       series.push({
         type: 'spline',
+        name: index === 0 ? 'Other users results' : undefined,
         data: graph.points.map((point) => [point.x, point.y]),
         color: '#ccc',
         lineWidth: 1,
         enableMouseTracking: false,
-        showInLegend: false,
+        showInLegend: index === 0,
         marker: {
           enabled: false,
         },
@@ -111,14 +121,17 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
         type: 'spline',
         name: 'Your result',
         data: graph.points.map((point) => {
-          const isSelected = selectedPoint && selectedPoint.x === point.x && selectedPoint.y === point.y
+          const isSelected =
+            selectedPoint &&
+            selectedPoint.x === point.x &&
+            selectedPoint.y === point.y
           return {
             x: point.x,
             y: point.y,
             marker: {
               enabled: true,
-              radius: isSelected ? 6 : 4,
-              fillColor: isSelected ? '#85ffa9' : 'white',
+              radius: isSelected ? 6 : 2,
+              fillColor: isSelected ? '#85ffa9' : 'black',
               lineColor: isSelected ? 'black' : 'black',
               lineWidth: isSelected ? 2 : 2,
               symbol: 'circle',
@@ -133,7 +146,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
         color: '#000',
         lineWidth: 2,
         enableMouseTracking: true,
-        showInLegend: false,
+        showInLegend: true,
       })
     })
 
@@ -147,6 +160,12 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
       },
       credits: {
         enabled: false,
+      },
+      legend: {
+        enabled: true,
+        align: 'right',
+        verticalAlign: 'top',
+        layout: 'horizontal',
       },
       xAxis: {
         title: {
@@ -214,17 +233,24 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
 
   return (
     <div className="relative flex w-full flex-col items-center">
-      <ChartHeader 
-        title={props.title} 
-        onTakeSurvey={!userGraph.data?.dissonanceGraphs?.length ? () => setSurveyOpen(true) : undefined}
+      <ChartHeader
+        title={props.title}
+        onTakeSurvey={
+          !userGraph.data?.dissonanceGraphs?.length
+            ? () => setSurveyOpen(true)
+            : undefined
+        }
       />
       <div className="mt-6 w-full overflow-x-auto lg:overflow-x-visible">
-        <div className="min-w-[600px] lg:min-w-0 lg:w-full">
+        <div className="min-w-[600px] lg:w-full lg:min-w-0">
           <Chart highcharts={Highcharts} options={chartOptions} />
         </div>
       </div>
 
-      <SurveyMachineProvider meanFrequency={props.meanFrequency} userSettings={userSettings.data.userSettings[0]}>
+      <SurveyMachineProvider
+        meanFrequency={props.meanFrequency}
+        userSettings={userSettings.data.userSettings[0]}
+      >
         <Survey setSurveyOpen={setSurveyOpen} open={surveyOpen} />
       </SurveyMachineProvider>
     </div>
