@@ -1,18 +1,21 @@
 'use client'
 
 import { db } from '@/db'
-import { useMemo, useState, useCallback } from 'react'
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react'
 import { Chart } from '@highcharts/react'
 import Highcharts from 'highcharts'
+import { AdditiveSynth } from 'new-tonality-web-synth'
 import { SurveyMachineProvider } from '@/state/machines'
 import { Survey } from './Survey'
 import { ChartHeader } from './ChartHeader'
+import { getIntervalFrequencies } from '@/lib'
 
 export function SurveyChart(props: { meanFrequency: number; title: string }) {
   const [surveyOpen, setSurveyOpen] = useState(false)
   const [selectedPoint, setSelectedPoint] = useState<Highcharts.Point | null>(
     null,
   )
+  const synthRef = useRef<AdditiveSynth | null>(null)
   const user = db.useUser()
   const userSettings = db.useQuery({
     userSettings: {
@@ -82,6 +85,43 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
       })),
     }
   }, [userGraph, otherGraphs])
+
+  useEffect(() => {
+    if (typeof AudioContext !== 'undefined' && !synthRef.current) {
+      synthRef.current = new AdditiveSynth({
+        spectrum: [{ partials: [{ rate: 1, amplitude: 0.2 }] }],
+        audioContext: new AudioContext(),
+        adsr: { attack: 0.1, sustain: 1, release: 0.1, decay: 0 },
+      })
+    }
+
+    return () => {
+      if (synthRef.current) {
+        synthRef.current.releaseAll()
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!synthRef.current) return
+
+    if (!selectedPoint) {
+      synthRef.current.releaseAll()
+      return
+    }
+
+    const interval = selectedPoint.x
+    const [f1, f2] = getIntervalFrequencies(interval, props.meanFrequency)
+
+    synthRef.current.releaseAll()
+
+    if (f1 !== f2) {
+      synthRef.current.play({ pitch: f1, velocity: 0.5 })
+      synthRef.current.play({ pitch: f2, velocity: 0.5 })
+    } else {
+      synthRef.current.play({ pitch: f1, velocity: 0.5 })
+    }
+  }, [selectedPoint, props.meanFrequency])
 
   const handlePointClick = useCallback(
     (point: Highcharts.Point) => {
@@ -192,21 +232,6 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
       },
       tooltip: {
         enabled: false,
-        // formatter: function (this: Highcharts.Point) {
-        //   // Only show tooltip for user's series
-        //   if (this.series.name === 'Your result') {
-        //     return `
-        //       <div class="rounded-lg border border-zinc-200 p-2 bg-white shadow-lg dark:border-zinc-700 dark:bg-zinc-800">
-        //         <p class="font-semibold text-sm leading-tight m-0">${this.x} cents</p>
-        //         <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-tight m-0">
-        //           Score: ${this.y?.toFixed(2)}
-        //         </p>
-        //       </div>
-        //     `
-        //   }
-        //   return false
-        // },
-        // useHTML: true,
       },
       plotOptions: {
         spline: {
