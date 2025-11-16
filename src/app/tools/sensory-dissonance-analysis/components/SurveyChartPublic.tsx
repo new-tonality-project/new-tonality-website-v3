@@ -7,6 +7,7 @@ import Highcharts from 'highcharts'
 import { SignInButton } from '@clerk/nextjs'
 import { ChartHeader } from './ChartHeader'
 import { Button } from '@/components'
+import { baseChartConfig } from './chartConfig'
 
 export function SurveyChartPublic(props: { meanFrequency: number; title: string }) {
   const allGraphs = db.useQuery({
@@ -37,54 +38,21 @@ export function SurveyChartPublic(props: { meanFrequency: number; title: string 
   }, [allGraphs])
 
   const chartOptions = useMemo(() => {
-    const series: Highcharts.SeriesOptionsType[] = (graphs || []).map((graph) => ({
-      type: 'line',
+    const series: Highcharts.SeriesOptionsType[] = (graphs || []).map((graph, index) => ({
+      type: 'spline',
       data: graph.points.map((point) => [point.x, point.y]),
+      name: index === 0 ? 'Other users results' : undefined,
       color: '#444',
       lineWidth: 1,
       enableMouseTracking: false,
-      showInLegend: false,
+      showInLegend: index === 0,
       marker: {
         enabled: false,
       },
     }))
 
     return {
-      chart: {
-        height: 300,
-        backgroundColor: 'transparent',
-        animation: false,
-      },
-      title: {
-        text: undefined,
-      },
-      credits: {
-        enabled: false,
-      },
-      xAxis: {
-        title: {
-          text: 'Interval (cents)',
-        },
-        min: 0,
-        max: 1200,
-        tickInterval: 100,
-        gridLineColor: '#ccc',
-        gridLineDashStyle: 'Dash',
-      },
-      yAxis: {
-        title: {
-          text: 'Dissonance score',
-          rotation: -90,
-        },
-        min: 1,
-        max: 7,
-        tickInterval: 1,
-        gridLineColor: '#ccc',
-        gridLineDashStyle: 'Dash',
-      },
-      tooltip: {
-        enabled: false,
-      },
+      ...baseChartConfig,
       plotOptions: {
         line: {
           animation: false,
