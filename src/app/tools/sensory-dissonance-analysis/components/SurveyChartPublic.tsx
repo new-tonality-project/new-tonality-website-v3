@@ -53,6 +53,7 @@ export function SurveyChartPublic(props: { meanFrequency: number; title: string 
       chart: {
         height: 300,
         backgroundColor: 'transparent',
+        animation: false,
       },
       title: {
         text: undefined,
@@ -83,6 +84,11 @@ export function SurveyChartPublic(props: { meanFrequency: number; title: string 
       },
       tooltip: {
         enabled: false,
+      },
+      plotOptions: {
+        line: {
+          animation: false,
+        },
       },
       series,
     } as Highcharts.Options

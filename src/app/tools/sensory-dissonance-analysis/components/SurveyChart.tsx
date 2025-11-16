@@ -154,6 +154,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
       chart: {
         height: 300,
         backgroundColor: 'transparent',
+        animation: false,
       },
       title: {
         text: undefined,
@@ -209,6 +210,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
       },
       plotOptions: {
         spline: {
+          animation: false,
           point: {
             events: {
               click: function (this: Highcharts.Point) {
