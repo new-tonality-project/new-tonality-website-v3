@@ -193,6 +193,15 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
 
     return {
       ...baseChartConfig,
+      credits: {
+        enabled: graphs.user && graphs.user.length > 0 ? true : false,
+        text: '* clicking on a point will play the interval',
+        style: {
+          fontSize: '12px',
+          fontStyle: 'italic',
+          color: '#999',
+        },
+      },
       plotOptions: {
         spline: {
           animation: false,
