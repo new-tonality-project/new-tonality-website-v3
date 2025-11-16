@@ -23,6 +23,8 @@ export default function InstantDBAuthSync() {
     } else {
       db.auth.signOut()
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSignedIn])
 
   return null

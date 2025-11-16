@@ -14,7 +14,7 @@ export const FALLBACK_PRESET: SetharesDissonancePreset = {
 export async function getInitialPreset(userId: string | null) {
   if (!userId) return
 
-  let result = await getInitPreset(userId)
+  const result = await getInitPreset(userId)
 
   if (result) return result
 

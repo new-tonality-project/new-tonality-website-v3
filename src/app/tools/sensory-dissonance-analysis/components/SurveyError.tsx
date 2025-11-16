@@ -7,7 +7,7 @@ import { TextLink } from '@/components/catalyst/text'
 
 export function SurveyError() {
   const [state] = useSurveyMachine()
-  const [error, setError] = useState<Object | null>(null)
+  const [error, setError] = useState<object | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [copied, setCopied] = useState<boolean>(false)
   const timeout = useRef<NodeJS.Timeout | null>(null)
@@ -44,6 +44,7 @@ export function SurveyError() {
     return () => {
       if (timeout.current) clearTimeout(timeout.current)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function copyToClipboard() {

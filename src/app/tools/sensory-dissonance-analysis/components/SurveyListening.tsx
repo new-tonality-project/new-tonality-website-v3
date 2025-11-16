@@ -57,7 +57,7 @@ export function SurveyListening() {
           Make sure you use headphones or monitoring speakers. Laptop or phone
           speakers, even good Macbook Pro ones, produce a lot of distorion and
           are introducing new harmonics that will impact the results of the
-          experiment. Press "Test volume" to make sure you can hear the interval
+          experiment. Press &quot;Test volume&quot; to make sure you can hear the interval
           clearly at a comfortable volume.
         </Text>
         <Button
@@ -77,7 +77,7 @@ export function SurveyListening() {
         <Text>
           Before you start rating the intervals you need to have the relative
           idea of what intervals sound very rough and should be rated as 7 or
-          very smooth and should be rated as 1. Press "Listen to intervals" to
+          very smooth and should be rated as 1. Press &quot;Listen to intervals&quot; to
           hear the 14 intervals that will be used in the experiment and understand
           how they sound to you.
         </Text>
@@ -104,7 +104,7 @@ export function SurveyListening() {
         disabled={!state.context.canStartExperiment}
       >
         <Text>
-          Press "Continue" to proceed to the experiment where you will rate the
+          Press &quot;Continue&quot; to proceed to the experiment where you will rate the
           intervals that you have just heard.
         </Text>
       </Step>

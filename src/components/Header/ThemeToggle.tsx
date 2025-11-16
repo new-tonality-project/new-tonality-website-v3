@@ -5,9 +5,9 @@ import { useTheme } from 'next-themes'
 import { MoonIcon, SunIcon } from '../Icons'
 
 export function ThemeToggle() {
-  let { resolvedTheme, setTheme } = useTheme()
-  let otherTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
-  let [mounted, setMounted] = useState(false)
+  const { resolvedTheme, setTheme } = useTheme()
+  const otherTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)

@@ -115,8 +115,8 @@ export default function DissonanceSurveyPage() {
               Finally, when rating the intervals, participants were asked to
               rate each interval on a 7-point scale of consonant - dissonant
               where <strong>the score of 7 is most consonant</strong>. The
-              meaning of consonance interval was defined as "beautiful" and
-              "euphonious".
+              meaning of consonance interval was defined as &quot;beautiful&quot; and
+              &quot;euphonious&quot;.
             </li>
           </ol>
 
@@ -139,9 +139,9 @@ export default function DissonanceSurveyPage() {
               <strong>the score of 7 is maximum dissonance</strong>.
             </li>
             <li>
-              We never use the word "consonance" or "dissonance" in the
+              We never use the word &quot;consonance&quot; or &quot;dissonance&quot; in the
               experiment. Instead,
-              <strong> we use terms like "smooth" and "rough" </strong> to
+              <strong> we use terms like &quot;smooth&quot; and &quot;rough&quot; </strong> to
               describe the intervals. We believe that this is more suitable for
               broader audience that may include professional musicians as well
               as non-musicians, as their definitions and perceptions of

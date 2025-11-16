@@ -11,12 +11,13 @@ export function formatDate(dateString: string) {
 }
 
 export function clamp(number: number, a: number, b: number) {
-  let min = Math.min(a, b)
-  let max = Math.max(a, b)
+  const min = Math.min(a, b)
+  const max = Math.max(a, b)
   return Math.min(Math.max(number, min), max)
 }
 
-export function debounceTransaction<T extends (...args: any) => any>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function debounceTransaction<T extends (...args: any[]) => any>(
   callback: T,
 ) {
   return debounce(callback, 100, { leading: false })

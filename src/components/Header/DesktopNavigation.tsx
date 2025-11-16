@@ -12,7 +12,7 @@ export function NavItem({
   href: string
   children: React.ReactNode
 }) {
-  let isActive = usePathname() === href
+  const isActive = usePathname() === href
 
   return (
     <li>

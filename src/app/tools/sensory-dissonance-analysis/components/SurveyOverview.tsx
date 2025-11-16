@@ -47,7 +47,7 @@ export function SurveyOverview() {
         to be shared on the results page. You can exit the experiment at any
         time, but you will loose all your progress.
       </p>
-      <p>Let's start the experiment!</p>
+      <p>Let&apos;s start the experiment!</p>
     </Prose>
   )
 }

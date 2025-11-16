@@ -1,12 +1,14 @@
 'use client'
 
-import { Button, Spinner } from '@/components'
+import { Button } from '@/components'
 import { useSurveyMachine } from '@/state/machines'
 import { useMemo, useRef, useState } from 'react'
-import { Strong, Text } from '@/components/catalyst/text'
+import { Text } from '@/components/catalyst/text'
 import { Step } from '@/components/Step'
 import { db } from '@/db'
 import { submitSurvey } from '../actions'
+import { LoadingOverlay } from '@/components/LoadingOverlay'
+import clsx from 'clsx'
 
 const COLORS = [
   '#E2E8F0',
@@ -25,6 +27,8 @@ export function SurveyExperiment() {
   const releaseNoteTimeout = useRef<NodeJS.Timeout | null>(null)
   const user = db.useUser()
 
+  const surveyLength = state.context.intervals?.surveyOrder.length ?? 0
+
   const currentInterval = useMemo(() => {
     return state.context.intervals?.surveyOrder[state.context.currentIndex]
   }, [state.context.intervals, state.context.currentIndex])
@@ -42,9 +46,9 @@ export function SurveyExperiment() {
 
     return (
       state.context.currentIndex ===
-      state.context.intervals?.surveyOrder.length - 1
+      surveyLength - 1
     )
-  }, [state.context.currentIndex, state.context.intervals?.surveyOrder.length])
+  }, [state.context.currentIndex, state.context.intervals, surveyLength])
 
   async function submit() {
     try {
@@ -76,22 +80,12 @@ export function SurveyExperiment() {
   )
     return null
 
-  if (submitting)
-    return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <Spinner className="mb-4" />
-        <Text>
-          <Strong> Thank you for your time! </Strong>
-        </Text>
-        <Text>We are submitting your answers...</Text>
-      </div>
-    )
-
   return (
-    <>
+    <div className={clsx('relative', submitting && 'pointer-events-none')}>
+      {submitting && <LoadingOverlay />}
       <Step className="mb-8" title="Step" number={1} disabled={false}>
         <Text className="pb-6">
-          Press "Play Interval" to hear the interval.
+          Press &quot;Play Interval&quot; to hear the interval.
         </Text>
         {state.context.isPlaying ? (
           <Button
@@ -131,7 +125,7 @@ export function SurveyExperiment() {
           Choose the number between 1 and 7 to rate how rough the interval
           sounds to you, where 7 is the roughest and 1 is the smoothest.
         </Text>
-        <div className="md:w-sm pt-6 pb-4">
+        <div className="pt-6 pb-4 md:w-sm">
           <div className="flex justify-between pb-2">
             <Text>Smooth</Text>
             <Text>Rough</Text>
@@ -165,7 +159,7 @@ export function SurveyExperiment() {
 
       <Step className="mb-8" title="Step" number={3} disabled={false}>
         <Text className="pb-6">
-          Once you've rated the interval, press "Next interval" to move to the
+          Once you&apos;ve rated the interval, press &quot;Next interval&quot; to move to the
           next interval.
         </Text>
 
@@ -205,6 +199,6 @@ export function SurveyExperiment() {
           </Button>
         )}
       </Step>
-    </>
+    </div>
   )
 }
