@@ -1,9 +1,17 @@
 'use client'
 
-import { Container, Prose, CollapsibleDescription } from '@/components'
+import {
+  Container,
+  Prose,
+  CollapsibleDescription,
+  SocialLink,
+  YouTubeIcon,
+  MailIcon,
+} from '@/components'
 import { SurveyChart, SurveyChartPublic } from './components'
 import { db } from '@/db'
 import { TextLink } from '@/components/catalyst/text'
+import { SOCIAL_MEDIA_LINKS } from '@/lib'
 
 export default function DissonanceSurveyPage() {
   return (
@@ -76,33 +84,95 @@ export default function DissonanceSurveyPage() {
             <SurveyChart meanFrequency={147} title="Low frequencies" />
           </db.SignedIn>
 
-          <h2>Some more background</h2>
+          <h2>Discrepancies with the original experiment</h2>
 
           <p>
             The results of Plomp and Levelt were not recieved without cotroversy
             because they deviated from the scientific and musical consensus at
             that time. That was not due to the mistake but because Plomp and
             Levelt intentionally modified their experiments in a way that was
-            not done before. Firt of all, the participants were not trained
-            musicians but rather people from the general public. Second, they
-            used a series of intervals that were not based on 12TET nor on
-            simple ratios. This was important to exclude previous training or
-            previous cultural experience from the results and get the raw
-            sensory data. Another important aspect was that they used pure
-            sinewaves to conduct listening experiments, that was done to exclude
-            the role that timbre might play in the perception of dissonance.
+            not done before:
           </p>
+          <ol>
+            <li>
+              The experiment specifically targeted{' '}
+              <strong>not musicians</strong>. All participants were people from
+              the general public without any musical training.
+            </li>
+            <li>
+              The set of intervals that were used in the experiment was{' '}
+              <strong>not based on 12TET nor on simple ratios</strong>. This was
+              important to exclude previous training or previous cultural
+              experience from the results and get the raw sensory data.
+            </li>
+            <li>
+              Another important aspect was that they used{' '}
+              <strong>pure sinewaves</strong> to conduct listening experiments,
+              that was done to exclude the role that timbre might play in the
+              perception of dissonance.
+            </li>
+            <li>
+              Finally, when rating the intervals, participants were asked to
+              rate each interval on a 7-point scale of consonant - dissonant
+              where <strong>the score of 7 is most consonant</strong>. The
+              meaning of consonance interval was defined as "beautiful" and
+              "euphonious".
+            </li>
+          </ol>
 
           <p>
             In this experiment we attempt to replicate the approach of Plomp and
-            Levelt. They results will not bear the same scientific rigor as the
-            experiments are not conducted in controlled laboratory environment,
-            but it is still interesting to see how it will compare to the
-            original work. Also in the end you will be able to see your own
-            results that you could use to build your own dissonance curvesand
-            share them with others.
+            Levelt. Because the experiments are not conducted in controlled
+            laboratory environment, the results will not bear the same
+            scientific rigor as the original research, but it is still
+            interesting to see how it will compare. There are several
+            differences between the original experiment and this one:
+          </p>
+          <ol>
+            <li>
+              Because the experiment is conducted online, we welcome
+              participants with <strong>any musical background</strong>.
+            </li>
+            <li>
+              We flip the 7-point scale to be more consistent with the work of
+              Sethares. In our experiment{' '}
+              <strong>the score of 7 is maximum dissonance</strong>.
+            </li>
+            <li>
+              We never use the word "consonance" or "dissonance" in the
+              experiment. Instead,
+              <strong> we use terms like "smooth" and "rough" </strong> to
+              describe the intervals. We believe that this is more suitable for
+              broader audience that may include professional musicians as well
+              as non-musicians, as their definitions and perceptions of
+              consonance and dissonance may differ.
+            </li>
+          </ol>
+          <p>
+            In other aspects the experiments are very similar. We hope that
+            gathered data will help us to build new tools to enable microtonal
+            experiments. But most of all we hope to educate people about the
+            topic of sensory dissonance and its connection to the problem of
+            musical tuning.
+          </p>
+          <p>
+            To follow the development and application of this experiment you can
+            subscribe to our YouTube channel, consider following development on
+            Github, and reach out if you have any questions or suggestions on
+            email:
           </p>
         </Prose>
+        <div className="flex flex-col gap-2">
+          <SocialLink href={SOCIAL_MEDIA_LINKS.youtube} icon={YouTubeIcon}>
+            YouTube
+          </SocialLink>
+          <SocialLink href={SOCIAL_MEDIA_LINKS.github} icon={YouTubeIcon}>
+            Github
+          </SocialLink>
+          <SocialLink href="mailto:info@newtonality.net" icon={MailIcon}>
+            info@newtonality.net
+          </SocialLink>
+        </div>
       </Container>
     </Container>
   )
