@@ -176,6 +176,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
         tickInterval: 100,
         gridLineColor: '#ccc',
         gridLineDashStyle: 'Dash',
+        gridLineWidth: 1,
       },
       yAxis: {
         title: {
