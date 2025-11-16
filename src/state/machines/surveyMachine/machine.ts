@@ -235,11 +235,13 @@ export const surveyMachine = machineSetup.createMachine({
     success: {
       entry: assign({
         title: 'Thank you!',
+        description: '',
       }),
     },
     error: {
       entry: assign({
         title: 'Something went wrong',
+        description: '',
       }),
     },
   },
