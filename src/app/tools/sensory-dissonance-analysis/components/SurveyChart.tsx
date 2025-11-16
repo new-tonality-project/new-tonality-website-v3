@@ -145,7 +145,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
     graphs.other?.forEach((graph, index) => {
       series.push({
         type: 'spline',
-        name: index === 0 ? 'Other users results' : undefined,
+        name: index === 0 ? 'Other participants' : undefined,
         data: graph.points.map((point) => [point.x, point.y]),
         color: '#ccc',
         lineWidth: 1,

@@ -41,7 +41,7 @@ export function SurveyChartPublic(props: { meanFrequency: number; title: string 
     const series: Highcharts.SeriesOptionsType[] = (graphs || []).map((graph, index) => ({
       type: 'spline',
       data: graph.points.map((point) => [point.x, point.y]),
-      name: index === 0 ? 'Other users results' : undefined,
+      name: index === 0 ? 'Other participants' : undefined,
       color: '#444',
       lineWidth: 1,
       enableMouseTracking: false,
