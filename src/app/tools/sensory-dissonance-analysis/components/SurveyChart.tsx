@@ -10,7 +10,7 @@ import { ChartHeader } from './ChartHeader'
 
 export function SurveyChart(props: { meanFrequency: number; title: string }) {
   const [surveyOpen, setSurveyOpen] = useState(false)
-  const [selectedPoint, setSelectedPoint] = useState<{ x: number; y: number } | null>(null);
+  const [selectedPoint, setSelectedPoint] = useState<Highcharts.Point | null>(null);
   const user = db.useUser()
   const userSettings = db.useQuery({
     userSettings: {
@@ -82,9 +82,12 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
   }, [userGraph, otherGraphs])
 
   const handlePointClick = useCallback((point: Highcharts.Point) => {
-    console.log(point)
-    setSelectedPoint({ x: point.x as number, y: point.y as number })
-  }, [])
+    if (selectedPoint && selectedPoint.x === point.x && selectedPoint.y === point.y) {
+      setSelectedPoint(null)
+      return
+    }
+    setSelectedPoint(point)
+  }, [selectedPoint])
 
   const chartOptions = useMemo(() => {
     const series: Highcharts.SeriesOptionsType[] = []
@@ -115,9 +118,10 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
             marker: {
               enabled: true,
               radius: isSelected ? 6 : 4,
-              fillColor: isSelected ? 'cyan' : 'black',
+              fillColor: isSelected ? '#85ffa9' : 'white',
               lineColor: isSelected ? 'black' : 'black',
-              lineWidth: isSelected ? 2 : 0,
+              lineWidth: isSelected ? 2 : 2,
+              symbol: 'circle',
               states: {
                 hover: {
                   radius: 6,
@@ -129,7 +133,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
         color: '#000',
         lineWidth: 2,
         enableMouseTracking: true,
-        showInLegend: true,
+        showInLegend: false,
       })
     })
 
