@@ -2,14 +2,8 @@
 
 import { db } from '@/db'
 import { useMemo } from 'react'
-import {
-  XAxis,
-  YAxis,
-  LineChart,
-  Line,
-  CartesianGrid,
-  ResponsiveContainer,
-} from 'recharts'
+import { Chart } from '@highcharts/react'
+import Highcharts from 'highcharts'
 import { SignInButton } from '@clerk/nextjs'
 import { ChartHeader } from './ChartHeader'
 import { Button } from '@/components'
@@ -42,6 +36,58 @@ export function SurveyChartPublic(props: { meanFrequency: number; title: string 
     }))
   }, [allGraphs])
 
+  const chartOptions = useMemo(() => {
+    const series: Highcharts.SeriesOptionsType[] = (graphs || []).map((graph) => ({
+      type: 'line',
+      data: graph.points.map((point) => [point.x, point.y]),
+      color: '#444',
+      lineWidth: 1,
+      enableMouseTracking: false,
+      showInLegend: false,
+      marker: {
+        enabled: false,
+      },
+    }))
+
+    return {
+      chart: {
+        height: 300,
+        backgroundColor: 'transparent',
+      },
+      title: {
+        text: undefined,
+      },
+      credits: {
+        enabled: false,
+      },
+      xAxis: {
+        title: {
+          text: 'Interval (cents)',
+        },
+        min: 0,
+        max: 1200,
+        tickInterval: 100,
+        gridLineColor: '#ccc',
+        gridLineDashStyle: 'Dash',
+      },
+      yAxis: {
+        title: {
+          text: 'Dissonance score',
+          rotation: -90,
+        },
+        min: 1,
+        max: 7,
+        tickInterval: 1,
+        gridLineColor: '#ccc',
+        gridLineDashStyle: 'Dash',
+      },
+      tooltip: {
+        enabled: false,
+      },
+      series,
+    } as Highcharts.Options
+  }, [graphs])
+
   if (allGraphs.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />
   }
@@ -62,52 +108,7 @@ export function SurveyChartPublic(props: { meanFrequency: number; title: string 
       />
       <div className="mt-6 w-full overflow-x-auto lg:overflow-x-visible">
         <div className="min-w-[600px] lg:min-w-0 lg:w-full">
-          <ResponsiveContainer width="100%" height={300}>
-        <LineChart
-          height={300}
-          margin={{ bottom: 20, left: 0, right: 10, top: 10 }}
-        >
-          <XAxis
-            dataKey="x"
-            type="number"
-            name="Interval"
-            label={{
-              value: 'Interval (cents)',
-              angle: 0,
-              position: 'insideBottom',
-              offset: -15,
-            }}
-            domain={[0, 1200]}
-            tickCount={13}
-          />
-          <YAxis
-            dataKey="y"
-            type="number"
-            name="Dissonance"
-            label={{
-              value: 'Dissonance score',
-              angle: -90,
-              position: 'outsideLeft',
-            }}
-            tickCount={7}
-            domain={[1, 7]}
-          />
-          <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-          {graphs?.map((graph) => (
-            <Line
-              key={graph.id}
-              type="monotone"
-              dot={false}
-              activeDot={false}
-              dataKey="y"
-              data={graph.points}
-              legendType="none"
-              tooltipType="none"
-              stroke="#444"
-            />
-          ))}
-        </LineChart>
-          </ResponsiveContainer>
+          <Chart highcharts={Highcharts} options={chartOptions} />
         </div>
       </div>
     </div>
