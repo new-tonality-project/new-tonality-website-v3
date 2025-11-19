@@ -64,10 +64,10 @@ export default function DissonanceSurveyPage() {
           <div className="h-4 md:h-2" />
 
           <db.SignedOut>
-            <SurveyChartPublic meanFrequency={1320} title="High frequencies" />
+            <SurveyChartPublic meanFrequency={147} title="Low frequencies" />
           </db.SignedOut>
           <db.SignedIn>
-            <SurveyChart meanFrequency={1320} title="High frequencies" />
+            <SurveyChart meanFrequency={147} title="Low frequencies" />
           </db.SignedIn>
 
           <db.SignedOut>
@@ -78,10 +78,10 @@ export default function DissonanceSurveyPage() {
           </db.SignedIn>
 
           <db.SignedOut>
-            <SurveyChartPublic meanFrequency={147} title="Low frequencies" />
+            <SurveyChartPublic meanFrequency={1320} title="High frequencies" />
           </db.SignedOut>
           <db.SignedIn>
-            <SurveyChart meanFrequency={147} title="Low frequencies" />
+            <SurveyChart meanFrequency={1320} title="High frequencies" />
           </db.SignedIn>
 
           <h2>Discrepancies with the original experiment</h2>
@@ -115,8 +115,8 @@ export default function DissonanceSurveyPage() {
               Finally, when rating the intervals, participants were asked to
               rate each interval on a 7-point scale of consonant - dissonant
               where <strong>the score of 7 is most consonant</strong>. The
-              meaning of consonance interval was defined as &quot;beautiful&quot; and
-              &quot;euphonious&quot;.
+              meaning of consonance interval was defined as
+              &quot;beautiful&quot; and &quot;euphonious&quot;.
             </li>
           </ol>
 
@@ -139,12 +139,15 @@ export default function DissonanceSurveyPage() {
               <strong>the score of 7 is maximum dissonance</strong>.
             </li>
             <li>
-              We never use the word &quot;consonance&quot; or &quot;dissonance&quot; in the
-              experiment. Instead,
-              <strong> we use terms like &quot;smooth&quot; and &quot;rough&quot; </strong> to
-              describe the intervals. We believe that this is more suitable for
-              broader audience that may include professional musicians as well
-              as non-musicians, as their definitions and perceptions of
+              We never use the word &quot;consonance&quot; or
+              &quot;dissonance&quot; in the experiment. Instead,
+              <strong>
+                {' '}
+                we use terms like &quot;smooth&quot; and &quot;rough&quot;{' '}
+              </strong>{' '}
+              to describe the intervals. We believe that this is more suitable
+              for broader audience that may include professional musicians as
+              well as non-musicians, as their definitions and perceptions of
               consonance and dissonance may differ.
             </li>
           </ol>
