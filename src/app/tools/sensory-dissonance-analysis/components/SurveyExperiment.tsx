@@ -4,6 +4,7 @@ import { Button } from '@/components'
 import { useSurveyMachine } from '@/state/machines'
 import { useMemo, useRef, useState } from 'react'
 import { Text } from '@/components/catalyst/text'
+import { Tooltip } from '@/components/catalyst/tooltip'
 import { Step } from '@/components/Step'
 import { db } from '@/db'
 import { submitSurvey } from '../actions'
@@ -125,8 +126,28 @@ export function SurveyExperiment() {
         </Text>
         <div className="pt-6 pb-4 md:w-sm">
           <div className="flex justify-between pb-2">
-            <Text className="text-sm">Smooth</Text>
-            <Text className="text-sm">Rough</Text>
+            <div className="flex items-center gap-1.5">
+              <Text className="text-sm">Smooth</Text>
+              <Tooltip
+                content={
+                  <div className="max-w-48">
+                    Smooth intervals sound stable, pleasant, and harmonious and
+                    are typically easier on the ears.
+                  </div>
+                }
+              />
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Text className="text-sm">Rough</Text>
+              <Tooltip
+                content={
+                  <div className="max-w-48">
+                    Rough intervals has a harsh quality to them. They sound
+                    unstable, tence and unpleasant.
+                  </div>
+                }
+              />
+            </div>
           </div>
 
           <div className="flex justify-between">
