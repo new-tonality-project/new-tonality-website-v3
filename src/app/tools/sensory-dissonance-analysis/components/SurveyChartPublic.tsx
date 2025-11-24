@@ -9,7 +9,10 @@ import { ChartHeader } from './ChartHeader'
 import { Button } from '@/components'
 import { baseChartConfig } from './chartConfig'
 
-export function SurveyChartPublic(props: { meanFrequency: number; title: string }) {
+export function SurveyChartPublic(props: {
+  meanFrequency: number
+  title: string
+}) {
   const allGraphs = db.useQuery({
     dissonanceGraphs: {
       $: {
@@ -38,18 +41,20 @@ export function SurveyChartPublic(props: { meanFrequency: number; title: string 
   }, [allGraphs])
 
   const chartOptions = useMemo(() => {
-    const series: Highcharts.SeriesOptionsType[] = (graphs || []).map((graph, index) => ({
-      type: 'spline',
-      data: graph.points.map((point) => [point.x, point.y]),
-      name: index === 0 ? 'Other participants' : undefined,
-      lineWidth: 1,
-      opacity: 0.5,
-      enableMouseTracking: false,
-      showInLegend: index === 0,
-      marker: {
-        enabled: false,
-      },
-    }))
+    const series: Highcharts.SeriesOptionsType[] = (graphs || []).map(
+      (graph, index) => ({
+        type: 'spline',
+        data: graph.points.map((point) => [point.x, point.y]),
+        name: index === 0 ? 'Other participants' : undefined,
+        lineWidth: 1,
+        opacity: 0.5,
+        enableMouseTracking: false,
+        showInLegend: index === 0,
+        marker: {
+          enabled: false,
+        },
+      }),
+    )
 
     return {
       ...baseChartConfig,
@@ -72,19 +77,21 @@ export function SurveyChartPublic(props: { meanFrequency: number; title: string 
 
   return (
     <div className="relative flex w-full flex-col items-center">
-      <ChartHeader 
-        title={props.title}
-        button={
-          <SignInButton>
-            <Button className="text-xs py-1! px-2 z-10" variant="secondary">Login to participate</Button>
-          </SignInButton>
-        }
-      />
       <div className="w-full overflow-x-auto lg:overflow-x-visible">
-        <div className="min-w-[600px] lg:min-w-0 lg:w-full">
+        <div className="min-w-[600px] lg:w-full lg:min-w-0">
           <Chart highcharts={Highcharts} options={chartOptions} />
         </div>
       </div>
+      <ChartHeader
+        title={props.title}
+        button={
+          <SignInButton>
+            <Button className="px-2 py-1! text-xs" variant="secondary">
+              Login to participate
+            </Button>
+          </SignInButton>
+        }
+      />
     </div>
   )
 }

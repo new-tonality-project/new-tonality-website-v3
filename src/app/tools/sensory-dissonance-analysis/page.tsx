@@ -34,7 +34,9 @@ export default function DissonanceSurveyPage() {
               </TextLink>
               , that made an important contribution to the modern psychoacoustic
               research by introducing the concept of sensory dissonance of pure
-              sinewaves and its dependency on musical intervals. That discovery
+              sinewaves and its dependency on musical intervals. Sensory
+              dissonance refers to the quality of a sound that is rough,
+              unpleasant and unstable. Its dependency on musical interval has
               found its practical application in the work of William Sethares{' '}
               <TextLink
                 href="https://www.r-5.org/files/books/rx-music/tuning/William_A_Sethares-Tuning_Timbre_Spectrum_Scale-EN.pdf"
@@ -42,20 +44,20 @@ export default function DissonanceSurveyPage() {
               >
                 Tuning, Timbre, Spectrum, Scale
               </TextLink>
-              . He used it to calculate dissonance curves, which can be used to
-              extract tuning from the timbre of musical instruments. He showed
-              how dissonance curves predict most common musical chords, how they
-              can be used to build dynamic tuning systems or to tune inharmonic
-              instruments.
+              . Sethares used results of Plomp and Levelt's experiment to
+              calculate dissonance curves, which can be used to extract tuning
+              from the timbre of musical instruments. He showed how dissonance
+              curves predict most common musical chords, how they can be used to
+              build dynamic tuning systems or to tune inharmonic instruments.
             </p>
 
             <p>
               Below you can see a set of graphs that show that dependency of
               sensory dissonance vs musical interval for different registers.
               Each line on the graph is the result of a real person listening to
-              intervals and rating how dissonant those intervals sound to them.
-              You can take part in that experiment too! Sign in and find out
-              your own dissonance preference and compare it with others. It
+              intervals and rating how rought or smooth those intervals sound to
+              them. You can take part in that experiment too! Sign in and find
+              out your own dissonance preference and compare it with others. It
               takes only 5 minutes to complete and both musicians and
               non-musicians are welcome to participate.
             </p>

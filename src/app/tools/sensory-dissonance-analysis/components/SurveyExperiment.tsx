@@ -44,10 +44,7 @@ export function SurveyExperiment() {
   const isFinished = useMemo(() => {
     if (!state.context.intervals) return false
 
-    return (
-      state.context.currentIndex ===
-      surveyLength - 1
-    )
+    return state.context.currentIndex === surveyLength - 1
   }, [state.context.currentIndex, state.context.intervals, surveyLength])
 
   async function submit() {
@@ -122,13 +119,14 @@ export function SurveyExperiment() {
 
       <Step className="mb-8" title="Step" number={2} disabled={false}>
         <Text className="pb-2">
-          Choose the number between 1 and 7 to rate how rough the interval
-          sounds to you, where 7 is the roughest and 1 is the smoothest.
+          Choose the number between 1 and 7 to rate how rough or smooth the
+          interval sounds to you. Where 7 is the roughest the most unstable and
+          unpleasant and 1 is the most smooth, stable and pleasant sound.
         </Text>
         <div className="pt-6 pb-4 md:w-sm">
           <div className="flex justify-between pb-2">
-            <Text>Smooth</Text>
-            <Text>Rough</Text>
+            <Text className="text-sm">Smooth</Text>
+            <Text className="text-sm">Rough</Text>
           </div>
 
           <div className="flex justify-between">
@@ -159,8 +157,8 @@ export function SurveyExperiment() {
 
       <Step className="mb-8" title="Step" number={3} disabled={false}>
         <Text className="pb-6">
-          Once you&apos;ve rated the interval, press &quot;Next interval&quot; to move to the
-          next interval.
+          Once you&apos;ve rated the interval, press &quot;Next interval&quot;
+          to move to the next interval.
         </Text>
 
         {isFinished ? (

@@ -76,8 +76,8 @@ export function SurveyListening() {
       >
         <Text>
           Before you start rating the intervals you need to have the relative
-          idea of what intervals sound very rough and should be rated as 7 or
-          very smooth and should be rated as 1. Press &quot;Listen to intervals&quot; to
+          idea of what intervals sound very rough, unpleasant, unstable and should be rated as 7 or
+          very smooth, pleasant and stable and should be rated as 1. Press &quot;Listen to intervals&quot; to
           hear the 14 intervals that will be used in the experiment and understand
           how they sound to you.
         </Text>

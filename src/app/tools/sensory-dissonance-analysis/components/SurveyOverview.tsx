@@ -7,11 +7,11 @@ export function SurveyOverview() {
     <Prose>
       <p>
         Thank you for taking part in the experiment! Our goal it to determine
-        how dissonant do you percieve different intervals on the scale from 1 to
-        7, where 1 is the least and 7 is the most dissonant. You will rate 14
-        random intervals that are chosen to be within the range of 1 octave. The
-        experiment usually takes around 5 minutes to complete and is done in
-        several steps:
+        how do you percieve different intervals on the scale from 1 to 7. Where
+        1 is the sound that is smooth, pleasant and stable, and 7 is rough,
+        unpleasant and unstable. You will rate 14 random intervals that are
+        chosen to be within the range of 1 octave. The experiment usually takes
+        around 5 minutes to complete and is done in several steps:
       </p>
       <ol>
         <li>

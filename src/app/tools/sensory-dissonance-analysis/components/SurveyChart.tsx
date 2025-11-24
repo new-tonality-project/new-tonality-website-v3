@@ -230,14 +230,6 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
 
   return (
     <div className="relative flex w-full flex-col items-center">
-      <ChartHeader
-        title={props.title}
-        onTakeSurvey={
-          !userGraph.data?.dissonanceGraphs?.length
-            ? () => setSurveyOpen(true)
-            : undefined
-        }
-      />
       <div className="w-full overflow-x-auto lg:overflow-x-visible">
         <div className="min-w-[600px] lg:w-full lg:min-w-0">
           <Chart highcharts={Highcharts} options={chartOptions} />
@@ -250,6 +242,14 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
       >
         <Survey setSurveyOpen={setSurveyOpen} open={surveyOpen} />
       </SurveyMachineProvider>
+      <ChartHeader
+        title={props.title}
+        onTakeSurvey={
+          !userGraph.data?.dissonanceGraphs?.length
+            ? () => setSurveyOpen(true)
+            : undefined
+        }
+      />
     </div>
   )
 }
