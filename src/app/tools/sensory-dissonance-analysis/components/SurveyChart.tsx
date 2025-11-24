@@ -147,8 +147,8 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
         type: 'spline',
         name: index === 0 ? 'Other participants' : undefined,
         data: graph.points.map((point) => [point.x, point.y]),
-        color: '#ccc',
         lineWidth: 1,
+        opacity: 0.5,
         enableMouseTracking: false,
         showInLegend: index === 0,
         marker: {
@@ -238,7 +238,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
             : undefined
         }
       />
-      <div className="mt-6 w-full overflow-x-auto lg:overflow-x-visible">
+      <div className="w-full overflow-x-auto lg:overflow-x-visible">
         <div className="min-w-[600px] lg:w-full lg:min-w-0">
           <Chart highcharts={Highcharts} options={chartOptions} />
         </div>

@@ -1,4 +1,4 @@
-import { Heading } from '@/components/catalyst/heading'
+import { Heading, Subheading } from '@/components/catalyst/heading'
 import { Button } from '@/components'
 import { type ReactNode } from 'react'
 
@@ -12,10 +12,10 @@ export function ChartHeader({
   button?: ReactNode
 }) {
   return (
-    <div className="flex w-full flex-wrap items-center gap-4 justify-start border-b border-zinc-950/10 pb-6 dark:border-white/10">
-      <Heading>{title}</Heading>
+    <div className="flex w-full flex-wrap items-center gap-4 justify-start absolute top-2 pl-14">
+      <Subheading className='m-0'>{title}</Subheading>
       {button || (onTakeSurvey && (
-        <Button onClick={onTakeSurvey} variant="primary">Start experiment</Button>
+        <Button onClick={onTakeSurvey} variant="primary" className="text-xs py-1! px-2 z-10">Start experiment</Button>
       ))}
     </div>
   )

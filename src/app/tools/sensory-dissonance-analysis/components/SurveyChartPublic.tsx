@@ -42,8 +42,8 @@ export function SurveyChartPublic(props: { meanFrequency: number; title: string 
       type: 'spline',
       data: graph.points.map((point) => [point.x, point.y]),
       name: index === 0 ? 'Other participants' : undefined,
-      color: '#444',
       lineWidth: 1,
+      opacity: 0.5,
       enableMouseTracking: false,
       showInLegend: index === 0,
       marker: {
@@ -76,11 +76,11 @@ export function SurveyChartPublic(props: { meanFrequency: number; title: string 
         title={props.title}
         button={
           <SignInButton>
-            <Button variant="secondary">Login to participate</Button>
+            <Button className="text-xs py-1! px-2 z-10" variant="secondary">Login to participate</Button>
           </SignInButton>
         }
       />
-      <div className="mt-6 w-full overflow-x-auto lg:overflow-x-visible">
+      <div className="w-full overflow-x-auto lg:overflow-x-visible">
         <div className="min-w-[600px] lg:min-w-0 lg:w-full">
           <Chart highcharts={Highcharts} options={chartOptions} />
         </div>
