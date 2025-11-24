@@ -27,3 +27,9 @@ export function getSurveyIntervals() {
 
   return [...sm, ...md, ...lg, ...xl]
 }
+
+export const EXPERIMENTS = [
+  { frequency: 147, title: 'Low frequencies' },
+  { frequency: 440, title: 'Middle frequencies' },
+  { frequency: 1320, title: 'High frequencies' },
+] as const

@@ -9,13 +9,18 @@ import {
   MailIcon,
 } from '@/components'
 import { SurveyChart, SurveyChartPublic } from './components'
+import { UnfinishedExperimentsModal } from './components/UnfinishedExperimentsModal'
 import { db } from '@/db'
 import { TextLink } from '@/components/catalyst/text'
 import { SOCIAL_MEDIA_LINKS } from '@/lib'
+import { EXPERIMENTS } from './utils'
 
 export default function DissonanceSurveyPage() {
   return (
     <Container className="mt-16 lg:mt-32">
+      <db.SignedIn>
+        <UnfinishedExperimentsModal />
+      </db.SignedIn>
       <Container>
         <header>
           <h1 className="mt-6 text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
@@ -66,24 +71,42 @@ export default function DissonanceSurveyPage() {
           <div className="h-4 md:h-2" />
 
           <db.SignedOut>
-            <SurveyChartPublic meanFrequency={147} title="Low frequencies" />
+            <SurveyChartPublic
+              meanFrequency={EXPERIMENTS[0].frequency}
+              title={EXPERIMENTS[0].title}
+            />
           </db.SignedOut>
           <db.SignedIn>
-            <SurveyChart meanFrequency={147} title="Low frequencies" />
+            <SurveyChart
+              meanFrequency={EXPERIMENTS[0].frequency}
+              title={EXPERIMENTS[0].title}
+            />
           </db.SignedIn>
 
           <db.SignedOut>
-            <SurveyChartPublic meanFrequency={440} title="Middle frequencies" />
+            <SurveyChartPublic
+              meanFrequency={EXPERIMENTS[1].frequency}
+              title={EXPERIMENTS[1].title}
+            />
           </db.SignedOut>
           <db.SignedIn>
-            <SurveyChart meanFrequency={440} title="Middle frequencies" />
+            <SurveyChart
+              meanFrequency={EXPERIMENTS[1].frequency}
+              title={EXPERIMENTS[1].title}
+            />
           </db.SignedIn>
 
           <db.SignedOut>
-            <SurveyChartPublic meanFrequency={1320} title="High frequencies" />
+            <SurveyChartPublic
+              meanFrequency={EXPERIMENTS[2].frequency}
+              title={EXPERIMENTS[2].title}
+            />
           </db.SignedOut>
           <db.SignedIn>
-            <SurveyChart meanFrequency={1320} title="High frequencies" />
+            <SurveyChart
+              meanFrequency={EXPERIMENTS[2].frequency}
+              title={EXPERIMENTS[2].title}
+            />
           </db.SignedIn>
 
           <h2>Discrepancies with the original experiment</h2>
