@@ -49,7 +49,7 @@ export default function DissonanceSurveyPage() {
               >
                 Tuning, Timbre, Spectrum, Scale
               </TextLink>
-              . Sethares used results of Plomp and Levelt's experiment to
+              . Sethares used results of Plomp and Levelt&apos;s experiment to
               calculate dissonance curves, which can be used to extract tuning
               from the timbre of musical instruments. He showed how dissonance
               curves predict most common musical chords, how they can be used to
