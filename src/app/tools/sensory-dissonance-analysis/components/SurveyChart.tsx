@@ -10,8 +10,13 @@ import { Survey } from './Survey'
 import { ChartHeader } from './ChartHeader'
 import { getIntervalFrequencies } from '@/lib'
 import { baseChartConfig } from './chartConfig'
+import { ChartSettings } from './types'
 
-export function SurveyChart(props: { meanFrequency: number; title: string }) {
+export function SurveyChart(props: {
+  meanFrequency: number
+  title: string
+  settings: ChartSettings
+}) {
   const [surveyOpen, setSurveyOpen] = useState(false)
   const [selectedPoint, setSelectedPoint] = useState<Highcharts.Point | null>(
     null,

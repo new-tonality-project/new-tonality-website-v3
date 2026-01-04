@@ -8,10 +8,12 @@ import { SignInButton } from '@clerk/nextjs'
 import { ChartHeader } from './ChartHeader'
 import { Button } from '@/components'
 import { baseChartConfig } from './chartConfig'
+import { ChartSettings } from './types'
 
 export function SurveyChartPublic(props: {
   meanFrequency: number
   title: string
+  settings: ChartSettings
 }) {
   const allGraphs = db.useQuery({
     dissonanceGraphs: {

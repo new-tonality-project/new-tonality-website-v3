@@ -8,14 +8,14 @@ import {
   YouTubeIcon,
   MailIcon,
 } from '@/components'
-import { SurveyChart, SurveyChartPublic } from './components'
+import { ExperimentCharts } from './components'
 import { UnfinishedExperimentsModal } from './components/UnfinishedExperimentsModal'
 import { db } from '@/db'
 import { TextLink } from '@/components/catalyst/text'
 import { SOCIAL_MEDIA_LINKS } from '@/lib'
-import { EXPERIMENTS } from './utils'
 
 export default function DissonanceSurveyPage() {
+
   return (
     <Container className="mt-16 lg:mt-32">
       <db.SignedIn>
@@ -70,44 +70,7 @@ export default function DissonanceSurveyPage() {
 
           <div className="h-4 md:h-2" />
 
-          <db.SignedOut>
-            <SurveyChartPublic
-              meanFrequency={EXPERIMENTS[0].frequency}
-              title={EXPERIMENTS[0].title}
-            />
-          </db.SignedOut>
-          <db.SignedIn>
-            <SurveyChart
-              meanFrequency={EXPERIMENTS[0].frequency}
-              title={EXPERIMENTS[0].title}
-            />
-          </db.SignedIn>
-
-          <db.SignedOut>
-            <SurveyChartPublic
-              meanFrequency={EXPERIMENTS[1].frequency}
-              title={EXPERIMENTS[1].title}
-            />
-          </db.SignedOut>
-          <db.SignedIn>
-            <SurveyChart
-              meanFrequency={EXPERIMENTS[1].frequency}
-              title={EXPERIMENTS[1].title}
-            />
-          </db.SignedIn>
-
-          <db.SignedOut>
-            <SurveyChartPublic
-              meanFrequency={EXPERIMENTS[2].frequency}
-              title={EXPERIMENTS[2].title}
-            />
-          </db.SignedOut>
-          <db.SignedIn>
-            <SurveyChart
-              meanFrequency={EXPERIMENTS[2].frequency}
-              title={EXPERIMENTS[2].title}
-            />
-          </db.SignedIn>
+          <ExperimentCharts />
 
           <h2>Discrepancies with the original experiment</h2>
 
