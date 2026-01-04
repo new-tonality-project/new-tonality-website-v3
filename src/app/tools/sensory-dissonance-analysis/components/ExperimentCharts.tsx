@@ -18,12 +18,13 @@ import {
 } from '@/components/catalyst/fieldset'
 import { Select } from '@/components/catalyst/select'
 import { CollapsiblePanel } from '@/components'
+import { parseMusicalBackground } from '@/lib'
 
 export function ExperimentCharts() {
   const [settings, setSettings] = useState<ChartSettings>({
     showAverage: false,
     showExponentialFit: false,
-    userType: undefined,
+    userBackground: undefined,
   })
 
   return (
@@ -32,16 +33,6 @@ export function ExperimentCharts() {
         <Fieldset>
           <div className="space-y-6">
             <CheckboxGroup>
-              <CheckboxField>
-                <Checkbox
-                  checked={settings.showAverage}
-                  onChange={(checked) =>
-                    setSettings((prev) => ({ ...prev, showAverage: checked }))
-                  }
-                />
-                <Label>Show average</Label>
-              </CheckboxField>
-
               <CheckboxField>
                 <Checkbox
                   checked={settings.showExponentialFit}
@@ -59,28 +50,25 @@ export function ExperimentCharts() {
             <Field>
               <Label>Filter by musical background</Label>
               <Select
-                value={settings.userType?.toString()}
+                value={settings.userBackground?.toString()}
                 onChange={(e) =>
                   setSettings((prev) => ({
                     ...prev,
-                    userType: e.target.value ? Number.parseInt(e.target.value) : undefined,
+                    userBackground: parseMusicalBackground(e.target.value) ,
                   }))
                 }
               >
                 <option value={undefined}>
                   All participants
                 </option>
-                <option value={MusicalBackground.NaiveListener.toString()}>
+                <option value={MusicalBackground.NaiveListener}>
                   No musical background
                 </option>
-                <option value={MusicalBackground.Musician.toString()}>
+                <option value={MusicalBackground.Musician}>
                   Musicians only
                 </option>
-                <option value={MusicalBackground.Microtonalist.toString()}>
+                <option value={MusicalBackground.Microtonalist}>
                   Microtonalists only
-                </option>
-                <option value={"0"}>
-                  Show none
                 </option>
               </Select>
             </Field>

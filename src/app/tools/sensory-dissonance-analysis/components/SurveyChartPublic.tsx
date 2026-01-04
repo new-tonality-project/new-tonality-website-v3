@@ -8,7 +8,7 @@ import { SignInButton } from '@clerk/nextjs'
 import { ChartHeader } from './ChartHeader'
 import { Button } from '@/components'
 import { baseChartConfig } from './chartConfig'
-import { ChartSettings } from './types'
+import type { ChartSettings } from './types'
 
 export function SurveyChartPublic(props: {
   meanFrequency: number
@@ -20,6 +20,7 @@ export function SurveyChartPublic(props: {
       $: {
         where: {
           meanFrequency: props.meanFrequency,
+          userBackground: props.settings.userBackground,
         },
       },
       intervalDissonanceScores: {
