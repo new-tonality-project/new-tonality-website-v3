@@ -17,6 +17,7 @@ const _schema = i.schema({
       createdAt: i.date(),
       meanFrequency: i.number().indexed(),
       updatedAt: i.date().optional(),
+      userBackground: i.string().indexed().optional(),
     }),
     intervalDissonanceScores: i.entity({
       averageRating: i.number().indexed(),
@@ -45,6 +46,7 @@ const _schema = i.schema({
       shareDataPrivately: i.boolean().indexed(),
       shareDataPublicly: i.boolean().indexed(),
       updatedAt: i.date(),
+      userBackground: i.string().indexed().optional(),
     }),
   },
   links: {
@@ -120,7 +122,7 @@ const _schema = i.schema({
 
 // This helps Typescript display nicer intellisense
 type _AppSchema = typeof _schema
-type AppSchema = _AppSchema
+interface AppSchema extends _AppSchema {}
 const schema: AppSchema = _schema
 
 export type { AppSchema }
