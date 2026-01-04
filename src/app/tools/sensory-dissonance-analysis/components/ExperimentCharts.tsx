@@ -13,25 +13,24 @@ import {
 } from '@/components/catalyst/checkbox'
 import {
   Fieldset,
-  Legend,
   Field,
   Label,
 } from '@/components/catalyst/fieldset'
 import { Select } from '@/components/catalyst/select'
+import { CollapsiblePanel } from '@/components'
 
 export function ExperimentCharts() {
   const [settings, setSettings] = useState<ChartSettings>({
     showAverage: false,
     showExponentialFit: false,
-    userType: MusicalBackground.NaiveListener,
+    userType: undefined,
   })
 
   return (
     <>
-      <div className="mb-8 rounded-lg border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-800 dark:bg-zinc-900/50">
+      <CollapsiblePanel title="Chart Settings" className="mb-8">
         <Fieldset>
-          <Legend>Chart Settings</Legend>
-          <div className="mt-4 space-y-6">
+          <div className="space-y-6">
             <CheckboxGroup>
               <CheckboxField>
                 <Checkbox
@@ -87,7 +86,7 @@ export function ExperimentCharts() {
             </Field>
           </div>
         </Fieldset>
-      </div>
+      </CollapsiblePanel>
       <db.SignedOut>
         <SurveyChartPublic
           meanFrequency={EXPERIMENTS[0].frequency}
