@@ -10,6 +10,7 @@ import {
 } from '@/components'
 import { SurveyChart, SurveyChartPublic } from './components'
 import { UnfinishedExperimentsModal } from './components/UnfinishedExperimentsModal'
+import { FirefoxWarningModal } from './components/FirefoxWarningModal'
 import { db } from '@/db'
 import { TextLink } from '@/components/catalyst/text'
 import { SOCIAL_MEDIA_LINKS } from '@/lib'
@@ -18,6 +19,7 @@ import { EXPERIMENTS } from './utils'
 export default function DissonanceSurveyPage() {
   return (
     <Container className="mt-16 lg:mt-32">
+      <FirefoxWarningModal />
       <db.SignedIn>
         <UnfinishedExperimentsModal />
       </db.SignedIn>
