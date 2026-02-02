@@ -218,7 +218,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
         },
       },
       series,
-    } as Highcharts.Options
+    }
   }, [graphs, selectedPoint, handlePointClick])
 
   if (userGraph.isLoading || otherGraphs.isLoading || userSettings.isLoading) {
@@ -233,7 +233,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
     <div className="relative flex w-full flex-col items-center">
       <div className="w-full overflow-x-auto lg:overflow-x-visible">
         <div className="min-w-[600px] lg:w-full lg:min-w-0">
-          <Chart highcharts={Highcharts} options={chartOptions} />
+          <Chart options={chartOptions as Highcharts.Options} />
         </div>
       </div>
 
