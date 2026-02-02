@@ -116,12 +116,13 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
 
     synthRef.current.releaseAll()
 
-    if (f1 !== f2) {
-      synthRef.current.play({ pitch: f1, velocity: 0.5 })
-      synthRef.current.play({ pitch: f2, velocity: 0.5 })
-    } else {
-      synthRef.current.play({ pitch: f1, velocity: 0.5 })
-    }
+    synthRef.current.update([{
+      partials: [
+        { rate: f1, amplitude: 1 }, { rate: f2, amplitude: 1 }
+      ]
+    }])
+
+    synthRef.current.play({ pitch: 1, velocity: 0.5 })
   }, [selectedPoint, props.meanFrequency])
 
   const handlePointClick = useCallback(
