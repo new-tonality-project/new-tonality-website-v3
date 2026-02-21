@@ -19,11 +19,14 @@ import {
 import { Select } from '@/components/catalyst/select'
 import { CollapsiblePanel } from '@/components'
 import { parseMusicalBackground } from '@/lib'
+import { DissonanceCurveControls } from './DissonanceCurveControls'
+import { SETHARES_DISSONANCE_PARAMS } from 'sethares-dissonance'
 
 export function ExperimentCharts() {
   const [settings, setSettings] = useState<ChartSettings>({
     showAverage: false,
     showExponentialFit: false,
+    x_star: SETHARES_DISSONANCE_PARAMS.x_star,
     userBackground: undefined,
   })
 
@@ -32,20 +35,10 @@ export function ExperimentCharts() {
       <CollapsiblePanel title="Chart Settings" className="mb-8">
         <Fieldset>
           <div className="space-y-6">
-            <CheckboxGroup>
-              <CheckboxField>
-                <Checkbox
-                  checked={settings.showExponentialFit}
-                  onChange={(checked) =>
-                    setSettings((prev) => ({
-                      ...prev,
-                      showExponentialFit: checked,
-                    }))
-                  }
-                />
-                <Label>Show exponential fit</Label>
-              </CheckboxField>
-            </CheckboxGroup>
+            <DissonanceCurveControls
+              value={settings}
+              onChange={setSettings}
+            />
 
             <Field>
               <Label>Filter by musical background</Label>
@@ -54,7 +47,7 @@ export function ExperimentCharts() {
                 onChange={(e) =>
                   setSettings((prev) => ({
                     ...prev,
-                    userBackground: parseMusicalBackground(e.target.value) ,
+                    userBackground: parseMusicalBackground(e.target.value),
                   }))
                 }
               >

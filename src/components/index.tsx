@@ -1,5 +1,6 @@
 export * from "./ArticleLayout"
 export * from "./Button"
+export * from "./DragNumberInput"
 export * from "./Card"
 export * from "./CollapsibleDescription"
 export * from "./CollapsiblePanel"

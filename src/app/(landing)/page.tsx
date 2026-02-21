@@ -10,7 +10,7 @@ export default async function Home() {
     <>
       <Container className="pt-30">
         <div className="flex w-full flex-col justify-between gap-12 md:flex-row">
-          <div className="flex max-w-md flex-grow flex-col justify-center px-7 text-end">
+          <div className="flex max-w-md flex-grow flex-col justify-center px-7 text-left">
             <h1 className="text-4xl font-normal tracking-wide text-zinc-800 sm:text-6xl dark:text-zinc-100">
               New Tonality
             </h1>
