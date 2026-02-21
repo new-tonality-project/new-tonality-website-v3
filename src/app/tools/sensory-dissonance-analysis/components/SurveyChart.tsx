@@ -10,13 +10,32 @@ import { Survey } from './Survey'
 import { ChartHeader } from './ChartHeader'
 import { getIntervalFrequencies } from '@/lib'
 import { baseChartConfig } from './chartConfig'
+import { useDissonanceCurve } from '@/hooks'
+import { Spectrum } from 'tuning-core'
+import type { DissonanceCurveParams } from './DissonanceCurveControls'
 
-export function SurveyChart(props: { meanFrequency: number; title: string }) {
+export function SurveyChart(props: {
+  meanFrequency: number
+  title: string
+  dissonanceParams: DissonanceCurveParams
+}) {
   const [surveyOpen, setSurveyOpen] = useState(false)
   const [selectedPoint, setSelectedPoint] = useState<Highcharts.Point | null>(
     null,
   )
   const synthRef = useRef<AdditiveSynth | null>(null)
+
+  const dissonanceCurveOptions = useMemo(
+    () => ({
+      context: Spectrum.harmonic(1, props.meanFrequency),
+      complement: Spectrum.harmonic(1, props.meanFrequency),
+      start: 1,
+      end: 2,
+      ...props.dissonanceParams,
+    }),
+    [props.meanFrequency, props.dissonanceParams]
+  )
+  const dissonanceCurve = useDissonanceCurve(dissonanceCurveOptions)
   const user = db.useUser()
   const userSettings = db.useQuery({
     userSettings: {
@@ -143,10 +162,22 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
   const chartOptions = useMemo(() => {
     const series: Highcharts.SeriesOptionsType[] = []
 
+    series.push({
+      type: 'spline',
+      name: 'Theoretical curve',
+      yAxis: "dissonance-curve",
+      data: dissonanceCurve.plotCents(),
+      color: 'red',
+      lineWidth: 1,
+      enableMouseTracking: false,
+      marker: { enabled: false },
+    })
+
     graphs.other?.forEach((graph, index) => {
       series.push({
         type: 'spline',
         name: index === 0 ? 'Other participants' : undefined,
+        yAxis: "dissonance-score",
         data: graph.points.map((point) => [point.x, point.y]),
         lineWidth: 1,
         opacity: 0.5,
@@ -162,6 +193,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
       series.push({
         type: 'spline',
         name: 'Your result',
+        yAxis: "dissonance-score",
         data: graph.points.map((point) => {
           const isSelected =
             selectedPoint &&
@@ -194,6 +226,28 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
 
     return {
       ...baseChartConfig,
+      yAxis: [
+        {
+          id: 'dissonance-score',
+          title: { text: 'Dissonance score', rotation: -90 },
+          min: 1,
+          max: 7,
+          tickInterval: 1,
+          gridLineColor: '#ccc',
+          gridLineDashStyle: 'Dash',
+          alignTicks: false,
+
+        },
+        {
+          id: 'dissonance-curve',
+          min: 0,
+          max: dissonanceCurve.maxDissonance,
+          opposite: true,
+          visible: false,
+          gridLineWidth: 0,
+          allowDecimals: true, 
+        },
+      ],
       credits: {
         enabled: graphs.user && graphs.user.length > 0 ? true : false,
         text: '* clicking on a point will play the interval',
@@ -219,7 +273,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
       },
       series,
     }
-  }, [graphs, selectedPoint, handlePointClick])
+  }, [graphs, selectedPoint, handlePointClick, dissonanceCurve])
 
   if (userGraph.isLoading || otherGraphs.isLoading || userSettings.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />

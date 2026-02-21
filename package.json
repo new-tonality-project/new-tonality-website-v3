@@ -43,7 +43,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "remark-gfm": "^4.0.1",
-    "sethares-dissonance": "^2.0.2",
+    "sethares-dissonance": "^2.1.0",
     "tailwindcss": "^4.1.13",
     "tuning-core": "^1.1.0",
     "typescript": "^5.8.3",

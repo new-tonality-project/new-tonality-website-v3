@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import {
   Container,
   Prose,
@@ -8,7 +9,13 @@ import {
   YouTubeIcon,
   MailIcon,
 } from '@/components'
-import { SurveyChart, SurveyChartPublic } from './components'
+import {
+  SurveyChart,
+  SurveyChartPublic,
+  DissonanceCurveControls,
+  DEFAULT_PARAMS,
+  type DissonanceCurveParams,
+} from './components'
 import { UnfinishedExperimentsModal } from './components/UnfinishedExperimentsModal'
 import { FirefoxWarningModal } from './components/FirefoxWarningModal'
 import { db } from '@/db'
@@ -17,6 +24,9 @@ import { SOCIAL_MEDIA_LINKS } from '@/lib'
 import { EXPERIMENTS } from './utils'
 
 export default function DissonanceSurveyPage() {
+  const [dissonanceParams, setDissonanceParams] =
+    useState<DissonanceCurveParams>(DEFAULT_PARAMS)
+
   return (
     <Container className="mt-16 lg:mt-32">
       <FirefoxWarningModal />
@@ -72,16 +82,25 @@ export default function DissonanceSurveyPage() {
 
           <div className="h-4 md:h-2" />
 
+          <div className="mb-6">
+            <DissonanceCurveControls
+              value={dissonanceParams}
+              onChange={setDissonanceParams}
+            />
+          </div>
+
           <db.SignedOut>
             <SurveyChartPublic
               meanFrequency={EXPERIMENTS[0].frequency}
               title={EXPERIMENTS[0].title}
+              dissonanceParams={dissonanceParams}
             />
           </db.SignedOut>
           <db.SignedIn>
             <SurveyChart
               meanFrequency={EXPERIMENTS[0].frequency}
               title={EXPERIMENTS[0].title}
+              dissonanceParams={dissonanceParams}
             />
           </db.SignedIn>
 
@@ -89,12 +108,14 @@ export default function DissonanceSurveyPage() {
             <SurveyChartPublic
               meanFrequency={EXPERIMENTS[1].frequency}
               title={EXPERIMENTS[1].title}
+              dissonanceParams={dissonanceParams}
             />
           </db.SignedOut>
           <db.SignedIn>
             <SurveyChart
               meanFrequency={EXPERIMENTS[1].frequency}
               title={EXPERIMENTS[1].title}
+              dissonanceParams={dissonanceParams}
             />
           </db.SignedIn>
 
@@ -102,12 +123,14 @@ export default function DissonanceSurveyPage() {
             <SurveyChartPublic
               meanFrequency={EXPERIMENTS[2].frequency}
               title={EXPERIMENTS[2].title}
+              dissonanceParams={dissonanceParams}
             />
           </db.SignedOut>
           <db.SignedIn>
             <SurveyChart
               meanFrequency={EXPERIMENTS[2].frequency}
               title={EXPERIMENTS[2].title}
+              dissonanceParams={dissonanceParams}
             />
           </db.SignedIn>
 
