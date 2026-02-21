@@ -58,22 +58,12 @@ export function SurveyChartPublic(props: {
   const dissonanceCurve = useDissonanceCurve(dissonanceCurveOptions)
 
   const chartOptions = useMemo(() => {
-    const series: Highcharts.SeriesOptionsType[] = []
-
-    series.push({
-      type: 'line',
-      name: 'Theoretical curve',
-      data: dissonanceCurve.plotCents(),
-      color: 'red',
-      lineWidth: 2,
-      yAxis: 1,
-      enableMouseTracking: false,
-      marker: { enabled: false },
-    });
+    const series: Highcharts.SeriesOptionsType[] = [];
 
     (graphs || []).forEach((graph, index) => {
       series.push({
         type: 'spline',
+        yAxis: "dissonance-score",
         data: graph.points.map((point) => [point.x, point.y]),
         name: index === 0 ? 'Other participants' : undefined,
         lineWidth: 1,
@@ -85,6 +75,19 @@ export function SurveyChartPublic(props: {
         },
       })
     })
+
+    if (props.settings.showExponentialFit) {
+      series.push({
+        type: 'spline',
+        name: 'Theoretical fit',
+        yAxis: "dissonance-curve",
+        data: dissonanceCurve.plotCents(),
+        color: 'red',
+        lineWidth: 2,
+        enableMouseTracking: false,
+        marker: { enabled: false },
+      });
+    }
 
     return {
       ...baseChartConfig,
@@ -115,7 +118,7 @@ export function SurveyChartPublic(props: {
       },
       series,
     } as Highcharts.Options
-  }, [graphs, dissonanceCurve])
+  }, [graphs, dissonanceCurve, props.settings])
 
   if (allGraphs.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />

@@ -162,17 +162,6 @@ export function SurveyChart(props: {
   const chartOptions = useMemo(() => {
     const series: Highcharts.SeriesOptionsType[] = []
 
-    series.push({
-      type: 'spline',
-      name: 'Theoretical curve',
-      yAxis: "dissonance-curve",
-      data: dissonanceCurve.plotCents(),
-      color: 'red',
-      lineWidth: 1,
-      enableMouseTracking: false,
-      marker: { enabled: false },
-    })
-
     graphs.other?.forEach((graph, index) => {
       series.push({
         type: 'spline',
@@ -224,6 +213,19 @@ export function SurveyChart(props: {
       })
     })
 
+    if (props.settings.showExponentialFit) {
+      series.push({
+        type: 'spline',
+        name: 'Theoretical fit',
+        yAxis: "dissonance-curve",
+        data: dissonanceCurve.plotCents(),
+        color: 'red',
+        lineWidth: 1,
+        enableMouseTracking: false,
+        marker: { enabled: false },
+      })
+    }
+
     return {
       ...baseChartConfig,
       yAxis: [
@@ -245,7 +247,7 @@ export function SurveyChart(props: {
           opposite: true,
           visible: false,
           gridLineWidth: 0,
-          allowDecimals: true, 
+          allowDecimals: true,
         },
       ],
       credits: {

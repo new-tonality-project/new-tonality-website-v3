@@ -20,6 +20,7 @@ export type DragNumberInputProps = {
   whole?: boolean
   nonResettable?: boolean
   className?: string
+  disabled?: boolean
 }
 
 function clamp(num: number, min: number, max: number, whole: boolean) {
@@ -49,6 +50,7 @@ export function DragNumberInput({
   whole = false,
   nonResettable = false,
   className,
+  disabled = false,
 }: DragNumberInputProps) {
   const isControlled = controlledValue !== undefined
   const [internalValue, setInternalValue] = useState(defaultValue)
@@ -214,12 +216,21 @@ export function DragNumberInput({
   return (
     <div
       className={clsx(
-        'group relative flex max-w-fit cursor-ns-resize items-center gap-1 pl-3 pr-2 py-1 text-xs rounded-lg border border-gray-200',
-        'hover:border-gray-300',
+        'group relative flex max-w-fit items-center gap-1 pl-3 pr-2 py-1 text-xs rounded-lg bg-white border border-gray-200',
+        disabled
+          ? 'cursor-not-allowed opacity-60'
+          : 'cursor-ns-resize hover:border-gray-300',
         className
       )}
-      onPointerDown={pointerDown}
+      onPointerDown={disabled ? undefined : pointerDown}
     >
+            <span
+        className="flex mr-1 shrink-0 flex-col items-center gap-0 opacity-60 transition-[gap] duration-200 group-hover:gap-0.5"
+        aria-hidden
+      >
+        <ChevronDownIcon className="size-2.5 rotate-180" stroke="currentColor" />
+        <ChevronDownIcon className="size-2.5" stroke="currentColor" />
+      </span>
       <span className="select-none">{label} =</span>
       <input
         type="number"
@@ -228,17 +239,12 @@ export function DragNumberInput({
         onChange={handleInputChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        className="w-12 cursor-ns-resize border-none bg-transparent outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        disabled={disabled}
+        className="w-12 border-none bg-transparent outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none disabled:cursor-not-allowed"
         style={{ width: `${inputWidth}ch` }}
       />
-      <span
-        className="flex -ml-1 shrink-0 flex-col items-center gap-0 opacity-60 transition-[gap] duration-200 group-hover:gap-0.5"
-        aria-hidden
-      >
-        <ChevronDownIcon className="size-2.5 rotate-180" stroke="currentColor" />
-        <ChevronDownIcon className="size-2.5" stroke="currentColor" />
-      </span>
-      {showReset && (
+
+      {showReset && !disabled && (
         <button
           type="button"
           onClick={reset}

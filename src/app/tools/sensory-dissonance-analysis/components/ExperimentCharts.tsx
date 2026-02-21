@@ -25,7 +25,7 @@ import { SETHARES_DISSONANCE_PARAMS } from 'sethares-dissonance'
 export function ExperimentCharts() {
   const [settings, setSettings] = useState<ChartSettings>({
     showAverage: false,
-    showExponentialFit: false,
+    showExponentialFit: true,
     x_star: SETHARES_DISSONANCE_PARAMS.x_star,
     userBackground: undefined,
   })
@@ -34,12 +34,7 @@ export function ExperimentCharts() {
     <>
       <CollapsiblePanel title="Chart Settings" className="mb-8">
         <Fieldset>
-          <div className="space-y-6">
-            <DissonanceCurveControls
-              value={settings}
-              onChange={setSettings}
-            />
-
+          <div className="space-y-6 pb-6">
             <Field>
               <Label>Filter by musical background</Label>
               <Select
@@ -66,6 +61,10 @@ export function ExperimentCharts() {
               </Select>
             </Field>
           </div>
+          <DissonanceCurveControls
+            value={settings}
+            onChange={setSettings}
+          />
         </Fieldset>
       </CollapsiblePanel>
       <db.SignedOut>
