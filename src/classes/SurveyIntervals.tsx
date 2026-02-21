@@ -1,5 +1,5 @@
 import type { IntervalDissonanceScore, PlotPoint } from '@/lib'
-import { centsToRatio } from 'sethares-dissonance'
+import { centsToRatio } from 'tuning-core'
 
 export type SurveyIntervalScore = Omit<
   IntervalDissonanceScore,
@@ -93,7 +93,7 @@ export class SurveyIntervals {
   }
 
   get valuesAsRatios() {
-    return this.values.map((val) => centsToRatio(val))
+    return this.values.map((val) => centsToRatio(val).valueOf())
   }
 
   get plotData() {

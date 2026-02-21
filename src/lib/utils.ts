@@ -1,9 +1,9 @@
 import { debounce, round } from 'lodash-es'
-import { centsToRatio } from 'sethares-dissonance'
+import { centsToRatio } from 'tuning-core'
 
 export function formatDate(dateString: string) {
   return new Date(`${dateString}T00:00:00Z`).toLocaleDateString('en-US', {
-    day: 'numeric',
+    day: 'numeric', 
     month: 'long',
     year: 'numeric',
     timeZone: 'UTC',
@@ -24,7 +24,7 @@ export function debounceTransaction<T extends (...args: any[]) => any>(
 }
 
 export function getIntervalFrequencies(interval: number, meanFrequency: number) {
-  const ratio = centsToRatio(interval)
+  const ratio = centsToRatio(interval).valueOf()
   const f_1 = round(meanFrequency / Math.sqrt(ratio), 3)
   const f_2 = round(ratio * f_1, 3)
   return [f_1, f_2] as [number, number]
