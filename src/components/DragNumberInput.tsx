@@ -248,7 +248,7 @@ export function DragNumberInput({
         <button
           type="button"
           onClick={reset}
-          className="absolute right-0.5 top-0.5 flex size-[18px] -translate-y-1/2 translate-x-1/2 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white hover:bg-gray-100"
+          className="absolute right-1 top-1 flex size-[18px] -translate-y-1/2 translate-x-1/2 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white hover:bg-gray-100"
           aria-label="Reset to default"
         >
           <CloseIcon className="size-[12px]" stroke="currentColor" />

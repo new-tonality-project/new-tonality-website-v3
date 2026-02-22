@@ -17,21 +17,23 @@ export function DissonanceCurveControls({
   onChange,
 }: DissonanceCurveControlsProps) {
   return (
-    <div className="flex items-center gap-6 flex-wrap w-full lg:max-w-none">
-        <CheckboxField>
-          <Checkbox
-            checked={value.showExponentialFit}
-            onChange={(checked) =>
-              onChange(
-                {
-                  ...value,
-                  showExponentialFit: checked,
-                }
-              )
-            }
-          />
-          <Label className="text-sm">Show exponential fit</Label>
-        </CheckboxField>
+    <div className="flex items-start gap-8 w-full lg:max-w-none">
+      <CheckboxField className="min-w-fit">
+        <Checkbox
+          checked={value.showExponentialFit}
+          onChange={(checked) =>
+            onChange(
+              {
+                ...value,
+                showExponentialFit: checked,
+              }
+            )
+          }
+        />
+        <Label className="text-sm">Show theoretical fit</Label>
+      </CheckboxField>
+      <div className="flex items-center gap-2 flex-wrap grow lg:max-w-none">
+
 
       <DragNumberInput
         defaultValue={SETHARES_DISSONANCE_PARAMS.x_star}
@@ -43,6 +45,65 @@ export function DissonanceCurveControls({
         label="x*"
         onChange={(x_star) => onChange({ ...value, x_star })}
       />
+
+      <DragNumberInput
+        defaultValue={SETHARES_DISSONANCE_PARAMS.b1}
+        value={value.b1}
+        disabled={!value.showExponentialFit}
+        min={0.01}
+        minStep={0.01}
+        max={10}
+        valueRange={1}
+        label="b1"
+        onChange={(b1) => onChange({ ...value, b1 })}
+      />
+
+      <DragNumberInput
+        defaultValue={SETHARES_DISSONANCE_PARAMS.b2}
+        value={value.b2}
+        disabled={!value.showExponentialFit}
+        min={0.01}
+        minStep={0.01}
+        max={10}
+        valueRange={1}
+        label="b2"
+        onChange={(b2) => onChange({ ...value, b2 })}
+      />
+
+      <DragNumberInput
+        defaultValue={SETHARES_DISSONANCE_PARAMS.s1}
+        value={value.s1}
+        disabled={!value.showExponentialFit}
+        min={0.001}
+        max={1}
+        valueRange={0.1}
+        label="s1"
+        onChange={(s1) => onChange({ ...value, s1 })}
+      />
+
+      <DragNumberInput
+        defaultValue={SETHARES_DISSONANCE_PARAMS.s2}
+        value={value.s2}
+        disabled={!value.showExponentialFit}
+        min={0.1}
+        minStep={0.1}
+        max={100}
+        valueRange={10}
+        label="s2"
+        onChange={(s2) => onChange({ ...value, s2 })}
+      />
+      <DragNumberInput
+        defaultValue={SETHARES_DISSONANCE_PARAMS.totalContribution}
+        value={value.totalContribution}
+        disabled={!value.showExponentialFit}
+        min={0.001}
+        max={2}
+        valueRange={0.1}
+        label="A"
+        onChange={(totalContribution) => onChange({ ...value, totalContribution })}
+      />
+      </div>
+
     </div>
   )
 }

@@ -245,9 +245,9 @@ export function SurveyChart(props: {
           min: 0,
           max: dissonanceCurve.maxDissonance,
           opposite: true,
-          visible: false,
+          visible: props.settings.showExponentialFit,
           gridLineWidth: 0,
-          allowDecimals: true,
+          title: { text: "Sensory dissonance D(f)" },
         },
       ],
       credits: {

@@ -26,8 +26,8 @@ export function ExperimentCharts() {
   const [settings, setSettings] = useState<ChartSettings>({
     showAverage: false,
     showExponentialFit: true,
-    x_star: SETHARES_DISSONANCE_PARAMS.x_star,
     userBackground: undefined,
+    ...SETHARES_DISSONANCE_PARAMS,
   })
 
   return (
