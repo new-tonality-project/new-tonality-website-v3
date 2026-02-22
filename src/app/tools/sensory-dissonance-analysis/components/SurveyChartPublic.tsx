@@ -52,6 +52,9 @@ export function SurveyChartPublic(props: {
       start: 1,
       end: 2,
       ...props.settings,
+      secondOrderBeating: props.settings.showSecondOrderBeating
+        ? props.settings.secondOrderBeating
+        : undefined,
     }),
     [props.meanFrequency, props.settings]
   )

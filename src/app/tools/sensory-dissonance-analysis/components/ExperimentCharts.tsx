@@ -26,6 +26,7 @@ export function ExperimentCharts() {
   const [settings, setSettings] = useState<ChartSettings>({
     showAverage: false,
     showExponentialFit: true,
+    showSecondOrderBeating: false,
     userBackground: undefined,
     ...SETHARES_DISSONANCE_PARAMS,
   })

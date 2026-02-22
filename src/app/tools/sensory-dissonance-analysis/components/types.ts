@@ -1,9 +1,10 @@
 import { MusicalBackground } from '@/lib/types'
-import type { SETHARES_DISSONANCE_PARAMS } from 'sethares-dissonance'
+import type { DissonanceParams } from 'sethares-dissonance'
 
-export type ChartSettings = Partial<typeof SETHARES_DISSONANCE_PARAMS> & {
+export type ChartSettings = Partial<DissonanceParams> & {
   showAverage: boolean
   showExponentialFit: boolean
+  showSecondOrderBeating: boolean
   userBackground: MusicalBackground | undefined
 }
 
