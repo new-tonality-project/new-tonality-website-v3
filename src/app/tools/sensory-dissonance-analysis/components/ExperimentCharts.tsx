@@ -7,11 +7,6 @@ import { EXPERIMENTS } from '../utils'
 import { MusicalBackground } from '@/lib/types'
 import type { ChartSettings } from './types'
 import {
-  CheckboxGroup,
-  CheckboxField,
-  Checkbox,
-} from '@/components/catalyst/checkbox'
-import {
   Fieldset,
   Field,
   Label,
@@ -26,8 +21,13 @@ export function ExperimentCharts() {
   const [settings, setSettings] = useState<ChartSettings>({
     showAverage: false,
     showExponentialFit: true,
-    showSecondOrderBeating: false,
     userBackground: undefined,
+    firstOrderContribution: 1,
+    secondOrderContribution: 0,
+    thirdOrderContribution: 0,
+    phantomHarmonicsNumber: 0,
+    start: 1,
+    end: 2,
     ...SETHARES_DISSONANCE_PARAMS,
   })
 

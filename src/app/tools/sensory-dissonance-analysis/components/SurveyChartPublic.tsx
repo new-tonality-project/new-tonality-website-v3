@@ -11,6 +11,10 @@ import { Button } from '@/components'
 import { baseChartConfig } from './chartConfig'
 import type { ChartSettings } from './types'
 import { useDissonanceCurve } from '@/hooks'
+import {
+  SETHARES_DISSONANCE_PARAMS,
+  type DissonanceCurveOptions,
+} from 'sethares-dissonance'
 
 export function SurveyChartPublic(props: {
   meanFrequency: number
@@ -45,19 +49,14 @@ export function SurveyChartPublic(props: {
     }))
   }, [allGraphs])
 
-  const dissonanceCurveOptions = useMemo(
-    () => ({
-      context: Spectrum.harmonic(1, props.meanFrequency),
-      complement: Spectrum.harmonic(1, props.meanFrequency),
-      start: 1,
-      end: 2,
-      ...props.settings,
-      secondOrderBeating: props.settings.showSecondOrderBeating
-        ? props.settings.secondOrderBeating
-        : undefined,
-    }),
-    [props.meanFrequency, props.settings]
-  )
+  const dissonanceCurveOptions = useMemo((): DissonanceCurveOptions => ({
+    ...SETHARES_DISSONANCE_PARAMS,
+    ...props.settings,
+    context: Spectrum.harmonic(1, props.meanFrequency),
+    complement: Spectrum.harmonic(1, props.meanFrequency),
+    start: props.settings.start ?? 1,
+    end: props.settings.end ?? 2,
+  }), [props.meanFrequency, props.settings])
   const dissonanceCurve = useDissonanceCurve(dissonanceCurveOptions)
 
   const chartOptions = useMemo(() => {

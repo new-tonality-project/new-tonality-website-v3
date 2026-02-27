@@ -13,6 +13,10 @@ import { baseChartConfig } from './chartConfig'
 import type { ChartSettings } from './types'
 import { useDissonanceCurve } from '@/hooks'
 import { Spectrum } from 'tuning-core'
+import {
+  SETHARES_DISSONANCE_PARAMS,
+  type DissonanceCurveOptions,
+} from 'sethares-dissonance'
 
 export function SurveyChart(props: {
   meanFrequency: number
@@ -25,19 +29,14 @@ export function SurveyChart(props: {
   )
   const synthRef = useRef<AdditiveSynth | null>(null)
 
-  const dissonanceCurveOptions = useMemo(
-    () => ({
-      context: Spectrum.harmonic(1, props.meanFrequency),
-      complement: Spectrum.harmonic(1, props.meanFrequency),
-      start: 1,
-      end: 2,
-      ...props.settings,
-      secondOrderBeating: props.settings.showSecondOrderBeating
-        ? props.settings.secondOrderBeating
-        : undefined,
-    }),
-    [props.meanFrequency, props.settings]
-  )
+  const dissonanceCurveOptions = useMemo((): DissonanceCurveOptions => ({
+    ...SETHARES_DISSONANCE_PARAMS,
+    ...props.settings,
+    context: Spectrum.harmonic(1, props.meanFrequency),
+    complement: Spectrum.harmonic(1, props.meanFrequency),
+    start: props.settings.start ?? 1,
+    end: props.settings.end ?? 2,
+  }), [props.meanFrequency, props.settings])
   const dissonanceCurve = useDissonanceCurve(dissonanceCurveOptions)
   const user = db.useUser()
   const userSettings = db.useQuery({
@@ -278,7 +277,7 @@ export function SurveyChart(props: {
       },
       series,
     }
-  }, [graphs, selectedPoint, handlePointClick, dissonanceCurve])
+  }, [graphs.other, graphs.user, props.settings.showExponentialFit, dissonanceCurve, selectedPoint, handlePointClick])
 
   if (userGraph.isLoading || otherGraphs.isLoading || userSettings.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />

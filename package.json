@@ -43,9 +43,9 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "remark-gfm": "^4.0.1",
-    "sethares-dissonance": "^2.1.0",
+    "sethares-dissonance": "^3.0.0",
     "tailwindcss": "^4.1.13",
-    "tuning-core": "^1.1.0",
+    "tuning-core": "^1.2.0",
     "typescript": "^5.8.3",
     "xstate": "^5.22.0"
   },

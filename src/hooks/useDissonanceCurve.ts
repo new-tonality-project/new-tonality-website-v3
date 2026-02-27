@@ -29,10 +29,7 @@ function createReadOnlyWrapper(curve: DissonanceCurve) {
 export function useDissonanceCurve(
   options: DissonanceCurveOptions
 ) {
-  const [curve] = useState(new DissonanceCurve(options))
-
   return useMemo(() => {
-    curve.recalculate(options)
-    return createReadOnlyWrapper(curve)
-  }, [options, curve])
+    return createReadOnlyWrapper(new DissonanceCurve(options))
+  }, [options])
 }
