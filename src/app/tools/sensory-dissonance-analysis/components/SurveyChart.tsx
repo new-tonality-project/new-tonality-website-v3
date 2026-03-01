@@ -234,9 +234,15 @@ export function SurveyChart(props: {
           min: 0,
           max: dissonanceCurve.maxDissonance,
           opposite: true,
-          visible: props.settings.showExponentialFit,
+          visible: true,
           gridLineWidth: 0,
-          title: { text: "Sensory dissonance D(f)" },
+          title: {
+            text: "Sensory dissonance D(f)",
+            style: { color: props.settings.showExponentialFit ? undefined : 'transparent' },
+          },
+          labels: {
+            style: { color: props.settings.showExponentialFit ? undefined : 'transparent' },
+          },
         },
       ],
       credits: {
