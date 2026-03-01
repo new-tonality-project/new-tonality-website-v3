@@ -49,12 +49,14 @@ export function useChartPlotBounds() {
 export function DissonanceChartOverlay(props: {
   plotBounds: PlotBounds | null
   meanFrequency: number
+  onIntervalChange?: (interval: number | null, mouseY?: number) => void
   xAxisMin?: number
   xAxisMax?: number
 }) {
   const {
     plotBounds,
     meanFrequency,
+    onIntervalChange,
     xAxisMin = DEFAULT_X_AXIS_MIN,
     xAxisMax = DEFAULT_X_AXIS_MAX,
   } = props
@@ -106,11 +108,22 @@ export function DissonanceChartOverlay(props: {
 
   const stopPlaying = useCallback(() => {
     setCurrentInterval(null)
+    onIntervalChange?.(null)
     if (synthRef.current) {
       synthRef.current.releaseAll()
     }
     isActiveRef.current = false
-  }, [])
+  }, [onIntervalChange])
+
+  const getMouseY = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!plotBounds || !overlayRef.current) return undefined
+      const rect = overlayRef.current.getBoundingClientRect()
+      const offsetY = e.clientY - rect.top
+      return plotBounds.top + offsetY
+    },
+    [plotBounds],
+  )
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
@@ -119,11 +132,12 @@ export function DissonanceChartOverlay(props: {
       const interval = mouseXToInterval(e.nativeEvent.offsetX, plotBounds.width)
       const clampedInterval = Math.round(Math.max(xAxisMin, Math.min(xAxisMax, interval)))
       setCurrentInterval(clampedInterval)
+      onIntervalChange?.(clampedInterval, getMouseY(e))
       if (isWithinBounds(interval)) {
         updateSynthForInterval(clampedInterval)
       }
     },
-    [plotBounds, mouseXToInterval, updateSynthForInterval, isWithinBounds, xAxisMin, xAxisMax],
+    [plotBounds, mouseXToInterval, updateSynthForInterval, isWithinBounds, xAxisMin, xAxisMax, onIntervalChange, getMouseY],
   )
 
   const handlePointerMove = useCallback(
@@ -135,11 +149,12 @@ export function DissonanceChartOverlay(props: {
       const interval = mouseXToInterval(offsetX, plotBounds.width)
       const clampedInterval = Math.round(Math.max(xAxisMin, Math.min(xAxisMax, interval)))
       setCurrentInterval(clampedInterval)
+      onIntervalChange?.(clampedInterval, getMouseY(e))
       if (isWithinBounds(interval)) {
         updateSynthForInterval(clampedInterval)
       }
     },
-    [plotBounds, mouseXToInterval, updateSynthForInterval, isWithinBounds, xAxisMin, xAxisMax],
+    [plotBounds, mouseXToInterval, updateSynthForInterval, isWithinBounds, xAxisMin, xAxisMax, onIntervalChange, getMouseY],
   )
 
   const handlePointerUp = useCallback(
@@ -191,12 +206,6 @@ export function DissonanceChartOverlay(props: {
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
-    >
-      {currentInterval !== null && (
-        <span className="pointer-events-none rounded bg-black/80 px-2 py-1 text-sm font-medium text-white">
-          {currentInterval} cents
-        </span>
-      )}
-    </div>
+    />
   )
 }

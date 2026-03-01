@@ -1,7 +1,7 @@
 'use client'
 
 import { db } from '@/db'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Chart } from '@highcharts/react'
 import Highcharts from 'highcharts'
 import { Spectrum } from 'tuning-core'
@@ -53,6 +53,8 @@ export function SurveyChartPublic(props: {
     }))
   }, [allGraphs])
 
+  const [playedInterval, setPlayedInterval] = useState<number | null>(null)
+  const [playedIntervalMouseY, setPlayedIntervalMouseY] = useState<number | undefined>(undefined)
   const { plotBounds, chartEvents } = useChartPlotBounds()
 
   const dissonanceCurveOptions = useMemo((): DissonanceCurveOptions => ({
@@ -103,6 +105,22 @@ export function SurveyChartPublic(props: {
         ...baseChartConfig.chart,
         ...chartEvents,
       },
+      xAxis: {
+        ...baseChartConfig.xAxis,
+        plotBands:
+          playedInterval != null
+            ? [
+                {
+                  from: playedInterval - 7.5,
+                  to: playedInterval + 7.5,
+                  color: 'rgba(255, 0, 0, 0.2)',
+                  borderColor: 'red',
+                  borderWidth: 1,
+                  zIndex: 1,
+                },
+              ]
+            : [],
+      },
       credits: {
         enabled: true,
         text: '* press and drag on the chart to play intervals',
@@ -139,7 +157,7 @@ export function SurveyChartPublic(props: {
       },
       series,
     } as Highcharts.Options
-  }, [graphs, dissonanceCurve, props.settings, chartEvents])
+  }, [graphs, dissonanceCurve, props.settings, chartEvents, playedInterval])
 
   if (allGraphs.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />
@@ -157,7 +175,23 @@ export function SurveyChartPublic(props: {
           <DissonanceChartOverlay
             plotBounds={plotBounds}
             meanFrequency={props.meanFrequency}
+            onIntervalChange={(interval, mouseY) => {
+              setPlayedInterval(interval)
+              setPlayedIntervalMouseY(mouseY)
+            }}
           />
+          {playedInterval != null && plotBounds && playedIntervalMouseY != null && (
+            <div
+              className="pointer-events-none absolute z-10 whitespace-nowrap text-xs font-medium text-red-600"
+              style={{
+                left: plotBounds.left + (playedInterval / 1200) * plotBounds.width,
+                top: playedIntervalMouseY,
+                transform: playedInterval > 600 ? 'translateX(calc(-100% - 12px))' : 'translateX(12px)',
+              }}
+            >
+              {playedInterval} cents
+            </div>
+          )}
         </div>
       </div>
       <ChartHeader

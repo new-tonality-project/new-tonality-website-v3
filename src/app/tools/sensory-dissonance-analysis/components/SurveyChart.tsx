@@ -29,6 +29,8 @@ export function SurveyChart(props: {
   const [selectedPoint, setSelectedPoint] = useState<Highcharts.Point | null>(
     null,
   )
+  const [playedInterval, setPlayedInterval] = useState<number | null>(null)
+  const [playedIntervalMouseY, setPlayedIntervalMouseY] = useState<number | undefined>(undefined)
   const chartRef = useRef<{ chart: Highcharts.Chart; container: HTMLDivElement } | null>(null)
   const { plotBounds, chartEvents } = useChartPlotBounds()
 
@@ -199,6 +201,22 @@ export function SurveyChart(props: {
         ...baseChartConfig.chart,
         ...chartEvents,
       },
+      xAxis: {
+        ...baseChartConfig.xAxis,
+        plotBands:
+          playedInterval != null
+            ? [
+                {
+                  from: playedInterval - 7.5,
+                  to: playedInterval + 7.5,
+                  color: 'rgba(255, 0, 0, 0.2)',
+                  borderColor: 'red',
+                  borderWidth: 1,
+                  zIndex: 1,
+                },
+              ]
+            : [],
+      },
       yAxis: [
         {
           id: 'dissonance-score',
@@ -246,7 +264,7 @@ export function SurveyChart(props: {
       },
       series,
     }
-  }, [graphs.other, graphs.user, props.settings.showExponentialFit, dissonanceCurve, selectedPoint, handlePointClick, chartEvents])
+  }, [graphs.other, graphs.user, props.settings.showExponentialFit, dissonanceCurve, selectedPoint, handlePointClick, chartEvents, playedInterval])
 
   if (userGraph.isLoading || otherGraphs.isLoading || userSettings.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />
@@ -264,7 +282,23 @@ export function SurveyChart(props: {
           <DissonanceChartOverlay
             plotBounds={plotBounds}
             meanFrequency={props.meanFrequency}
+            onIntervalChange={(interval, mouseY) => {
+              setPlayedInterval(interval)
+              setPlayedIntervalMouseY(mouseY)
+            }}
           />
+          {playedInterval != null && plotBounds && playedIntervalMouseY != null && (
+            <div
+              className="pointer-events-none absolute z-10 whitespace-nowrap text-xs font-medium text-red-600"
+              style={{
+                left: plotBounds.left + (playedInterval / 1200) * plotBounds.width,
+                top: playedIntervalMouseY,
+                transform: playedInterval > 600 ? 'translateX(calc(-100% - 12px))' : 'translateX(12px)',
+              }}
+            >
+              {playedInterval} cents
+            </div>
+          )}
         </div>
       </div>
 
