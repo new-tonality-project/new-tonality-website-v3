@@ -92,7 +92,7 @@ export function SurveyChartPublic(props: {
         name: 'Theoretical fit',
         yAxis: "dissonance-curve",
         data: dissonanceCurve.plotCents(),
-        color: 'red',
+        color: 'black',
         lineWidth: 2,
         enableMouseTracking: false,
         marker: { enabled: false },
@@ -143,11 +143,18 @@ export function SurveyChartPublic(props: {
         },
         {
           id: "dissonance-curve",
-          title: { text: undefined },
           min: 0,
+          max: dissonanceCurve.maxDissonance,
           opposite: true,
-          labels: { enabled: false },
+          visible: true,
           gridLineWidth: 0,
+          title: {
+            text: "Sensory dissonance D(f)",
+            style: { color: props.settings.showExponentialFit ? undefined : 'transparent' },
+          },
+          labels: {
+            style: { color: props.settings.showExponentialFit ? undefined : 'transparent' },
+          },
         },
       ],
       plotOptions: {
