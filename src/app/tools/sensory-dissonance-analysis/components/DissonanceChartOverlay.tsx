@@ -32,12 +32,10 @@ export function useChartPlotBounds() {
     updateRef.current = updatePlotBounds
   }, [updatePlotBounds])
 
-  const chartEvents: Highcharts.ChartOptions['chart'] = {
+  const chartEvents: Highcharts.Options['chart'] = {
     events: {
+      // eslint-disable-next-line react-hooks/unsupported-syntax
       load: function (this: Highcharts.Chart) {
-        updateRef.current?.(this)
-      },
-      resize: function (this: Highcharts.Chart) {
         updateRef.current?.(this)
       },
     },

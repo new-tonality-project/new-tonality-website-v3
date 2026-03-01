@@ -259,6 +259,7 @@ export function SurveyChart(props: {
           animation: false,
           point: {
             events: {
+              // eslint-disable-next-line react-hooks/unsupported-syntax
               click: function (this: Highcharts.Point) {
                 if (this.series.name === 'Your result') {
                   handlePointClick(this)

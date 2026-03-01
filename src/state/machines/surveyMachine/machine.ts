@@ -5,6 +5,7 @@ import { SurveyIntervals } from '@/classes'
 import {
   getIntervalFrequencies,
   MusicalBackground,
+  parseMusicalBackground,
   type UserSettings,
 } from '@/lib'
 
@@ -75,17 +76,13 @@ export const surveyMachine = machineSetup.createMachine({
         setMusicalBackground: {
           actions: assign({
             musicalBackground: ({ event }) => {
-              const val = parseInt(event.value)
+              const val = parseMusicalBackground(event.value)
 
-              if (
-                val === MusicalBackground.Microtonalist ||
-                val === MusicalBackground.Musician ||
-                val === MusicalBackground.NaiveListener
-              ) {
+              if (val !== undefined) {
                 return val
               }
 
-              throw new Error('Invalid musical backgroun value')
+              throw new Error('Invalid musical background value')
             },
           }),
         },
