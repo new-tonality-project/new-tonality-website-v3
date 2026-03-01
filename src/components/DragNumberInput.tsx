@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import throttle from 'lodash-es/throttle'
 import debounce from 'lodash-es/debounce'
 import { clsx } from 'clsx'
@@ -58,6 +59,7 @@ export function DragNumberInput({
 
   const [isFocused, setIsFocused] = useState(false)
   const [draftValue, setDraftValue] = useState<string | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
   const fineRef = useRef(false)
   const startYRef = useRef(0)
   const startValueRef = useRef(0)
@@ -136,9 +138,11 @@ export function DragNumberInput({
     (e: React.PointerEvent) => {
       startYRef.current = e.clientY
       startValueRef.current = value
+      setIsDragging(true)
 
       const onPointerMove = (ev: PointerEvent) => pointerMove(ev)
       const onPointerUp = () => {
+        setIsDragging(false)
         window.removeEventListener('pointermove', onPointerMove)
         window.removeEventListener('pointerup', onPointerUp)
       }
@@ -213,8 +217,21 @@ export function DragNumberInput({
 
   const showReset = !nonResettable && value !== defaultValue
 
+  const dragOverlay = isDragging && typeof document !== 'undefined'
+    ? createPortal(
+        <div
+          className="fixed inset-0 z-[9999] cursor-ns-resize select-none touch-none"
+          style={{ userSelect: 'none', WebkitUserSelect: 'none', touchAction: 'none' }}
+          aria-hidden
+        />,
+        document.body
+      )
+    : null
+
   return (
-    <div
+    <>
+      {dragOverlay}
+      <div
       className={clsx(
         'group relative flex max-w-fit items-center gap-1 pl-3 pr-2 py-1 text-xs rounded-lg bg-white border border-gray-200',
         disabled
@@ -239,6 +256,7 @@ export function DragNumberInput({
         onChange={handleInputChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        onPointerDown={(e) => e.stopPropagation()}
         disabled={disabled}
         className="w-12 border-none bg-transparent outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none disabled:cursor-not-allowed"
         style={{ width: `${inputWidth}ch` }}
@@ -248,6 +266,7 @@ export function DragNumberInput({
         <button
           type="button"
           onClick={reset}
+          onPointerDown={(e) => e.stopPropagation()}
           className="absolute right-1 top-1 flex size-[18px] -translate-y-1/2 translate-x-1/2 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white hover:bg-gray-100"
           aria-label="Reset to default"
         >
@@ -255,5 +274,6 @@ export function DragNumberInput({
         </button>
       )}
     </div>
+    </>
   )
 }

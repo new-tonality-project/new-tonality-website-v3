@@ -6,9 +6,6 @@ import { Checkbox, CheckboxField } from '@/components/catalyst/checkbox'
 import { Label } from '@headlessui/react'
 import type { ChartSettings } from './types'
 
-const DEFAULT_START = 1
-const DEFAULT_END = 2
-
 type DissonanceCurveControlsProps = {
   value: ChartSettings
   onChange: (params: ChartSettings) => void
