@@ -15,6 +15,10 @@ import {
   SETHARES_DISSONANCE_PARAMS,
   type DissonanceCurveOptions,
 } from 'sethares-dissonance'
+import {
+  useChartPlotBounds,
+  DissonanceChartOverlay,
+} from './DissonanceChartOverlay'
 
 export function SurveyChartPublic(props: {
   meanFrequency: number
@@ -48,6 +52,8 @@ export function SurveyChartPublic(props: {
       })),
     }))
   }, [allGraphs])
+
+  const { plotBounds, chartEvents } = useChartPlotBounds()
 
   const dissonanceCurveOptions = useMemo((): DissonanceCurveOptions => ({
     ...SETHARES_DISSONANCE_PARAMS,
@@ -93,6 +99,19 @@ export function SurveyChartPublic(props: {
 
     return {
       ...baseChartConfig,
+      chart: {
+        ...baseChartConfig.chart,
+        ...chartEvents,
+      },
+      credits: {
+        enabled: true,
+        text: '* press and drag on the chart to play intervals',
+        style: {
+          fontSize: '12px',
+          fontStyle: 'italic',
+          color: '#999',
+        },
+      },
       yAxis: [
         {
           id: "dissonance-score",
@@ -120,7 +139,7 @@ export function SurveyChartPublic(props: {
       },
       series,
     } as Highcharts.Options
-  }, [graphs, dissonanceCurve, props.settings])
+  }, [graphs, dissonanceCurve, props.settings, chartEvents])
 
   if (allGraphs.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />
@@ -133,8 +152,12 @@ export function SurveyChartPublic(props: {
   return (
     <div className="relative flex w-full flex-col items-center">
       <div className="w-full overflow-x-auto lg:overflow-x-visible">
-        <div className="min-w-[600px] lg:w-full lg:min-w-0">
+        <div className="relative min-w-[600px] lg:w-full lg:min-w-0">
           <Chart highcharts={Highcharts} options={chartOptions} />
+          <DissonanceChartOverlay
+            plotBounds={plotBounds}
+            meanFrequency={props.meanFrequency}
+          />
         </div>
       </div>
       <ChartHeader

@@ -1,14 +1,12 @@
 'use client'
 
 import { db } from '@/db'
-import { useMemo, useState, useCallback, useRef, useEffect } from 'react'
+import { useMemo, useState, useCallback, useRef } from 'react'
 import { Chart } from '@highcharts/react'
 import Highcharts from 'highcharts'
-import { AdditiveSynth } from 'new-tonality-web-synth'
 import { SurveyMachineProvider } from '@/state/machines'
 import { Survey } from './Survey'
 import { ChartHeader } from './ChartHeader'
-import { getIntervalFrequencies } from '@/lib'
 import { baseChartConfig } from './chartConfig'
 import type { ChartSettings } from './types'
 import { useDissonanceCurve } from '@/hooks'
@@ -17,6 +15,10 @@ import {
   SETHARES_DISSONANCE_PARAMS,
   type DissonanceCurveOptions,
 } from 'sethares-dissonance'
+import {
+  useChartPlotBounds,
+  DissonanceChartOverlay,
+} from './DissonanceChartOverlay'
 
 export function SurveyChart(props: {
   meanFrequency: number
@@ -27,7 +29,8 @@ export function SurveyChart(props: {
   const [selectedPoint, setSelectedPoint] = useState<Highcharts.Point | null>(
     null,
   )
-  const synthRef = useRef<AdditiveSynth | null>(null)
+  const chartRef = useRef<{ chart: Highcharts.Chart; container: HTMLDivElement } | null>(null)
+  const { plotBounds, chartEvents } = useChartPlotBounds()
 
   const dissonanceCurveOptions = useMemo((): DissonanceCurveOptions => ({
     ...SETHARES_DISSONANCE_PARAMS,
@@ -107,44 +110,6 @@ export function SurveyChart(props: {
       })),
     }
   }, [userGraph, otherGraphs])
-
-  useEffect(() => {
-    if (typeof AudioContext !== 'undefined' && !synthRef.current) {
-      synthRef.current = new AdditiveSynth({
-        spectrum: [{ partials: [{ rate: 1, amplitude: 0.2 }] }],
-        audioContext: new AudioContext(),
-        adsr: { attack: 0.1, sustain: 1, release: 0.1, decay: 0 },
-      })
-    }
-
-    return () => {
-      if (synthRef.current) {
-        synthRef.current.releaseAll()
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!synthRef.current) return
-
-    if (!selectedPoint) {
-      synthRef.current.releaseAll()
-      return
-    }
-
-    const interval = selectedPoint.x
-    const [f1, f2] = getIntervalFrequencies(interval, props.meanFrequency)
-
-    synthRef.current.releaseAll()
-
-    synthRef.current.update([{
-      partials: [
-        { rate: f1, amplitude: 1 }, { rate: f2, amplitude: 1 }
-      ]
-    }])
-
-    synthRef.current.play({ pitch: 1, velocity: 0.5 })
-  }, [selectedPoint, props.meanFrequency])
 
   const handlePointClick = useCallback(
     (point: Highcharts.Point) => {
@@ -230,6 +195,10 @@ export function SurveyChart(props: {
 
     return {
       ...baseChartConfig,
+      chart: {
+        ...baseChartConfig.chart,
+        ...chartEvents,
+      },
       yAxis: [
         {
           id: 'dissonance-score',
@@ -254,7 +223,7 @@ export function SurveyChart(props: {
       ],
       credits: {
         enabled: graphs.user && graphs.user.length > 0 ? true : false,
-        text: '* clicking on a point will play the interval',
+        text: '* press and drag on the chart to play intervals',
         style: {
           fontSize: '12px',
           fontStyle: 'italic',
@@ -277,7 +246,7 @@ export function SurveyChart(props: {
       },
       series,
     }
-  }, [graphs.other, graphs.user, props.settings.showExponentialFit, dissonanceCurve, selectedPoint, handlePointClick])
+  }, [graphs.other, graphs.user, props.settings.showExponentialFit, dissonanceCurve, selectedPoint, handlePointClick, chartEvents])
 
   if (userGraph.isLoading || otherGraphs.isLoading || userSettings.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />
@@ -290,8 +259,12 @@ export function SurveyChart(props: {
   return (
     <div className="relative flex w-full flex-col items-center">
       <div className="w-full overflow-x-auto lg:overflow-x-visible">
-        <div className="min-w-[600px] lg:w-full lg:min-w-0">
-          <Chart options={chartOptions as Highcharts.Options} />
+        <div className="relative min-w-[600px] lg:w-full lg:min-w-0">
+          <Chart ref={chartRef} options={chartOptions as Highcharts.Options} />
+          <DissonanceChartOverlay
+            plotBounds={plotBounds}
+            meanFrequency={props.meanFrequency}
+          />
         </div>
       </div>
 

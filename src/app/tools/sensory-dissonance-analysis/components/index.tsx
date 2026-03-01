@@ -1,6 +1,7 @@
 export * from './Survey'
 export * from './SurveyChart'
 export * from './SurveyChartPublic'
+export * from './DissonanceChartOverlay'
 export * from './DissonanceCurveControls'
 export * from './SurveyExperiment'
 export * from './SurveyListening'
