@@ -4,19 +4,8 @@ import { AdditiveSynth } from 'new-tonality-web-synth'
 import { SurveyIntervals } from '@/classes'
 import {
   getIntervalFrequencies,
-  MusicalBackground,
   parseMusicalBackground,
-  type UserSettings,
 } from '@/lib'
-
-function getMusicalBackground(
-  userSettings?: UserSettings,
-): MusicalBackground | undefined {
-  if (userSettings?.isMicrotonalist) return MusicalBackground.Microtonalist
-  if (userSettings?.isMusician) return MusicalBackground.Musician
-  if (userSettings?.isNaiveListener) return MusicalBackground.NaiveListener
-  return
-}
 
 // TODO: when exiting survey we get questions reset to defaultContext rather than data from BE. Need to fix this.
 
@@ -29,9 +18,7 @@ export const surveyMachine = machineSetup.createMachine({
       defaultContext.shareDataPrivately,
     shareDataPublicly:
       input.userSettings?.shareDataPublicly ?? defaultContext.shareDataPublicly,
-    musicalBackground:
-      getMusicalBackground(input.userSettings) ??
-      defaultContext.musicalBackground,
+    musicalBackground: parseMusicalBackground(input.userSettings?.userBackground) ?? defaultContext.musicalBackground,
   }),
   initial: 'overview',
   on: {
@@ -97,10 +84,10 @@ export const surveyMachine = machineSetup.createMachine({
         synth:
           typeof AudioContext !== 'undefined'
             ? new AdditiveSynth({
-                spectrum: [{ partials: [{ rate: 1, amplitude: 0.2 }] }],
-                audioContext: new AudioContext(),
-                adsr: { attack: 0.1, sustain: 1, release: 0.1, decay: 0 },
-              })
+              spectrum: [{ partials: [{ rate: 1, amplitude: 0.2 }] }],
+              audioContext: new AudioContext(),
+              adsr: { attack: 0.1, sustain: 1, release: 0.1, decay: 0 },
+            })
             : undefined,
       })),
       on: {

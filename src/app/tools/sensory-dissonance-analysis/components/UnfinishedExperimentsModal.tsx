@@ -15,7 +15,9 @@ import { SurveyMachineProvider } from '@/state/machines'
 import { Survey } from './Survey'
 import { EXPERIMENTS } from '../utils'
 
-export function UnfinishedExperimentsModal() {
+export function UnfinishedExperimentsModal(props: {
+  active: boolean
+}) {
   const user = db.useUser()
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedFrequency, setSelectedFrequency] = useState<number | null>(
@@ -68,7 +70,9 @@ export function UnfinishedExperimentsModal() {
       !hasBeenDismissed
     ) {
       const timer = setTimeout(() => {
-        setModalOpen(true)
+        if (props.active) {
+          setModalOpen(true)
+        }
       }, 3000)
 
       return () => clearTimeout(timer)
@@ -80,6 +84,7 @@ export function UnfinishedExperimentsModal() {
     modalOpen,
     surveyOpen,
     hasBeenDismissed,
+    props.active,
   ])
 
   const handleStartExperiment = (frequency: number) => {

@@ -31,7 +31,7 @@ export function getIntervalFrequencies(interval: number, meanFrequency: number) 
   return [f_1, f_2] as [number, number]
 }
 
-export function parseMusicalBackground(background: string): MusicalBackground | undefined {
+export function parseMusicalBackground(background: string | undefined): MusicalBackground | undefined {
   if (background === MusicalBackground.Microtonalist) return MusicalBackground.Microtonalist
   if (background === MusicalBackground.Musician) return MusicalBackground.Musician
   if (background === MusicalBackground.NaiveListener) return MusicalBackground.NaiveListener

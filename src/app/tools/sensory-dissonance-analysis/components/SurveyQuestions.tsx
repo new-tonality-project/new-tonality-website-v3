@@ -29,7 +29,7 @@ export function SurveyQuestions() {
           <RadioGroup
             name="musical-background"
             className="pb-12"
-            value={state.context.musicalBackground.toString()}
+            value={state.context.musicalBackground}
             onChange={(e) => {
               send({
                 type: 'setMusicalBackground',
@@ -38,7 +38,7 @@ export function SurveyQuestions() {
             }}
           >
             <RadioField>
-              <Radio value={MusicalBackground.NaiveListener.toString()} />
+              <Radio value={MusicalBackground.NaiveListener} />
               <Label>I just enjoy listening to music</Label>
               <Description>
                 I do not sing or play an instrument. I have no formal training
@@ -48,7 +48,7 @@ export function SurveyQuestions() {
             </RadioField>
 
             <RadioField>
-              <Radio value={MusicalBackground.Musician.toString()} />
+              <Radio value={MusicalBackground.Musician} />
               <Label>I am a musician</Label>
               <Description>
                 I can compose or perform music. I do it as a hobby or
@@ -57,7 +57,7 @@ export function SurveyQuestions() {
             </RadioField>
 
             <RadioField>
-              <Radio value={MusicalBackground.Microtonalist.toString()} />
+              <Radio value={MusicalBackground.Microtonalist} />
               <Label>I am a microtonalist</Label>
               <Description>
                 I moved beyond 12TET in my musical journey. I frequently listen

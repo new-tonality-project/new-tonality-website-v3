@@ -23,7 +23,8 @@ import {
 export function SurveyChart(props: {
   meanFrequency: number
   title: string
-  settings: ChartSettings
+  settings: ChartSettings,
+  onTakeSurvey?: (open?: boolean) => void
 }) {
   const [surveyOpen, setSurveyOpen] = useState(false)
   const [selectedPoint, setSelectedPoint] = useState<Highcharts.Point | null>(
@@ -206,15 +207,15 @@ export function SurveyChart(props: {
         plotBands:
           playedInterval != null
             ? [
-                {
-                  from: playedInterval - 7.5,
-                  to: playedInterval + 7.5,
-                  color: 'rgba(255, 0, 0, 0.2)',
-                  borderColor: 'red',
-                  borderWidth: 1,
-                  zIndex: 1,
-                },
-              ]
+              {
+                from: playedInterval - 7.5,
+                to: playedInterval + 7.5,
+                color: 'rgba(255, 0, 0, 0.2)',
+                borderColor: 'red',
+                borderWidth: 1,
+                zIndex: 1,
+              },
+            ]
             : [],
       },
       yAxis: [
@@ -319,7 +320,10 @@ export function SurveyChart(props: {
         title={props.title}
         onTakeSurvey={
           !userGraph.data?.dissonanceGraphs?.length
-            ? () => setSurveyOpen(true)
+            ? () => {
+              setSurveyOpen(true)
+              props.onTakeSurvey?.(true)
+            }
             : undefined
         }
       />

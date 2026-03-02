@@ -17,7 +17,9 @@ import { parseMusicalBackground } from '@/lib'
 import { DissonanceCurveControls } from './DissonanceCurveControls'
 import { SETHARES_DISSONANCE_PARAMS } from 'sethares-dissonance'
 
-export function ExperimentCharts() {
+export function ExperimentCharts(props: {
+  onTakeSurvey?: (open?: boolean) => void
+}) {
   const [settings, setSettings] = useState<ChartSettings>({
     showAverage: false,
     showExponentialFit: true,
@@ -93,18 +95,21 @@ export function ExperimentCharts() {
           meanFrequency={EXPERIMENTS[0].frequency}
           title={EXPERIMENTS[0].title}
           settings={settings}
+          onTakeSurvey={props.onTakeSurvey}
         />
 
         <SurveyChart
           meanFrequency={EXPERIMENTS[1].frequency}
           title={EXPERIMENTS[1].title}
           settings={settings}
+          onTakeSurvey={props.onTakeSurvey}
         />
 
         <SurveyChart
           meanFrequency={EXPERIMENTS[2].frequency}
           title={EXPERIMENTS[2].title}
           settings={settings}
+          onTakeSurvey={props.onTakeSurvey}
         />
       </db.SignedIn>
     </>

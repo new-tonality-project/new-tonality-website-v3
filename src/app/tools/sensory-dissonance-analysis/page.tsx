@@ -14,13 +14,16 @@ import { FirefoxWarningModal } from './components/FirefoxWarningModal'
 import { db } from '@/db'
 import { TextLink } from '@/components/catalyst/text'
 import { SOCIAL_MEDIA_LINKS } from '@/lib'
+import { useState } from 'react'
 
 export default function DissonanceSurveyPage() {
+  const [surveyOpen, setSurveyOpen] = useState(false)
+  
   return (
     <Container className="mt-16 lg:mt-32">
       <FirefoxWarningModal />
       <db.SignedIn>
-        <UnfinishedExperimentsModal />
+        <UnfinishedExperimentsModal active={!surveyOpen} />
       </db.SignedIn>
       <Container>
         <header>
@@ -71,7 +74,7 @@ export default function DissonanceSurveyPage() {
 
           <div className="h-4 md:h-2" />
 
-          <ExperimentCharts />
+          <ExperimentCharts onTakeSurvey={(open) => setSurveyOpen(open ?? false)} />
 
           <h2>Discrepancies with the original experiment</h2>
 
