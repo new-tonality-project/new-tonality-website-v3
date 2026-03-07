@@ -5,13 +5,20 @@ import { db } from '@/db'
 import { MusicalBackground } from '@/lib'
 import { id } from '@instantdb/react'
 
-export async function submitSurvey(args: {
+type SubmitSurveyArgs = {
   scores: SurveyIntervalScore[]
   shareDataPrivately: boolean
   shareDataPublicly: boolean
   musicalBackground: MusicalBackground
   meanFrequency: number
   userId: string
+}
+
+async function updateUserSettings(args: {
+  userId: string
+  musicalBackground: MusicalBackground
+  shareDataPrivately: boolean
+  shareDataPublicly: boolean
 }) {
   const userSettings = await db.queryOnce({
     userSettings: {
@@ -24,6 +31,7 @@ export async function submitSurvey(args: {
   })
 
   const existingUserSettingsId = userSettings.data.userSettings[0]?.id
+  const now = Date.now()
 
   await db.transact(
     db.tx.userSettings[existingUserSettingsId ?? id()]
@@ -36,21 +44,28 @@ export async function submitSurvey(args: {
         userBackground: args.musicalBackground,
         shareDataPrivately: args.shareDataPrivately,
         shareDataPublicly: args.shareDataPublicly,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
+        createdAt: now,
+        updatedAt: now,
       })
       .link({
         $users: args.userId,
       }),
   )
+}
 
+async function createDissonanceGraph(args: {
+  userId: string
+  musicalBackground: MusicalBackground
+  meanFrequency: number
+}): Promise<string> {
   const dissonanceGraphId = id()
+  const now = Date.now()
 
   await db.transact(
     db.tx.dissonanceGraphs[dissonanceGraphId]
       .create({
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
+        createdAt: now,
+        updatedAt: now,
         userBackground: args.musicalBackground,
         meanFrequency: args.meanFrequency,
       })
@@ -59,8 +74,13 @@ export async function submitSurvey(args: {
       }),
   )
 
+  return dissonanceGraphId
+}
 
-
+async function updateUserDissonanceGraphsBackground(args: {
+  userId: string
+  musicalBackground: MusicalBackground
+}) {
   const usersDissonanceGraphs = await db.queryOnce({
     dissonanceGraphs: {
       $: {
@@ -71,40 +91,67 @@ export async function submitSurvey(args: {
     },
   })
 
-  if (usersDissonanceGraphs.data?.dissonanceGraphs.length !== 0) {
-    const transactionBatch1 = []
+  const graphs = usersDissonanceGraphs.data?.dissonanceGraphs ?? []
+  if (graphs.length === 0) return
 
+  const updates = graphs.map((graph) =>
+    db.tx.dissonanceGraphs[graph.id].update({
+      userBackground: args.musicalBackground,
+    }),
+  )
 
-    for (const graph of usersDissonanceGraphs.data?.dissonanceGraphs) {
-      transactionBatch1.push(
-        db.tx.dissonanceGraphs[graph.id].update({
-          userBackground: args.musicalBackground,
-        }),
-      )
-    }
+  await db.transact(updates)
+}
 
-    await db.transact(transactionBatch1)
-  }
+async function createIntervalDissonanceScores(args: {
+  scores: SurveyIntervalScore[]
+  userId: string
+  dissonanceGraphId: string
+  meanFrequency: number
+}) {
+  const now = Date.now()
+  const transactions = args.scores.map((score) =>
+    db.tx.intervalDissonanceScores[id()]
+      .create({
+        ...score,
+        meanFrequency: args.meanFrequency,
+        createdAt: now,
+        updatedAt: now,
+      })
+      .link({
+        $users: args.userId,
+      })
+      .link({
+        dissonanceGraphs: args.dissonanceGraphId,
+      }),
+  )
 
-  const transactionBatch = []
+  await db.transact(transactions)
+}
 
-  for (const score of args.scores) {
-    transactionBatch.push(
-      db.tx.intervalDissonanceScores[id()]
-        .create({
-          ...score,
-          meanFrequency: args.meanFrequency,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-        })
-        .link({
-          $users: args.userId,
-        })
-        .link({
-          dissonanceGraphs: dissonanceGraphId,
-        }),
-    )
-  }
+export async function submitSurvey(args: SubmitSurveyArgs) {
+  await updateUserSettings({
+    userId: args.userId,
+    musicalBackground: args.musicalBackground,
+    shareDataPrivately: args.shareDataPrivately,
+    shareDataPublicly: args.shareDataPublicly,
+  })
 
-  await db.transact(transactionBatch)
+  const dissonanceGraphId = await createDissonanceGraph({
+    userId: args.userId,
+    musicalBackground: args.musicalBackground,
+    meanFrequency: args.meanFrequency,
+  })
+
+  await updateUserDissonanceGraphsBackground({
+    userId: args.userId,
+    musicalBackground: args.musicalBackground,
+  })
+
+  await createIntervalDissonanceScores({
+    scores: args.scores,
+    userId: args.userId,
+    dissonanceGraphId,
+    meanFrequency: args.meanFrequency,
+  })
 }
