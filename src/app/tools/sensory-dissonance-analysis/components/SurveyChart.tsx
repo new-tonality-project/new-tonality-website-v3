@@ -164,8 +164,8 @@ export function SurveyChart(props: {
             marker: {
               enabled: true,
               radius: isSelected ? 6 : 2,
-              fillColor: isSelected ? '#85ffa9' : 'black',
-              lineColor: isSelected ? 'black' : 'black',
+              fillColor: isSelected ? '#85ffa9' : '#000',
+              lineColor: isSelected ? 'black' : '#000',
               lineWidth: isSelected ? 2 : 2,
               symbol: 'circle',
               states: {
@@ -189,8 +189,8 @@ export function SurveyChart(props: {
         name: 'Theoretical fit',
         yAxis: "dissonance-curve",
         data: dissonanceCurve.plotCents(),
-        color: 'red',
-        lineWidth: 1,
+        color: '#0099FF',
+        lineWidth: 2,
         enableMouseTracking: false,
         marker: { enabled: false },
       })
