@@ -5,7 +5,9 @@ export type ChartSettings = Required<DissonanceParams> & {
   showAverage: boolean
   showExponentialFit: boolean
   userBackground: MusicalBackground | undefined
-  start?: number
-  end?: number
+  /** X-axis and dissonance curve range start (cents) */
+  xAxisStart: number
+  /** X-axis and dissonance curve range end (cents) */
+  xAxisEnd: number
 }
 

@@ -28,8 +28,8 @@ export function ExperimentCharts(props: {
     secondOrderContribution: 0,
     thirdOrderContribution: 0,
     phantomHarmonicsNumber: 0,
-    start: 1,
-    end: 2,
+    xAxisStart: 0,
+    xAxisEnd: 1200,
     ...SETHARES_DISSONANCE_PARAMS,
   })
 

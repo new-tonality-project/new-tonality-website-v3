@@ -32,6 +32,28 @@ export function DissonanceCurveControls({
 
       <div className="flex items-center gap-2 flex-wrap grow lg:max-w-none">
         <DragNumberInput
+          defaultValue={0}
+          value={value.xAxisStart}
+          min={-3600}
+          max={Math.max(0, value.xAxisEnd - 1)}
+          minStep={1}
+          valueRange={1000}
+          whole
+          label="Start (cents)"
+          onChange={(xAxisStart) => onChange({ ...value, xAxisStart })}
+        />
+        <DragNumberInput
+          defaultValue={1200}
+          value={value.xAxisEnd}
+          min={Math.min(1200, value.xAxisStart + 1)}
+          max={3600}
+          minStep={1}
+          valueRange={1000}
+          whole
+          label="End (cents)"
+          onChange={(xAxisEnd) => onChange({ ...value, xAxisEnd })}
+        />
+        <DragNumberInput
           defaultValue={SETHARES_DISSONANCE_PARAMS.x_star}
           value={value.x_star}
           disabled={!value.showExponentialFit}
