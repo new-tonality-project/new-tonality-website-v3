@@ -1,6 +1,10 @@
 'use client'
 
-import { DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS } from 'sethares-dissonance'
+import {
+  DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
+  DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
+  DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
+} from 'sethares-dissonance'
 import { DragNumberInput } from '@/components'
 import { Checkbox, CheckboxField } from '@/components/catalyst/checkbox'
 import { Label } from '@headlessui/react'
@@ -200,6 +204,316 @@ export function DissonanceCurveControls({
               />
             </div>
           </div>
+
+          <div className="flex flex-col gap-2">
+            <CheckboxField>
+              <Checkbox
+                checked={(value.secondOrderDissonance.magnitude ?? 0) > 0}
+                onChange={(checked) =>
+                  onChange({
+                    ...value,
+                    secondOrderDissonance: {
+                      ...value.secondOrderDissonance,
+                      magnitude: checked
+                        ? (value.secondOrderDissonance.magnitude ||
+                            DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude)
+                        : 0,
+                    },
+                  })
+                }
+              />
+              <Label className="text-sm">Second order beating contribution</Label>
+            </CheckboxField>
+            {(value.secondOrderDissonance.magnitude ?? 0) > 0 && (
+              <div className="flex items-center gap-2 flex-wrap">
+                  <DragNumberInput
+                    defaultValue={
+                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude
+                    }
+                    value={
+                      value.secondOrderDissonance.magnitude ??
+                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude
+                    }
+                    min={0}
+                    max={2}
+                    minStep={0.01}
+                    valueRange={0.5}
+                    label="Magnitude"
+                    onChange={(magnitude) =>
+                      onChange({
+                        ...value,
+                        secondOrderDissonance: {
+                          ...value.secondOrderDissonance,
+                          magnitude,
+                        },
+                      })
+                    }
+                  />
+                  <DragNumberInput
+                    defaultValue={
+                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.x_star
+                    }
+                    value={
+                      value.secondOrderDissonance.x_star ??
+                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.x_star
+                    }
+                    min={0.001}
+                    max={1}
+                    valueRange={0.1}
+                    label="x*"
+                    onChange={(x_star) =>
+                      onChange({
+                        ...value,
+                        secondOrderDissonance: {
+                          ...value.secondOrderDissonance,
+                          x_star,
+                        },
+                      })
+                    }
+                  />
+                  <DragNumberInput
+                    defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b1}
+                    value={
+                      value.secondOrderDissonance.b1 ??
+                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b1
+                    }
+                    min={0.01}
+                    minStep={0.01}
+                    max={10}
+                    valueRange={1}
+                    label="b1"
+                    onChange={(b1) =>
+                      onChange({
+                        ...value,
+                        secondOrderDissonance: {
+                          ...value.secondOrderDissonance,
+                          b1,
+                        },
+                      })
+                    }
+                  />
+                  <DragNumberInput
+                    defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b2}
+                    value={
+                      value.secondOrderDissonance.b2 ??
+                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b2
+                    }
+                    min={0.01}
+                    minStep={0.01}
+                    max={10}
+                    valueRange={1}
+                    label="b2"
+                    onChange={(b2) =>
+                      onChange({
+                        ...value,
+                        secondOrderDissonance: {
+                          ...value.secondOrderDissonance,
+                          b2,
+                        },
+                      })
+                    }
+                  />
+                  <DragNumberInput
+                    defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s1}
+                    value={
+                      value.secondOrderDissonance.s1 ??
+                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s1
+                    }
+                    min={0.001}
+                    max={1}
+                    valueRange={0.1}
+                    label="s1"
+                    onChange={(s1) =>
+                      onChange({
+                        ...value,
+                        secondOrderDissonance: {
+                          ...value.secondOrderDissonance,
+                          s1,
+                        },
+                      })
+                    }
+                  />
+                  <DragNumberInput
+                    defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s2}
+                    value={
+                      value.secondOrderDissonance.s2 ??
+                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s2
+                    }
+                    min={0.1}
+                    minStep={0.1}
+                    max={100}
+                    valueRange={10}
+                    label="s2"
+                    onChange={(s2) =>
+                      onChange({
+                        ...value,
+                        secondOrderDissonance: {
+                          ...value.secondOrderDissonance,
+                          s2,
+                        },
+                      })
+                    }
+                  />
+              </div>
+            )}
+          </div>
+
+          {(value.secondOrderDissonance.magnitude ?? 0) > 0 && (
+            <div className="flex flex-col gap-2">
+              <CheckboxField>
+                <Checkbox
+                  checked={(value.thirdOrderDissonance.magnitude ?? 0) > 0}
+                  onChange={(checked) =>
+                    onChange({
+                      ...value,
+                      thirdOrderDissonance: {
+                        ...value.thirdOrderDissonance,
+                        magnitude: checked
+                          ? (value.thirdOrderDissonance.magnitude ||
+                              DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitude)
+                          : 0,
+                      },
+                    })
+                  }
+                />
+                <Label className="text-sm">
+                  Third order beating contribution
+                </Label>
+              </CheckboxField>
+              {(value.thirdOrderDissonance.magnitude ?? 0) > 0 && (
+                <div className="flex items-center gap-2 flex-wrap">
+                    <DragNumberInput
+                      defaultValue={
+                        DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitude
+                      }
+                      value={
+                        value.thirdOrderDissonance.magnitude ??
+                        DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitude
+                      }
+                      min={0}
+                      max={2}
+                      minStep={0.01}
+                      valueRange={0.5}
+                      label="Magnitude"
+                      onChange={(magnitude) =>
+                        onChange({
+                          ...value,
+                          thirdOrderDissonance: {
+                            ...value.thirdOrderDissonance,
+                            magnitude,
+                          },
+                        })
+                      }
+                    />
+                    <DragNumberInput
+                      defaultValue={
+                        DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.x_star
+                      }
+                      value={
+                        value.thirdOrderDissonance.x_star ??
+                        DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.x_star
+                      }
+                      min={0.001}
+                      max={1}
+                      valueRange={0.1}
+                      label="x*"
+                      onChange={(x_star) =>
+                        onChange({
+                          ...value,
+                          thirdOrderDissonance: {
+                            ...value.thirdOrderDissonance,
+                            x_star,
+                          },
+                        })
+                      }
+                    />
+                    <DragNumberInput
+                      defaultValue={DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.b1}
+                      value={
+                        value.thirdOrderDissonance.b1 ??
+                        DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.b1
+                      }
+                      min={0.01}
+                      minStep={0.01}
+                      max={10}
+                      valueRange={1}
+                      label="b1"
+                      onChange={(b1) =>
+                        onChange({
+                          ...value,
+                          thirdOrderDissonance: {
+                            ...value.thirdOrderDissonance,
+                            b1,
+                          },
+                        })
+                      }
+                    />
+                    <DragNumberInput
+                      defaultValue={DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.b2}
+                      value={
+                        value.thirdOrderDissonance.b2 ??
+                        DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.b2
+                      }
+                      min={0.01}
+                      minStep={0.01}
+                      max={10}
+                      valueRange={1}
+                      label="b2"
+                      onChange={(b2) =>
+                        onChange({
+                          ...value,
+                          thirdOrderDissonance: {
+                            ...value.thirdOrderDissonance,
+                            b2,
+                          },
+                        })
+                      }
+                    />
+                    <DragNumberInput
+                      defaultValue={DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.s1}
+                      value={
+                        value.thirdOrderDissonance.s1 ??
+                        DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.s1
+                      }
+                      min={0.001}
+                      max={1}
+                      valueRange={0.1}
+                      label="s1"
+                      onChange={(s1) =>
+                        onChange({
+                          ...value,
+                          thirdOrderDissonance: {
+                            ...value.thirdOrderDissonance,
+                            s1,
+                          },
+                        })
+                      }
+                    />
+                    <DragNumberInput
+                      defaultValue={DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.s2}
+                      value={
+                        value.thirdOrderDissonance.s2 ??
+                        DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.s2
+                      }
+                      min={0.1}
+                      minStep={0.1}
+                      max={100}
+                      valueRange={10}
+                      label="s2"
+                      onChange={(s2) =>
+                        onChange({
+                          ...value,
+                          thirdOrderDissonance: {
+                            ...value.thirdOrderDissonance,
+                            s2,
+                          },
+                        })
+                      }
+                    />
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
