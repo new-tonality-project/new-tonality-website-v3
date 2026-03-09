@@ -19,11 +19,13 @@ import {
   useChartPlotBounds,
   DissonanceChartOverlay,
 } from './DissonanceChartOverlay'
+import { getVolumeForFrequency } from '../utils'
 
 export function SurveyChartPublic(props: {
   meanFrequency: number
   title: string
   settings: ChartSettings
+  volume?: number
 }) {
   const allGraphs = db.useQuery({
     dissonanceGraphs: {
@@ -169,7 +171,7 @@ export function SurveyChartPublic(props: {
       },
       series,
     } as Highcharts.Options
-  }, [graphs, dissonanceCurve, props.settings, props.settings.xAxisStart, props.settings.xAxisEnd, chartEvents, playedInterval])
+  }, [graphs, dissonanceCurve, props.settings, chartEvents, playedInterval])
 
   if (allGraphs.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />
@@ -187,6 +189,7 @@ export function SurveyChartPublic(props: {
           <DissonanceChartOverlay
             plotBounds={plotBounds}
             meanFrequency={props.meanFrequency}
+            volume={props.volume ?? getVolumeForFrequency(props.meanFrequency)}
             xAxisMin={props.settings.xAxisStart}
             xAxisMax={props.settings.xAxisEnd}
             onIntervalChange={(interval, mouseY) => {

@@ -19,12 +19,14 @@ import {
   useChartPlotBounds,
   DissonanceChartOverlay,
 } from './DissonanceChartOverlay'
+import { getVolumeForFrequency } from '../utils'
 
 export function SurveyChart(props: {
   meanFrequency: number
   title: string
-  settings: ChartSettings,
+  settings: ChartSettings
   onTakeSurvey?: (open?: boolean) => void
+  volume?: number
 }) {
   const [surveyOpen, setSurveyOpen] = useState(false)
   const [selectedPoint, setSelectedPoint] = useState<Highcharts.Point | null>(
@@ -295,6 +297,7 @@ export function SurveyChart(props: {
           <DissonanceChartOverlay
             plotBounds={plotBounds}
             meanFrequency={props.meanFrequency}
+            volume={props.volume ?? getVolumeForFrequency(props.meanFrequency)}
             xAxisMin={props.settings.xAxisStart}
             xAxisMax={props.settings.xAxisEnd}
             onIntervalChange={(interval, mouseY) => {

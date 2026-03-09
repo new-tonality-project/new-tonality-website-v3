@@ -50,6 +50,7 @@ export function DissonanceChartOverlay(props: {
   onIntervalChange?: (interval: number | null, mouseY?: number) => void
   xAxisMin?: number
   xAxisMax?: number
+  volume?: number
 }) {
   const {
     plotBounds,
@@ -57,6 +58,7 @@ export function DissonanceChartOverlay(props: {
     onIntervalChange,
     xAxisMin = DEFAULT_X_AXIS_MIN,
     xAxisMax = DEFAULT_X_AXIS_MAX,
+    volume = 1,
   } = props
 
   const [currentInterval, setCurrentInterval] = useState<number | null>(null)
@@ -97,11 +99,11 @@ export function DissonanceChartOverlay(props: {
             { rate: f2, amplitude: 1 },
           ],
         }])
-        synthRef.current.play({ pitch: 1, velocity: 0.5 })
+        synthRef.current.play({ pitch: 1, velocity: 0.5 * volume })
         isActiveRef.current = true
       }
     },
-    [meanFrequency, isWithinBounds],
+    [meanFrequency, isWithinBounds, volume],
   )
 
   const stopPlaying = useCallback(() => {
