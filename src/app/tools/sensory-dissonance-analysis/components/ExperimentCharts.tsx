@@ -15,7 +15,12 @@ import { Select } from '@/components/catalyst/select'
 import { CollapsiblePanel } from '@/components'
 import { parseMusicalBackground } from '@/lib'
 import { DissonanceCurveControls } from './DissonanceCurveControls'
-import { SETHARES_DISSONANCE_PARAMS } from 'sethares-dissonance'
+import {
+  DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
+  DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
+  DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
+  DEFAULT_PHANTOM_HARMONICS_NUMBER,
+} from 'sethares-dissonance'
 
 export function ExperimentCharts(props: {
   onTakeSurvey?: (open?: boolean) => void
@@ -24,13 +29,12 @@ export function ExperimentCharts(props: {
     showAverage: false,
     showExponentialFit: true,
     userBackground: undefined,
-    firstOrderContribution: 1,
-    secondOrderContribution: 0,
-    thirdOrderContribution: 0,
-    phantomHarmonicsNumber: 0,
+    firstOrderDissonance: { ...DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS },
+    secondOrderDissonance: { ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS },
+    thirdOrderDissonance: { ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS },
+    phantomHarmonicsNumber: DEFAULT_PHANTOM_HARMONICS_NUMBER,
     xAxisStart: 0,
     xAxisEnd: 1200,
-    ...SETHARES_DISSONANCE_PARAMS,
   })
 
   return (

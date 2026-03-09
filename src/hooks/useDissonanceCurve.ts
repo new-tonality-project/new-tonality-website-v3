@@ -30,6 +30,8 @@ export function useDissonanceCurve(
   options: DissonanceCurveOptions
 ) {
   return useMemo(() => {
-    return createReadOnlyWrapper(new DissonanceCurve(options))
+    const curve = new DissonanceCurve(options)
+    curve.normalize()
+    return createReadOnlyWrapper(curve)
   }, [options])
 }

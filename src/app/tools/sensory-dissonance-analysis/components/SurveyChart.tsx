@@ -11,10 +11,7 @@ import { baseChartConfig } from './chartConfig'
 import type { ChartSettings } from './types'
 import { useDissonanceCurve } from '@/hooks'
 import { Spectrum } from 'tuning-core'
-import {
-  SETHARES_DISSONANCE_PARAMS,
-  type DissonanceCurveOptions,
-} from 'sethares-dissonance'
+import type { DissonanceCurveOptions } from 'sethares-dissonance'
 import {
   useChartPlotBounds,
   DissonanceChartOverlay,
@@ -38,10 +35,16 @@ export function SurveyChart(props: {
   const { plotBounds, chartEvents } = useChartPlotBounds()
 
   const dissonanceCurveOptions = useMemo((): DissonanceCurveOptions => {
-    const { xAxisStart, xAxisEnd, ...rest } = props.settings
+    const {
+      xAxisStart,
+      xAxisEnd,
+      showAverage,
+      showExponentialFit,
+      userBackground,
+      ...dissonanceParams
+    } = props.settings
     return {
-      ...SETHARES_DISSONANCE_PARAMS,
-      ...rest,
+      ...dissonanceParams,
       context: Spectrum.harmonic(1, props.meanFrequency),
       complement: Spectrum.harmonic(1, props.meanFrequency),
       start: Math.pow(2, xAxisStart / 1200),
@@ -240,7 +243,9 @@ export function SurveyChart(props: {
         {
           id: 'dissonance-curve',
           min: 0,
-          max: dissonanceCurve.maxDissonance,
+          max: 1,
+          endOnTick: false,
+          maxPadding: 0,
           opposite: true,
           visible: true,
           gridLineWidth: 0,

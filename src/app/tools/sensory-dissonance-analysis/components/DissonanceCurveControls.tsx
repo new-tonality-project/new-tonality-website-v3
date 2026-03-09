@@ -1,6 +1,6 @@
 'use client'
 
-import { SETHARES_DISSONANCE_PARAMS } from 'sethares-dissonance'
+import { DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS } from 'sethares-dissonance'
 import { DragNumberInput } from '@/components'
 import { Checkbox, CheckboxField } from '@/components/catalyst/checkbox'
 import { Label } from '@headlessui/react'
@@ -54,92 +54,96 @@ export function DissonanceCurveControls({
           onChange={(xAxisEnd) => onChange({ ...value, xAxisEnd })}
         />
         <DragNumberInput
-          defaultValue={SETHARES_DISSONANCE_PARAMS.x_star}
-          value={value.x_star}
+          defaultValue={DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.x_star}
+          value={value.firstOrderDissonance.x_star ?? DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.x_star}
           disabled={!value.showExponentialFit}
           min={0.001}
           max={1}
           valueRange={0.1}
           label="x*"
-          onChange={(x_star) => onChange({ ...value, x_star })}
+          onChange={(x_star) =>
+            onChange({
+              ...value,
+              firstOrderDissonance: {
+                ...value.firstOrderDissonance,
+                x_star,
+              },
+            })
+          }
         />
         <DragNumberInput
-          defaultValue={SETHARES_DISSONANCE_PARAMS.b1}
-          value={value.b1}
+          defaultValue={DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.b1}
+          value={value.firstOrderDissonance.b1 ?? DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.b1}
           disabled={!value.showExponentialFit}
           min={0.01}
           minStep={0.01}
           max={10}
           valueRange={1}
           label="b1"
-          onChange={(b1) => onChange({ ...value, b1 })}
+          onChange={(b1) =>
+            onChange({
+              ...value,
+              firstOrderDissonance: {
+                ...value.firstOrderDissonance,
+                b1,
+              },
+            })
+          }
         />
         <DragNumberInput
-          defaultValue={SETHARES_DISSONANCE_PARAMS.b2}
-          value={value.b2}
+          defaultValue={DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.b2}
+          value={value.firstOrderDissonance.b2 ?? DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.b2}
           disabled={!value.showExponentialFit}
           min={0.01}
           minStep={0.01}
           max={10}
           valueRange={1}
           label="b2"
-          onChange={(b2) => onChange({ ...value, b2 })}
+          onChange={(b2) =>
+            onChange({
+              ...value,
+              firstOrderDissonance: {
+                ...value.firstOrderDissonance,
+                b2,
+              },
+            })
+          }
         />
         <DragNumberInput
-          defaultValue={SETHARES_DISSONANCE_PARAMS.s1}
-          value={value.s1}
+          defaultValue={DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.s1}
+          value={value.firstOrderDissonance.s1 ?? DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.s1}
           disabled={!value.showExponentialFit}
           min={0.001}
           max={1}
           valueRange={0.1}
           label="s1"
-          onChange={(s1) => onChange({ ...value, s1 })}
+          onChange={(s1) =>
+            onChange({
+              ...value,
+              firstOrderDissonance: {
+                ...value.firstOrderDissonance,
+                s1,
+              },
+            })
+          }
         />
         <DragNumberInput
-          defaultValue={SETHARES_DISSONANCE_PARAMS.s2}
-          value={value.s2}
+          defaultValue={DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.s2}
+          value={value.firstOrderDissonance.s2 ?? DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.s2}
           disabled={!value.showExponentialFit}
           min={0.1}
           minStep={0.1}
           max={100}
           valueRange={10}
           label="s2"
-          onChange={(s2) => onChange({ ...value, s2 })}
-        />
-        <DragNumberInput
-          defaultValue={1}
-          value={value.firstOrderContribution}
-          min={0}
-          max={1}
-          minStep={0.01}
-          valueRange={1}
-          label="1st order"
-          onChange={(firstOrderContribution) =>
-            onChange({ ...value, firstOrderContribution })
-          }
-        />
-        <DragNumberInput
-          defaultValue={0}
-          value={value.secondOrderContribution}
-          min={0}
-          max={1}
-          minStep={0.01}
-          valueRange={1}
-          label="2nd order"
-          onChange={(secondOrderContribution) =>
-            onChange({ ...value, secondOrderContribution })
-          }
-        />
-        <DragNumberInput
-          defaultValue={0}
-          value={value.thirdOrderContribution}
-          min={0}
-          max={1}
-          minStep={0.01}
-          valueRange={1}
-          label="3rd order"
-          onChange={(thirdOrderContribution) =>
-            onChange({ ...value, thirdOrderContribution })
+          onChange={(s2) =>
+            onChange({
+              ...value,
+              firstOrderDissonance: {
+                ...value.firstOrderDissonance,
+                s2,
+              },
+            })
           }
         />
         <DragNumberInput
