@@ -13,11 +13,19 @@ import type { ChartSettings } from './types'
 type DissonanceCurveControlsProps = {
   value: ChartSettings
   onChange: (params: ChartSettings) => void
+  secondOrderEnabled: boolean
+  thirdOrderEnabled: boolean
+  onSecondOrderEnabledChange: (enabled: boolean) => void
+  onThirdOrderEnabledChange: (enabled: boolean) => void
 }
 
 export function DissonanceCurveControls({
   value,
   onChange,
+  secondOrderEnabled,
+  thirdOrderEnabled,
+  onSecondOrderEnabledChange,
+  onThirdOrderEnabledChange,
 }: DissonanceCurveControlsProps) {
   return (
     <div className="flex flex-col gap-4 w-full lg:max-w-none pb-8">
@@ -210,23 +218,25 @@ export function DissonanceCurveControls({
           <div className="flex flex-col gap-2">
             <CheckboxField>
               <Checkbox
-                checked={(value.secondOrderDissonance.magnitude ?? 0) > 0}
-                onChange={(checked) =>
-                  onChange({
-                    ...value,
-                    secondOrderDissonance: {
-                      ...value.secondOrderDissonance,
-                      magnitude: checked
-                        ? (value.secondOrderDissonance.magnitude ||
-                            DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude)
-                        : 0,
-                    },
-                  })
-                }
+                checked={secondOrderEnabled}
+                onChange={(checked) => {
+                  onSecondOrderEnabledChange(checked)
+                  if (checked) {
+                    onChange({
+                      ...value,
+                      secondOrderDissonance: {
+                        ...value.secondOrderDissonance,
+                        magnitude:
+                          value.secondOrderDissonance.magnitude ||
+                          DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude,
+                      },
+                    })
+                  }
+                }}
               />
               <Label className="text-sm">Second order beating contribution</Label>
             </CheckboxField>
-            {(value.secondOrderDissonance.magnitude ?? 0) > 0 && (
+            {secondOrderEnabled && (
               <div className="flex items-center gap-2 flex-wrap">
                   <DragNumberInput
                     defaultValue={
@@ -384,29 +394,31 @@ export function DissonanceCurveControls({
             )}
           </div>
 
-          {(value.secondOrderDissonance.magnitude ?? 0) > 0 && (
+          {secondOrderEnabled && (
             <div className="flex flex-col gap-2">
               <CheckboxField>
                 <Checkbox
-                  checked={(value.thirdOrderDissonance.magnitude ?? 0) > 0}
-                  onChange={(checked) =>
-                    onChange({
-                      ...value,
-                      thirdOrderDissonance: {
-                        ...value.thirdOrderDissonance,
-                        magnitude: checked
-                          ? (value.thirdOrderDissonance.magnitude ||
-                              DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitude)
-                          : 0,
-                      },
-                    })
-                  }
+                  checked={thirdOrderEnabled}
+                  onChange={(checked) => {
+                    onThirdOrderEnabledChange(checked)
+                    if (checked) {
+                      onChange({
+                        ...value,
+                        thirdOrderDissonance: {
+                          ...value.thirdOrderDissonance,
+                          magnitude:
+                            value.thirdOrderDissonance.magnitude ||
+                            DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitude,
+                        },
+                      })
+                    }
+                  }}
                 />
                 <Label className="text-sm">
                   Third order beating contribution
                 </Label>
               </CheckboxField>
-              {(value.thirdOrderDissonance.magnitude ?? 0) > 0 && (
+              {thirdOrderEnabled && (
                 <div className="flex items-center gap-2 flex-wrap">
                     <DragNumberInput
                       defaultValue={

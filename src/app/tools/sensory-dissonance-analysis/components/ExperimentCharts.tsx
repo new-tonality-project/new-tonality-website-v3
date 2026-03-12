@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { db } from '@/db'
 import { SurveyChart, SurveyChartPublic } from './'
 import { EXPERIMENTS } from '../utils'
@@ -37,6 +37,22 @@ export function ExperimentCharts(props: {
     xAxisEnd: 1200,
   })
 
+  const [secondOrderEnabled, setSecondOrderEnabled] = useState(false)
+  const [thirdOrderEnabled, setThirdOrderEnabled] = useState(false)
+
+  const effectiveSettings = useMemo(
+    () => ({
+      ...settings,
+      secondOrderDissonance: secondOrderEnabled
+        ? settings.secondOrderDissonance
+        : { ...settings.secondOrderDissonance, magnitude: 0 },
+      thirdOrderDissonance: thirdOrderEnabled
+        ? settings.thirdOrderDissonance
+        : { ...settings.thirdOrderDissonance, magnitude: 0 },
+    }),
+    [settings, secondOrderEnabled, thirdOrderEnabled]
+  )
+
   return (
     <>
       <CollapsiblePanel title="Chart Settings" className="mb-8">
@@ -71,6 +87,13 @@ export function ExperimentCharts(props: {
           <DissonanceCurveControls
             value={settings}
             onChange={setSettings}
+            secondOrderEnabled={secondOrderEnabled}
+            thirdOrderEnabled={thirdOrderEnabled}
+            onSecondOrderEnabledChange={(enabled) => {
+              setSecondOrderEnabled(enabled)
+              if (!enabled) setThirdOrderEnabled(false)
+            }}
+            onThirdOrderEnabledChange={setThirdOrderEnabled}
           />
         </Fieldset>
       </CollapsiblePanel>
@@ -78,19 +101,19 @@ export function ExperimentCharts(props: {
         <SurveyChartPublic
           meanFrequency={EXPERIMENTS[0].frequency}
           title={EXPERIMENTS[0].title}
-          settings={settings}
+          settings={effectiveSettings}
         />
 
         <SurveyChartPublic
           meanFrequency={EXPERIMENTS[1].frequency}
           title={EXPERIMENTS[1].title}
-          settings={settings}
+          settings={effectiveSettings}
         />
 
         <SurveyChartPublic
           meanFrequency={EXPERIMENTS[2].frequency}
           title={EXPERIMENTS[2].title}
-          settings={settings}
+          settings={effectiveSettings}
         />
       </db.SignedOut>
 
@@ -98,21 +121,21 @@ export function ExperimentCharts(props: {
         <SurveyChart
           meanFrequency={EXPERIMENTS[0].frequency}
           title={EXPERIMENTS[0].title}
-          settings={settings}
+          settings={effectiveSettings}
           onTakeSurvey={props.onTakeSurvey}
         />
 
         <SurveyChart
           meanFrequency={EXPERIMENTS[1].frequency}
           title={EXPERIMENTS[1].title}
-          settings={settings}
+          settings={effectiveSettings}
           onTakeSurvey={props.onTakeSurvey}
         />
 
         <SurveyChart
           meanFrequency={EXPERIMENTS[2].frequency}
           title={EXPERIMENTS[2].title}
-          settings={settings}
+          settings={effectiveSettings}
           onTakeSurvey={props.onTakeSurvey}
         />
       </db.SignedIn>
