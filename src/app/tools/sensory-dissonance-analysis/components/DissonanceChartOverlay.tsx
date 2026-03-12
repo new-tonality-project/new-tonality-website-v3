@@ -196,12 +196,13 @@ export function DissonanceChartOverlay(props: {
   return (
     <div
       ref={overlayRef}
-      className="absolute cursor-crosshair select-none"
+      className="absolute select-none"
       style={{
         left: plotBounds.left,
         top: plotBounds.top,
         width: plotBounds.width,
         height: plotBounds.height,
+        cursor: "url('/volume-icon.svg') 8 8, crosshair",
       }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
