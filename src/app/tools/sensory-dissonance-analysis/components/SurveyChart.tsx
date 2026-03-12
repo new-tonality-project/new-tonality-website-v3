@@ -298,7 +298,8 @@ export function SurveyChart(props: {
     <div className="relative flex w-full flex-col items-center">
       <div className="w-full overflow-x-auto lg:overflow-x-visible">
         <div className="relative min-w-[600px] lg:w-full lg:min-w-0">
-          <Chart ref={chartRef} options={chartOptions as Highcharts.Options} />
+          {/* @ts-expect-error - Highcharts Options type incompatible with @highcharts/react props (version mismatch) */}
+          <Chart ref={chartRef} options={chartOptions} />
           <DissonanceChartOverlay
             plotBounds={plotBounds}
             meanFrequency={props.meanFrequency}
