@@ -85,7 +85,7 @@ export function DissonanceCurveControls({
                   DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.magnitude
                 }
                 min={0}
-                max={2}
+                max={1}
                 minStep={0.01}
                 valueRange={0.5}
                 label="Magnitude"
@@ -106,7 +106,6 @@ export function DissonanceCurveControls({
                   DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.x_star
                 }
                 min={0.001}
-                max={1}
                 valueRange={0.1}
                 label="x*"
                 onChange={(x_star) =>
@@ -127,7 +126,10 @@ export function DissonanceCurveControls({
                 }
                 min={0.01}
                 minStep={0.01}
-                max={10}
+                max={
+                  (value.firstOrderDissonance.b2 ??
+                    DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.b2) - 0.01
+                }
                 valueRange={1}
                 label="b1"
                 onChange={(b1) =>
@@ -146,9 +148,11 @@ export function DissonanceCurveControls({
                   value.firstOrderDissonance.b2 ??
                   DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.b2
                 }
-                min={0.01}
+                min={
+                  (value.firstOrderDissonance.b1 ??
+                    DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.b1) + 0.01
+                }
                 minStep={0.01}
-                max={10}
                 valueRange={1}
                 label="b2"
                 onChange={(b2) =>
@@ -168,7 +172,6 @@ export function DissonanceCurveControls({
                   DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.s1
                 }
                 min={0.001}
-                max={1}
                 valueRange={0.1}
                 label="s1"
                 onChange={(s1) =>
@@ -189,7 +192,6 @@ export function DissonanceCurveControls({
                 }
                 min={0.1}
                 minStep={0.1}
-                max={100}
                 valueRange={10}
                 label="s2"
                 onChange={(s2) =>
@@ -235,7 +237,7 @@ export function DissonanceCurveControls({
                       DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude
                     }
                     min={0}
-                    max={2}
+                    max={1}
                     minStep={0.01}
                     valueRange={0.5}
                     label="Magnitude"
@@ -258,7 +260,6 @@ export function DissonanceCurveControls({
                       DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.x_star
                     }
                     min={0.001}
-                    max={1}
                     valueRange={0.1}
                     label="x*"
                     onChange={(x_star) =>
@@ -279,7 +280,10 @@ export function DissonanceCurveControls({
                     }
                     min={0.01}
                     minStep={0.01}
-                    max={10}
+                    max={
+                      (value.secondOrderDissonance.b2 ??
+                        DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b2) - 0.01
+                    }
                     valueRange={1}
                     label="b1"
                     onChange={(b1) =>
@@ -298,9 +302,11 @@ export function DissonanceCurveControls({
                       value.secondOrderDissonance.b2 ??
                       DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b2
                     }
-                    min={0.01}
+                    min={
+                      (value.secondOrderDissonance.b1 ??
+                        DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b1) + 0.01
+                    }
                     minStep={0.01}
-                    max={10}
                     valueRange={1}
                     label="b2"
                     onChange={(b2) =>
@@ -320,7 +326,6 @@ export function DissonanceCurveControls({
                       DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s1
                     }
                     min={0.001}
-                    max={1}
                     valueRange={0.1}
                     label="s1"
                     onChange={(s1) =>
@@ -341,7 +346,6 @@ export function DissonanceCurveControls({
                     }
                     min={0.1}
                     minStep={0.1}
-                    max={100}
                     valueRange={10}
                     label="s2"
                     onChange={(s2) =>
@@ -391,7 +395,7 @@ export function DissonanceCurveControls({
                         DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitude
                       }
                       min={0}
-                      max={2}
+                      max={1}
                       minStep={0.01}
                       valueRange={0.5}
                       label="Magnitude"
@@ -414,7 +418,6 @@ export function DissonanceCurveControls({
                         DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.x_star
                       }
                       min={0.001}
-                      max={1}
                       valueRange={0.1}
                       label="x*"
                       onChange={(x_star) =>
@@ -435,7 +438,10 @@ export function DissonanceCurveControls({
                       }
                       min={0.01}
                       minStep={0.01}
-                      max={10}
+                      max={
+                        (value.thirdOrderDissonance.b2 ??
+                          DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.b2) - 0.01
+                      }
                       valueRange={1}
                       label="b1"
                       onChange={(b1) =>
@@ -454,9 +460,11 @@ export function DissonanceCurveControls({
                         value.thirdOrderDissonance.b2 ??
                         DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.b2
                       }
-                      min={0.01}
+                      min={
+                        (value.thirdOrderDissonance.b1 ??
+                          DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.b1) + 0.01
+                      }
                       minStep={0.01}
-                      max={10}
                       valueRange={1}
                       label="b2"
                       onChange={(b2) =>
@@ -476,7 +484,6 @@ export function DissonanceCurveControls({
                         DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.s1
                       }
                       min={0.001}
-                      max={1}
                       valueRange={0.1}
                       label="s1"
                       onChange={(s1) =>
@@ -497,7 +504,6 @@ export function DissonanceCurveControls({
                       }
                       min={0.1}
                       minStep={0.1}
-                      max={100}
                       valueRange={10}
                       label="s2"
                       onChange={(s2) =>
