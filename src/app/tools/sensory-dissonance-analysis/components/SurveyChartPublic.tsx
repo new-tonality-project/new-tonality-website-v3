@@ -189,9 +189,9 @@ export function SurveyChartPublic(props: {
   return (
     <div className="relative flex w-full flex-col items-center">
       <div className="w-full overflow-x-auto lg:overflow-x-visible">
-        <div className="relative min-w-[600px] lg:w-full lg:min-w-0">
+        <div className="relative grid min-w-[600px] lg:w-full lg:min-w-0 *:col-start-1 *:row-start-1">
           {/* @ts-expect-error - Highcharts Options type causes excessive stack depth when comparing with @highcharts/react props */}
-          <Chart highcharts={Highcharts} options={chartOptions} />
+          <Chart highcharts={Highcharts} options={chartOptions} containerProps={{ className: 'w-full min-h-[300px]' }} />
           <DissonanceChartOverlay
             plotBounds={plotBounds}
             meanFrequency={props.meanFrequency}

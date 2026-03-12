@@ -20,11 +20,23 @@ export function useChartPlotBounds() {
   const updateRef = useRef<((chart: Highcharts.Chart) => void) | null>(null)
 
   const updatePlotBounds = useCallback((chart: Highcharts.Chart) => {
-    setPlotBounds({
+    const next = {
       left: chart.plotLeft,
       top: chart.plotTop,
       width: chart.plotWidth,
       height: chart.plotHeight,
+    }
+    setPlotBounds((prev) => {
+      if (!prev) return next
+      if (
+        prev.left === next.left &&
+        prev.top === next.top &&
+        prev.width === next.width &&
+        prev.height === next.height
+      ) {
+        return prev
+      }
+      return next
     })
   }, [])
 
@@ -36,6 +48,10 @@ export function useChartPlotBounds() {
     events: {
       // eslint-disable-next-line react-hooks/unsupported-syntax
       load: function (this: Highcharts.Chart) {
+        updateRef.current?.(this)
+      },
+      // eslint-disable-next-line react-hooks/unsupported-syntax
+      redraw: function (this: Highcharts.Chart) {
         updateRef.current?.(this)
       },
     },
@@ -79,31 +95,44 @@ export function DissonanceChartOverlay(props: {
     [xAxisMin, xAxisMax],
   )
 
+  const ensureSynth = useCallback(() => {
+    if (synthRef.current) return synthRef.current
+    if (typeof AudioContext === 'undefined') return null
+    const synth = new AdditiveSynth({
+      spectrum: [{ partials: [{ rate: 1, amplitude: 0.2 }] }],
+      audioContext: new AudioContext(),
+      adsr: { attack: 0.1, sustain: 1, release: 0.1, decay: 0 },
+    })
+    synthRef.current = synth
+    return synth
+  }, [])
+
   const updateSynthForInterval = useCallback(
     (interval: number) => {
-      if (!synthRef.current || !isWithinBounds(interval)) return
+      const synth = ensureSynth()
+      if (!synth || !isWithinBounds(interval)) return
 
       const [f1, f2] = getIntervalFrequencies(Math.round(interval), meanFrequency)
 
       if (isActiveRef.current) {
-        synthRef.current.update([{
+        synth.update([{
           partials: [
             { rate: f1, amplitude: 1 },
             { rate: f2, amplitude: 1 },
           ],
         }])
       } else {
-        synthRef.current.update([{
+        synth.update([{
           partials: [
             { rate: f1, amplitude: 1 },
             { rate: f2, amplitude: 1 },
           ],
         }])
-        synthRef.current.play({ pitch: 1, velocity: 0.5 * volume })
+        synth.play({ pitch: 1, velocity: 0.5 * volume })
         isActiveRef.current = true
       }
     },
-    [meanFrequency, isWithinBounds, volume],
+    [meanFrequency, isWithinBounds, volume, ensureSynth],
   )
 
   const stopPlaying = useCallback(() => {
@@ -176,14 +205,6 @@ export function DissonanceChartOverlay(props: {
   }, [stopPlaying])
 
   useEffect(() => {
-    if (typeof AudioContext !== 'undefined' && !synthRef.current) {
-      synthRef.current = new AdditiveSynth({
-        spectrum: [{ partials: [{ rate: 1, amplitude: 0.2 }] }],
-        audioContext: new AudioContext(),
-        adsr: { attack: 0.1, sustain: 1, release: 0.1, decay: 0 },
-      })
-    }
-
     return () => {
       if (synthRef.current) {
         synthRef.current.releaseAll()
@@ -196,7 +217,7 @@ export function DissonanceChartOverlay(props: {
   return (
     <div
       ref={overlayRef}
-      className="absolute select-none"
+      className="absolute z-10 select-none"
       style={{
         left: plotBounds.left,
         top: plotBounds.top,
