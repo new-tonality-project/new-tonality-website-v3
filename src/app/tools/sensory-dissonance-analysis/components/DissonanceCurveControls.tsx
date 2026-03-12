@@ -40,7 +40,7 @@ export function DissonanceCurveControls({
             <DragNumberInput
               defaultValue={0}
               value={value.xAxisStart}
-              min={-3600}
+              min={0}
               max={Math.max(0, value.xAxisEnd - 1)}
               minStep={1}
               valueRange={1000}
@@ -358,6 +358,28 @@ export function DissonanceCurveControls({
                       })
                     }
                   />
+                  <DragNumberInput
+                    defaultValue={
+                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitudeFrequencyDecay
+                    }
+                    value={
+                      value.secondOrderDissonance.magnitudeFrequencyDecay ??
+                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitudeFrequencyDecay
+                    }
+                    min={0}
+                    minStep={0.01}
+                    valueRange={1}
+                    label="Magnitude freq. decay"
+                    onChange={(magnitudeFrequencyDecay) =>
+                      onChange({
+                        ...value,
+                        secondOrderDissonance: {
+                          ...value.secondOrderDissonance,
+                          magnitudeFrequencyDecay,
+                        },
+                      })
+                    }
+                  />
               </div>
             )}
           </div>
@@ -512,6 +534,28 @@ export function DissonanceCurveControls({
                           thirdOrderDissonance: {
                             ...value.thirdOrderDissonance,
                             s2,
+                          },
+                        })
+                      }
+                    />
+                    <DragNumberInput
+                      defaultValue={
+                        DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitudeFrequencyDecay
+                      }
+                      value={
+                        value.thirdOrderDissonance.magnitudeFrequencyDecay ??
+                        DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitudeFrequencyDecay
+                      }
+                      min={0}
+                      minStep={0.01}
+                      valueRange={1}
+                      label="Magnitude freq. decay"
+                      onChange={(magnitudeFrequencyDecay) =>
+                        onChange({
+                          ...value,
+                          thirdOrderDissonance: {
+                            ...value.thirdOrderDissonance,
+                            magnitudeFrequencyDecay,
                           },
                         })
                       }

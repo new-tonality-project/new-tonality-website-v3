@@ -10,8 +10,7 @@ import { ChartHeader } from './ChartHeader'
 import { Button } from '@/components'
 import { baseChartConfig } from './chartConfig'
 import type { ChartSettings } from './types'
-import { useDissonanceCurve } from '@/hooks'
-import type { DissonanceCurveOptions } from 'sethares-dissonance'
+import { useDissonanceCurve, type UseDissonanceCurveOptions } from '@/hooks'
 import {
   useChartPlotBounds,
   DissonanceChartOverlay,
@@ -56,7 +55,7 @@ export function SurveyChartPublic(props: {
   const [playedIntervalMouseY, setPlayedIntervalMouseY] = useState<number | undefined>(undefined)
   const { plotBounds, chartEvents } = useChartPlotBounds()
 
-  const dissonanceCurveOptions = useMemo((): DissonanceCurveOptions => {
+  const dissonanceCurveOptions = useMemo((): UseDissonanceCurveOptions => {
     const {
       xAxisStart,
       xAxisEnd,
@@ -71,6 +70,7 @@ export function SurveyChartPublic(props: {
       complement: Spectrum.harmonic(1, props.meanFrequency),
       start: Math.pow(2, xAxisStart / 1200),
       end: Math.pow(2, xAxisEnd / 1200),
+      normalize: { min: 0, max: dissonanceParams.firstOrderDissonance.magnitude ?? 1 }
     }
   }, [props.meanFrequency, props.settings])
   const dissonanceCurve = useDissonanceCurve(dissonanceCurveOptions)

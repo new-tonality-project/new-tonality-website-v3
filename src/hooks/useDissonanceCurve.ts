@@ -17,6 +17,8 @@ function createReadOnlyWrapper(curve: DissonanceCurve) {
   } satisfies Partial<ReadOnlyDissonanceCurve>
 }
 
+export type UseDissonanceCurveOptions = DissonanceCurveOptions & { normalize?: { min: number, max: number } }
+
 /**
  * React hook that creates and maintains a DissonanceCurve instance.
  * Recalculates when options change and returns a new wrapper object (new reference)
@@ -27,11 +29,11 @@ function createReadOnlyWrapper(curve: DissonanceCurve) {
  * @returns ReadOnlyDissonanceCurve - wrapper delegating to the curve (new ref on each update)
  */
 export function useDissonanceCurve(
-  options: DissonanceCurveOptions
+  options: UseDissonanceCurveOptions
 ) {
   return useMemo(() => {
     const curve = new DissonanceCurve(options)
-    curve.normalize()
+    if (options.normalize) curve.normalize(options.normalize.min, options.normalize.max)
     return createReadOnlyWrapper(curve)
   }, [options])
 }

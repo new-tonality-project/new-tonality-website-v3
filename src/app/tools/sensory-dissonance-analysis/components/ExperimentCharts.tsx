@@ -29,15 +29,9 @@ export function ExperimentCharts(props: {
     showAverage: false,
     showExponentialFit: true,
     userBackground: undefined,
-    firstOrderDissonance: { ...DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS },
-    secondOrderDissonance: {
-      ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
-      magnitude: 0,
-    },
-    thirdOrderDissonance: {
-      ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
-      magnitude: 0,
-    },
+    firstOrderDissonance: DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
+    secondOrderDissonance: DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
+    thirdOrderDissonance: DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
     phantomHarmonicsNumber: DEFAULT_PHANTOM_HARMONICS_NUMBER,
     xAxisStart: 0,
     xAxisEnd: 1200,

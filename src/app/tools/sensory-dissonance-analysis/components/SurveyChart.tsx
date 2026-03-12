@@ -9,9 +9,8 @@ import { Survey } from './Survey'
 import { ChartHeader } from './ChartHeader'
 import { baseChartConfig } from './chartConfig'
 import type { ChartSettings } from './types'
-import { useDissonanceCurve } from '@/hooks'
+import { useDissonanceCurve, type UseDissonanceCurveOptions } from '@/hooks'
 import { Spectrum } from 'tuning-core'
-import type { DissonanceCurveOptions } from 'sethares-dissonance'
 import {
   useChartPlotBounds,
   DissonanceChartOverlay,
@@ -31,10 +30,9 @@ export function SurveyChart(props: {
   )
   const [playedInterval, setPlayedInterval] = useState<number | null>(null)
   const [playedIntervalMouseY, setPlayedIntervalMouseY] = useState<number | undefined>(undefined)
-  const chartRef = useRef<{ chart: Highcharts.Chart; container: HTMLDivElement } | null>(null)
   const { plotBounds, chartEvents } = useChartPlotBounds()
 
-  const dissonanceCurveOptions = useMemo((): DissonanceCurveOptions => {
+  const dissonanceCurveOptions = useMemo((): UseDissonanceCurveOptions => {
     const {
       xAxisStart,
       xAxisEnd,
@@ -49,6 +47,7 @@ export function SurveyChart(props: {
       complement: Spectrum.harmonic(1, props.meanFrequency),
       start: Math.pow(2, xAxisStart / 1200),
       end: Math.pow(2, xAxisEnd / 1200),
+      normalize: { min: 0, max: dissonanceParams.firstOrderDissonance.magnitude ?? 1 }
     }
   }, [props.meanFrequency, props.settings])
   const dissonanceCurve = useDissonanceCurve(dissonanceCurveOptions)
@@ -203,7 +202,7 @@ export function SurveyChart(props: {
         marker: { enabled: false },
       })
     }
-
+    
     return {
       ...baseChartConfig,
       chart: {
@@ -284,7 +283,7 @@ export function SurveyChart(props: {
       },
       series,
     }
-  }, [graphs.other, graphs.user, props.settings.showExponentialFit, props.settings.xAxisStart, props.settings.xAxisEnd, dissonanceCurve, selectedPoint, handlePointClick, chartEvents, playedInterval])
+  }, [graphs.other, graphs.user, props.settings.showExponentialFit, props.settings.xAxisStart, props.settings.xAxisEnd, chartEvents, playedInterval, selectedPoint, dissonanceCurve, handlePointClick])
 
   if (userGraph.isLoading || otherGraphs.isLoading || userSettings.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />
@@ -299,7 +298,7 @@ export function SurveyChart(props: {
       <div className="w-full overflow-x-auto lg:overflow-x-visible">
         <div className="relative min-w-[600px] lg:w-full lg:min-w-0">
           {/* @ts-expect-error - Highcharts Options type incompatible with @highcharts/react props (version mismatch) */}
-          <Chart ref={chartRef} options={chartOptions} />
+          <Chart options={chartOptions} />
           <DissonanceChartOverlay
             plotBounds={plotBounds}
             meanFrequency={props.meanFrequency}
