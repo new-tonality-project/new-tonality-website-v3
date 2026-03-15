@@ -1,22 +1,56 @@
 'use client'
 
 import { db } from '@/db'
-import { useMemo, useState, useCallback, useRef, useEffect } from 'react'
+import { useMemo, useState, useCallback, useRef } from 'react'
 import { Chart } from '@highcharts/react'
 import Highcharts from 'highcharts'
-import { AdditiveSynth } from 'new-tonality-web-synth'
 import { SurveyMachineProvider } from '@/state/machines'
 import { Survey } from './Survey'
 import { ChartHeader } from './ChartHeader'
-import { getIntervalFrequencies } from '@/lib'
 import { baseChartConfig } from './chartConfig'
+import type { ChartSettings } from './types'
+import { useDissonanceCurve, type UseDissonanceCurveOptions } from '@/hooks'
+import { Spectrum } from 'tuning-core'
+import {
+  useChartPlotBounds,
+  DissonanceChartOverlay,
+} from './DissonanceChartOverlay'
+import { getVolumeForFrequency } from '../utils'
 
-export function SurveyChart(props: { meanFrequency: number; title: string }) {
+export function SurveyChart(props: {
+  meanFrequency: number
+  title: string
+  settings: ChartSettings
+  onTakeSurvey?: (open?: boolean) => void
+  volume?: number
+}) {
   const [surveyOpen, setSurveyOpen] = useState(false)
   const [selectedPoint, setSelectedPoint] = useState<Highcharts.Point | null>(
     null,
   )
-  const synthRef = useRef<AdditiveSynth | null>(null)
+  const [playedInterval, setPlayedInterval] = useState<number | null>(null)
+  const [playedIntervalMouseY, setPlayedIntervalMouseY] = useState<number | undefined>(undefined)
+  const { plotBounds, chartEvents } = useChartPlotBounds()
+
+  const dissonanceCurveOptions = useMemo((): UseDissonanceCurveOptions => {
+    const {
+      xAxisStart,
+      xAxisEnd,
+      showAverage,
+      showExponentialFit,
+      userBackground,
+      ...dissonanceParams
+    } = props.settings
+    return {
+      ...dissonanceParams,
+      context: Spectrum.harmonic(1, props.meanFrequency),
+      complement: Spectrum.harmonic(1, props.meanFrequency),
+      start: Math.pow(2, xAxisStart / 1200),
+      end: Math.pow(2, xAxisEnd / 1200),
+      normalize: { min: 0, max: dissonanceParams.firstOrderDissonance.magnitude ?? 1 }
+    }
+  }, [props.meanFrequency, props.settings])
+  const dissonanceCurve = useDissonanceCurve(dissonanceCurveOptions)
   const user = db.useUser()
   const userSettings = db.useQuery({
     userSettings: {
@@ -87,44 +121,6 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
     }
   }, [userGraph, otherGraphs])
 
-  useEffect(() => {
-    if (typeof AudioContext !== 'undefined' && !synthRef.current) {
-      synthRef.current = new AdditiveSynth({
-        spectrum: [{ partials: [{ rate: 1, amplitude: 0.2 }] }],
-        audioContext: new AudioContext(),
-        adsr: { attack: 0.1, sustain: 1, release: 0.1, decay: 0 },
-      })
-    }
-
-    return () => {
-      if (synthRef.current) {
-        synthRef.current.releaseAll()
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!synthRef.current) return
-
-    if (!selectedPoint) {
-      synthRef.current.releaseAll()
-      return
-    }
-
-    const interval = selectedPoint.x
-    const [f1, f2] = getIntervalFrequencies(interval, props.meanFrequency)
-
-    synthRef.current.releaseAll()
-
-    synthRef.current.update([{
-      partials: [
-        { rate: f1, amplitude: 1 }, { rate: f2, amplitude: 1 }
-      ]
-    }])
-
-    synthRef.current.play({ pitch: 1, velocity: 0.5 })
-  }, [selectedPoint, props.meanFrequency])
-
   const handlePointClick = useCallback(
     (point: Highcharts.Point) => {
       if (
@@ -147,6 +143,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
       series.push({
         type: 'spline',
         name: index === 0 ? 'Other participants' : undefined,
+        yAxis: "dissonance-score",
         data: graph.points.map((point) => [point.x, point.y]),
         lineWidth: 1,
         opacity: 0.5,
@@ -162,6 +159,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
       series.push({
         type: 'spline',
         name: 'Your result',
+        yAxis: "dissonance-score",
         data: graph.points.map((point) => {
           const isSelected =
             selectedPoint &&
@@ -173,8 +171,8 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
             marker: {
               enabled: true,
               radius: isSelected ? 6 : 2,
-              fillColor: isSelected ? '#85ffa9' : 'black',
-              lineColor: isSelected ? 'black' : 'black',
+              fillColor: isSelected ? '#85ffa9' : '#000',
+              lineColor: isSelected ? 'black' : '#000',
               lineWidth: isSelected ? 2 : 2,
               symbol: 'circle',
               states: {
@@ -192,11 +190,76 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
       })
     })
 
+    if (props.settings.showExponentialFit) {
+      series.push({
+        type: 'spline',
+        name: 'Theoretical fit',
+        yAxis: "dissonance-curve",
+        data: dissonanceCurve.plotCents(),
+        color: '#0099FF',
+        lineWidth: 2,
+        enableMouseTracking: false,
+        marker: { enabled: false },
+      })
+    }
+    
     return {
       ...baseChartConfig,
+      chart: {
+        ...baseChartConfig.chart,
+        ...chartEvents,
+      },
+      xAxis: {
+        ...baseChartConfig.xAxis,
+        min: props.settings.xAxisStart,
+        max: props.settings.xAxisEnd,
+        plotBands:
+          playedInterval != null
+            ? [
+              {
+                from: playedInterval - 7.5,
+                to: playedInterval + 7.5,
+                color: 'rgba(255, 0, 0, 0.2)',
+                borderColor: 'red',
+                borderWidth: 1,
+                zIndex: 1,
+              },
+            ]
+            : [],
+      },
+      yAxis: [
+        {
+          id: 'dissonance-score',
+          title: { text: 'Dissonance score', rotation: -90 },
+          min: 1,
+          max: 7,
+          tickInterval: 1,
+          gridLineColor: '#ccc',
+          gridLineDashStyle: 'Dash',
+          alignTicks: false,
+
+        },
+        {
+          id: 'dissonance-curve',
+          min: 0,
+          max: 1,
+          endOnTick: false,
+          maxPadding: 0,
+          opposite: true,
+          visible: true,
+          gridLineWidth: 0,
+          title: {
+            text: "Sensory dissonance D(f)",
+            style: { color: props.settings.showExponentialFit ? undefined : 'transparent' },
+          },
+          labels: {
+            style: { color: props.settings.showExponentialFit ? undefined : 'transparent' },
+          },
+        },
+      ],
       credits: {
         enabled: graphs.user && graphs.user.length > 0 ? true : false,
-        text: '* clicking on a point will play the interval',
+        text: '* press and drag on the chart to play intervals',
         style: {
           fontSize: '12px',
           fontStyle: 'italic',
@@ -208,6 +271,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
           animation: false,
           point: {
             events: {
+              // eslint-disable-next-line react-hooks/unsupported-syntax
               click: function (this: Highcharts.Point) {
                 if (this.series.name === 'Your result') {
                   handlePointClick(this)
@@ -219,7 +283,7 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
       },
       series,
     }
-  }, [graphs, selectedPoint, handlePointClick])
+  }, [graphs.other, graphs.user, props.settings.showExponentialFit, props.settings.xAxisStart, props.settings.xAxisEnd, chartEvents, playedInterval, selectedPoint, dissonanceCurve, handlePointClick])
 
   if (userGraph.isLoading || otherGraphs.isLoading || userSettings.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />
@@ -232,8 +296,32 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
   return (
     <div className="relative flex w-full flex-col items-center">
       <div className="w-full overflow-x-auto lg:overflow-x-visible">
-        <div className="min-w-[600px] lg:w-full lg:min-w-0">
-          <Chart options={chartOptions as Highcharts.Options} />
+        <div className="relative grid min-w-[600px] lg:w-full lg:min-w-0 *:col-start-1 *:row-start-1">
+          {/* @ts-expect-error - Highcharts Options type incompatible with @highcharts/react props (version mismatch) */}
+          <Chart options={chartOptions} containerProps={{ className: 'w-full min-h-[300px]' }} />
+          <DissonanceChartOverlay
+            plotBounds={plotBounds}
+            meanFrequency={props.meanFrequency}
+            volume={props.volume ?? getVolumeForFrequency(props.meanFrequency)}
+            xAxisMin={props.settings.xAxisStart}
+            xAxisMax={props.settings.xAxisEnd}
+            onIntervalChange={(interval, mouseY) => {
+              setPlayedInterval(interval)
+              setPlayedIntervalMouseY(mouseY)
+            }}
+          />
+          {playedInterval != null && plotBounds && playedIntervalMouseY != null && (
+            <div
+              className="pointer-events-none absolute z-10 whitespace-nowrap text-xs font-medium text-red-600"
+              style={{
+                left: plotBounds.left + ((playedInterval - props.settings.xAxisStart) / (props.settings.xAxisEnd - props.settings.xAxisStart)) * plotBounds.width,
+                top: playedIntervalMouseY,
+                transform: playedInterval > 600 ? 'translateX(calc(-100% - 12px))' : 'translateX(12px)',
+              }}
+            >
+              {playedInterval} cents
+            </div>
+          )}
         </div>
       </div>
 
@@ -247,7 +335,10 @@ export function SurveyChart(props: { meanFrequency: number; title: string }) {
         title={props.title}
         onTakeSurvey={
           !userGraph.data?.dissonanceGraphs?.length
-            ? () => setSurveyOpen(true)
+            ? () => {
+              setSurveyOpen(true)
+              props.onTakeSurvey?.(true)
+            }
             : undefined
         }
       />

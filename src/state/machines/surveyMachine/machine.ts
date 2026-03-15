@@ -4,18 +4,8 @@ import { AdditiveSynth } from 'new-tonality-web-synth'
 import { SurveyIntervals } from '@/classes'
 import {
   getIntervalFrequencies,
-  MusicalBackground,
-  type UserSettings,
+  parseMusicalBackground,
 } from '@/lib'
-
-function getMusicalBackground(
-  userSettings?: UserSettings,
-): MusicalBackground | undefined {
-  if (userSettings?.isMicrotonalist) return MusicalBackground.Microtonalist
-  if (userSettings?.isMusician) return MusicalBackground.Musician
-  if (userSettings?.isNaiveListener) return MusicalBackground.NaiveListener
-  return
-}
 
 // TODO: when exiting survey we get questions reset to defaultContext rather than data from BE. Need to fix this.
 
@@ -28,9 +18,7 @@ export const surveyMachine = machineSetup.createMachine({
       defaultContext.shareDataPrivately,
     shareDataPublicly:
       input.userSettings?.shareDataPublicly ?? defaultContext.shareDataPublicly,
-    musicalBackground:
-      getMusicalBackground(input.userSettings) ??
-      defaultContext.musicalBackground,
+    musicalBackground: parseMusicalBackground(input.userSettings?.userBackground) ?? defaultContext.musicalBackground,
   }),
   initial: 'overview',
   on: {
@@ -75,17 +63,13 @@ export const surveyMachine = machineSetup.createMachine({
         setMusicalBackground: {
           actions: assign({
             musicalBackground: ({ event }) => {
-              const val = parseInt(event.value)
+              const val = parseMusicalBackground(event.value)
 
-              if (
-                val === MusicalBackground.Microtonalist ||
-                val === MusicalBackground.Musician ||
-                val === MusicalBackground.NaiveListener
-              ) {
+              if (val !== undefined) {
                 return val
               }
 
-              throw new Error('Invalid musical backgroun value')
+              throw new Error('Invalid musical background value')
             },
           }),
         },
@@ -100,10 +84,10 @@ export const surveyMachine = machineSetup.createMachine({
         synth:
           typeof AudioContext !== 'undefined'
             ? new AdditiveSynth({
-                spectrum: [{ partials: [{ rate: 1, amplitude: 0.2 }] }],
-                audioContext: new AudioContext(),
-                adsr: { attack: 0.1, sustain: 1, release: 0.1, decay: 0 },
-              })
+              spectrum: [{ partials: [{ rate: 1, amplitude: 0.2 }] }],
+              audioContext: new AudioContext(),
+              adsr: { attack: 0.1, sustain: 1, release: 0.1, decay: 0 },
+            })
             : undefined,
       })),
       on: {

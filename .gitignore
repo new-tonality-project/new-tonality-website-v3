@@ -10,3 +10,7 @@ tsconfig.tsbuildinfo
 
 # clerk configuration (can include secrets)
 .clerk/
+
+# local folders
+src/tuning-core
+src/sethares-dissonance

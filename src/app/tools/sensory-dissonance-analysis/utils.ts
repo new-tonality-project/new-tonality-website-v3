@@ -33,3 +33,10 @@ export const EXPERIMENTS = [
   { frequency: 440, title: 'Middle frequencies' },
   { frequency: 1320, title: 'High frequencies' },
 ] as const
+
+const LOWEST_EXPERIMENT_FREQUENCY = EXPERIMENTS[0].frequency
+
+/** Volume scale for synth playback: higher frequencies are quieter (0–1). */
+export function getVolumeForFrequency(meanFrequency: number): number {
+  return Math.sqrt(LOWEST_EXPERIMENT_FREQUENCY / meanFrequency)
+}
