@@ -17,7 +17,6 @@ export function clamp(number: number, a: number, b: number) {
   return Math.min(Math.max(number, min), max)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function debounceTransaction<T extends (...args: any[]) => any>(
   callback: T,
 ) {

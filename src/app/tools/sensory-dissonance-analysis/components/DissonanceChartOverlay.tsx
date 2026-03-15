@@ -50,7 +50,6 @@ export function useChartPlotBounds() {
       load: function (this: Highcharts.Chart) {
         updateRef.current?.(this)
       },
-      // eslint-disable-next-line react-hooks/unsupported-syntax
       redraw: function (this: Highcharts.Chart) {
         updateRef.current?.(this)
       },
