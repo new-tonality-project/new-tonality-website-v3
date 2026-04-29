@@ -1,4 +1,4 @@
-import { db } from '@/db'
+import { adminDb } from '@/db/server'
 import { debounceTransaction, type SetharesDissonancePreset } from '@/lib'
 import { id } from '@instantdb/admin'
 
@@ -24,7 +24,7 @@ export async function getInitialPreset(userId: string | null) {
 }
 
 export async function getInitPreset(userId: string) {
-  const result = await db.queryOnce({
+  const { setharesDissonancePresets } = await adminDb.query({
     setharesDissonancePresets: {
       $: {
         where: {
@@ -35,14 +35,14 @@ export async function getInitPreset(userId: string) {
     },
   })
 
-  if (result.data.setharesDissonancePresets.length === 0) return undefined
+  if (setharesDissonancePresets.length === 0) return undefined
 
-  return result.data.setharesDissonancePresets[0]
+  return setharesDissonancePresets[0]
 }
 
 export async function initializePreset(userId: string) {
-  return db.transact(
-    db.tx.setharesDissonancePresets[id()].create({
+  return adminDb.transact(
+    adminDb.tx.setharesDissonancePresets[id()].create({
       userId,
       name: 'init',
       numberOfPartials: FALLBACK_PRESET.numberOfPartials,
@@ -54,8 +54,8 @@ export async function initializePreset(userId: string) {
 
 export const updatePreset = debounceTransaction(
   (id: string, numberOfPartials: number) => {
-    db.transact(
-      db.tx.setharesDissonancePresets[id].update({
+    adminDb.transact(
+      adminDb.tx.setharesDissonancePresets[id].update({
         numberOfPartials,
         updatedAt: Date.now(),
       }),

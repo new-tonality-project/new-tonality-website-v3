@@ -8,13 +8,14 @@ import { NAV_ITEMS } from '@/lib/const'
 import {
   SignInButton,
   SignUpButton,
-  SignedIn,
-  SignedOut,
+  useAuth,
   UserButton,
 } from '@clerk/nextjs'
 import { HeaderButton } from './HeaderButton'
 
 export function Header() {
+  const { isSignedIn } = useAuth()
+
   return (
     <header
       className="pointer-events-none relative flex flex-none flex-col"
@@ -52,15 +53,17 @@ export function Header() {
             </div>
             <div className="flex justify-end md:flex-1">
               <div className="w pointer-events-auto flex gap-3">
-                <SignedOut>
+                {!isSignedIn && (
+                  <>
                   <SignInButton>
                     <HeaderButton variant="secondary">Sign In</HeaderButton>
                   </SignInButton>
                   <SignUpButton>
                     <HeaderButton variant="primary">Sign Up</HeaderButton>
                   </SignUpButton>
-                </SignedOut>
-                <SignedIn>
+                  </>
+                )}
+                {isSignedIn && (
                   <UserButton
                     appearance={{
                       elements: {
@@ -68,7 +71,7 @@ export function Header() {
                       },
                     }}
                   />
-                </SignedIn>
+                )}
               </div>
             </div>
           </div>

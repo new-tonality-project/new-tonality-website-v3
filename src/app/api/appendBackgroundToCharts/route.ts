@@ -1,4 +1,4 @@
-import { adminDb } from '@/db'
+import { adminDb } from '@/db/server'
 import { MusicalBackground, type UserSettings } from '@/lib'
 import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
