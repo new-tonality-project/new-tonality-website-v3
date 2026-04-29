@@ -1,8 +1,8 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { db } from '@/db'
-import { SurveyChart, SurveyChartPublic } from './'
 import { EXPERIMENTS } from '../utils'
 import { MusicalBackground } from '@/lib/types'
 import type { ChartSettings } from './types'
@@ -21,6 +21,15 @@ import {
   DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
   DEFAULT_PHANTOM_HARMONICS_NUMBER,
 } from 'sethares-dissonance'
+
+const SurveyChart = dynamic(
+  () => import('./SurveyChart').then((module) => module.SurveyChart),
+  { ssr: false, loading: () => <div className="h-[300px] w-full rounded bg-neutral-100" /> },
+)
+const SurveyChartPublic = dynamic(
+  () => import('./SurveyChartPublic').then((module) => module.SurveyChartPublic),
+  { ssr: false, loading: () => <div className="h-[300px] w-full rounded bg-neutral-100" /> },
+)
 
 export function ExperimentCharts(props: {
   onTakeSurvey?: (open?: boolean) => void
