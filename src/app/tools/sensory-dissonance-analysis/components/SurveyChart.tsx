@@ -195,37 +195,40 @@ export function SurveyChart(props: {
     if (props.settings.showPnLResults) {
       const pnlCurves = getPnlCurvesInCents(props.meanFrequency)
       if (pnlCurves) {
+        const rangeData = pnlCurves.lower.map((lowerPoint, index) => {
+          const upperPoint = pnlCurves.upper[index]
+          return [lowerPoint.x, lowerPoint.y, upperPoint.y]
+        })
+
         series.push({
-          type: 'spline',
-          name: 'P&L lower',
+          type: 'arearange',
+          name: 'P&L range',
           yAxis: 'dissonance-score',
-          data: pnlCurves.lower.map((point) => [point.x, point.y]),
+          data: rangeData,
           color: '#f97316',
-          lineWidth: 1,
-          dashStyle: 'ShortDot',
+          fillOpacity: 0.2,
+          lineWidth: 0,
           marker: { enabled: false },
           enableMouseTracking: false,
+          zIndex: 1,
         })
         series.push({
-          type: 'spline',
-          name: 'P&L median',
+          type: 'line',
+          name: 'P&L mean',
           yAxis: 'dissonance-score',
           data: pnlCurves.median.map((point) => [point.x, point.y]),
           color: '#ea580c',
-          lineWidth: 2,
-          marker: { enabled: false },
-          enableMouseTracking: false,
-        })
-        series.push({
-          type: 'spline',
-          name: 'P&L upper',
-          yAxis: 'dissonance-score',
-          data: pnlCurves.upper.map((point) => [point.x, point.y]),
-          color: '#f97316',
           lineWidth: 1,
-          dashStyle: 'ShortDot',
-          marker: { enabled: false },
+          marker: {
+            enabled: true,
+            radius: 3,
+            symbol: 'circle',
+            fillColor: 'transparent',
+            lineColor: '#ea580c',
+            lineWidth: 1,
+          },
           enableMouseTracking: false,
+          zIndex: 2,
         })
       }
     }
@@ -338,7 +341,7 @@ export function SurveyChart(props: {
       <div className="w-full overflow-x-auto lg:overflow-x-visible">
         <div className="relative grid min-w-[600px] lg:w-full lg:min-w-0 *:col-start-1 *:row-start-1">
           {/* @ts-expect-error - Highcharts Options type incompatible with @highcharts/react props (version mismatch) */}
-          <Chart options={chartOptions} containerProps={{ className: 'w-full min-h-[300px]' }} />
+          <Chart highcharts={Highcharts} options={chartOptions} containerProps={{ className: 'w-full min-h-[300px]' }} />
           <DissonanceChartOverlay
             plotBounds={plotBounds}
             meanFrequency={props.meanFrequency}

@@ -99,37 +99,40 @@ export function SurveyChartPublic(props: {
     if (props.settings.showPnLResults) {
       const pnlCurves = getPnlCurvesInCents(props.meanFrequency)
       if (pnlCurves) {
+        const rangeData = pnlCurves.lower.map((lowerPoint, index) => {
+          const upperPoint = pnlCurves.upper[index]
+          return [lowerPoint.x, lowerPoint.y, upperPoint.y]
+        })
+
         series.push({
-          type: 'spline',
-          name: 'P&L lower',
+          type: 'arearange',
+          name: 'P&L range',
           yAxis: 'dissonance-score',
-          data: pnlCurves.lower.map((point) => [point.x, point.y]),
+          data: rangeData,
           color: '#f97316',
-          lineWidth: 1,
-          dashStyle: 'ShortDot',
-          marker: { enabled: true },
+          fillOpacity: 0.2,
+          lineWidth: 0,
+          marker: { enabled: false },
           enableMouseTracking: false,
+          zIndex: 1,
         })
         series.push({
-          type: 'spline',
-          name: 'P&L median',
+          type: 'line',
+          name: 'P&L mean',
           yAxis: 'dissonance-score',
           data: pnlCurves.median.map((point) => [point.x, point.y]),
           color: '#ea580c',
-          lineWidth: 2,
-          marker: { enabled: true },
-          enableMouseTracking: false,
-        })
-        series.push({
-          type: 'spline',
-          name: 'P&L upper',
-          yAxis: 'dissonance-score',
-          data: pnlCurves.upper.map((point) => [point.x, point.y]),
-          color: '#f97316',
           lineWidth: 1,
-          dashStyle: 'ShortDot',
-          marker: { enabled: true },
+          marker: {
+            enabled: true,
+            radius: 3,
+            symbol: 'circle',
+            fillColor: 'transparent',
+            lineColor: '#ea580c',
+            lineWidth: 1,
+          },
           enableMouseTracking: false,
+          zIndex: 2,
         })
       }
     }
