@@ -17,7 +17,7 @@ import {
   DissonanceChartOverlay,
 } from './DissonanceChartOverlay'
 import { getVolumeForFrequency } from '../utils'
-import { getPnlCurvesInCents } from '../const'
+import { getPnlCurvesInCents, getPnlMeanFrequencyForSurvey } from '../const'
 
 const OTHER_PARTICIPANT_TEAL_TINTS = [
   '#1f5d56',
@@ -155,6 +155,9 @@ export function SurveyChart(props: {
 
   const chartOptions = useMemo(() => {
     const series: Highcharts.SeriesOptionsType[] = []
+    const pnlMeanFrequency =
+      getPnlMeanFrequencyForSurvey(props.meanFrequency) ?? props.meanFrequency
+    const pnlLegendName = `P&L (${pnlMeanFrequency}Hz)`
 
     graphs.other?.forEach((graph, index) => {
       series.push({
@@ -221,7 +224,7 @@ export function SurveyChart(props: {
 
         series.push({
           type: 'arearange',
-          name: 'P&L range',
+          name: pnlLegendName,
           yAxis: 'dissonance-score',
           data: rangeData,
           color: PNL_COLOR,
@@ -229,13 +232,14 @@ export function SurveyChart(props: {
           lineWidth: 0,
           marker: { enabled: false },
           enableMouseTracking: false,
+          showInLegend: false,
           zIndex: 1,
         })
         series.push({
           type: 'line',
-          name: 'P&L mean',
+          name: pnlLegendName,
           yAxis: 'dissonance-score',
-          data: pnlCurves.median.map((point) => [point.x, point.y]),
+          data: pnlCurves.mean.map((point) => [point.x, point.y]),
           color: PNL_COLOR,
           lineWidth: 1,
           marker: {
@@ -247,6 +251,7 @@ export function SurveyChart(props: {
             lineWidth: 1,
           },
           enableMouseTracking: false,
+          showInLegend: true,
           zIndex: 2,
         })
       }

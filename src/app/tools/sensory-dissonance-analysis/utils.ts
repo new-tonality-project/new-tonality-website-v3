@@ -29,9 +29,9 @@ export function getSurveyIntervals() {
 }
 
 export const EXPERIMENTS = [
-  { frequency: 147, title: 'Low frequencies' },
-  { frequency: 440, title: 'Middle frequencies' },
-  { frequency: 1320, title: 'High frequencies' },
+  { frequency: 147, title: 'Low band' },
+  { frequency: 440, title: 'Mid band' },
+  { frequency: 1320, title: 'High band' },
 ] as const
 
 const LOWEST_EXPERIMENT_FREQUENCY = EXPERIMENTS[0].frequency

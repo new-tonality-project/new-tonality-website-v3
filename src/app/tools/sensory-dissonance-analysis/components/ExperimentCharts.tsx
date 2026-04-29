@@ -101,19 +101,19 @@ export function ExperimentCharts(props: {
       <db.SignedOut>
         <SurveyChartPublic
           meanFrequency={EXPERIMENTS[0].frequency}
-          title={EXPERIMENTS[0].title}
+          title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
           settings={effectiveSettings}
         />
 
         <SurveyChartPublic
           meanFrequency={EXPERIMENTS[1].frequency}
-          title={EXPERIMENTS[1].title}
+          title={`${EXPERIMENTS[1].title} (${EXPERIMENTS[1].frequency}Hz)`}
           settings={effectiveSettings}
         />
 
         <SurveyChartPublic
           meanFrequency={EXPERIMENTS[2].frequency}
-          title={EXPERIMENTS[2].title}
+          title={`${EXPERIMENTS[2].title} (${EXPERIMENTS[2].frequency}Hz)`}
           settings={effectiveSettings}
         />
       </db.SignedOut>
@@ -121,21 +121,21 @@ export function ExperimentCharts(props: {
       <db.SignedIn>
         <SurveyChart
           meanFrequency={EXPERIMENTS[0].frequency}
-          title={EXPERIMENTS[0].title}
+          title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
           settings={effectiveSettings}
           onTakeSurvey={props.onTakeSurvey}
         />
 
         <SurveyChart
           meanFrequency={EXPERIMENTS[1].frequency}
-          title={EXPERIMENTS[1].title}
+          title={`${EXPERIMENTS[1].title} (${EXPERIMENTS[1].frequency}Hz)`}
           settings={effectiveSettings}
           onTakeSurvey={props.onTakeSurvey}
         />
 
         <SurveyChart
           meanFrequency={EXPERIMENTS[2].frequency}
-          title={EXPERIMENTS[2].title}
+          title={`${EXPERIMENTS[2].title} (${EXPERIMENTS[2].frequency}Hz)`}
           settings={effectiveSettings}
           onTakeSurvey={props.onTakeSurvey}
         />
