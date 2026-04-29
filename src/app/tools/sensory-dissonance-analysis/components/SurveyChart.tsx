@@ -16,6 +16,7 @@ import {
   DissonanceChartOverlay,
 } from './DissonanceChartOverlay'
 import { getVolumeForFrequency } from '../utils'
+import { getPnlCurvesInCents } from '../const'
 
 export function SurveyChart(props: {
   meanFrequency: number
@@ -38,6 +39,7 @@ export function SurveyChart(props: {
       xAxisEnd,
       showAverage,
       showExponentialFit,
+      showPnLResults,
       userBackground,
       ...dissonanceParams
     } = props.settings
@@ -190,6 +192,44 @@ export function SurveyChart(props: {
       })
     })
 
+    if (props.settings.showPnLResults) {
+      const pnlCurves = getPnlCurvesInCents(props.meanFrequency)
+      if (pnlCurves) {
+        series.push({
+          type: 'spline',
+          name: 'P&L lower',
+          yAxis: 'dissonance-score',
+          data: pnlCurves.lower.map((point) => [point.x, point.y]),
+          color: '#f97316',
+          lineWidth: 1,
+          dashStyle: 'ShortDot',
+          marker: { enabled: false },
+          enableMouseTracking: false,
+        })
+        series.push({
+          type: 'spline',
+          name: 'P&L median',
+          yAxis: 'dissonance-score',
+          data: pnlCurves.median.map((point) => [point.x, point.y]),
+          color: '#ea580c',
+          lineWidth: 2,
+          marker: { enabled: false },
+          enableMouseTracking: false,
+        })
+        series.push({
+          type: 'spline',
+          name: 'P&L upper',
+          yAxis: 'dissonance-score',
+          data: pnlCurves.upper.map((point) => [point.x, point.y]),
+          color: '#f97316',
+          lineWidth: 1,
+          dashStyle: 'ShortDot',
+          marker: { enabled: false },
+          enableMouseTracking: false,
+        })
+      }
+    }
+
     if (props.settings.showExponentialFit) {
       series.push({
         type: 'spline',
@@ -283,7 +323,7 @@ export function SurveyChart(props: {
       },
       series,
     }
-  }, [graphs.other, graphs.user, props.settings.showExponentialFit, props.settings.xAxisStart, props.settings.xAxisEnd, chartEvents, playedInterval, selectedPoint, dissonanceCurve, handlePointClick])
+  }, [graphs.other, graphs.user, props.settings.showExponentialFit, props.settings.showPnLResults, props.settings.xAxisStart, props.settings.xAxisEnd, props.meanFrequency, chartEvents, playedInterval, selectedPoint, dissonanceCurve, handlePointClick])
 
   if (userGraph.isLoading || otherGraphs.isLoading || userSettings.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />

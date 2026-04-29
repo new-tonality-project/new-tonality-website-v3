@@ -28,6 +28,7 @@ export function ExperimentCharts(props: {
   const [settings, setSettings] = useState<ChartSettings>({
     showAverage: false,
     showExponentialFit: true,
+    showPnLResults: false,
     userBackground: undefined,
     firstOrderDissonance: DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
     secondOrderDissonance: DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
