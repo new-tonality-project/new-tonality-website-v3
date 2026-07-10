@@ -12,14 +12,14 @@ export const COLORS = {
 
 /** Sky blue tints from dark to light, for overlapping participant curves */
 export const SKY_BLUE_TINTS = [
-  '#1a4a6377',
-  '#2d6d8a77',
-  '#3f90b177',
-  '#56B4E977',
-  '#72c0ec77',
-  '#8eccf077',
-  '#aad8f477',
-  '#c6e4f877',
+  '#1a4a63aa',
+  '#2d6d8aaa',
+  '#3f90b1aa',
+  '#56B4E9aa',
+  '#72c0ecaa',
+  '#8eccf0aa',
+  '#aad8f4aa',
+  '#c6e4f8aa',
 ] as const
 
 export const CHART_COLORS = {
