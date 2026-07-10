@@ -89,12 +89,21 @@ export function SurveyChart(props: {
   const otherGraphs = db.useQuery({
     dissonanceGraphs: {
       $: {
-        where: {
-          and: [
-            { $users: { $ne: user?.id } },
-            { meanFrequency: props.meanFrequency },
-          ],
-        },
+        where:
+          props.settings.userBackground !== undefined
+            ? {
+                and: [
+                  { $users: { $ne: user?.id } },
+                  { meanFrequency: props.meanFrequency },
+                  { userBackground: props.settings.userBackground },
+                ],
+              }
+            : {
+                and: [
+                  { $users: { $ne: user?.id } },
+                  { meanFrequency: props.meanFrequency },
+                ],
+              },
       },
       intervalDissonanceScores: {
         $: {

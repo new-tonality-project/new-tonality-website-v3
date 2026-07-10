@@ -29,10 +29,15 @@ export function SurveyChartPublic(props: {
   const allGraphs = db.useQuery({
     dissonanceGraphs: {
       $: {
-        where: {
-          meanFrequency: props.meanFrequency,
-          userBackground: props.settings.userBackground,
-        },
+        where:
+          props.settings.userBackground !== undefined
+            ? {
+                meanFrequency: props.meanFrequency,
+                userBackground: props.settings.userBackground,
+              }
+            : {
+                meanFrequency: props.meanFrequency,
+              },
       },
       intervalDissonanceScores: {
         $: {

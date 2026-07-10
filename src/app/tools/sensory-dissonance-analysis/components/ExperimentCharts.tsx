@@ -77,7 +77,7 @@ export function ExperimentCharts(props: {
             <Field>
               <Label>Filter by musical background</Label>
               <Select
-                value={settings.userBackground?.toString()}
+                value={settings.userBackground ?? ''}
                 onChange={(e) =>
                   setSettings((prev) => ({
                     ...prev,
@@ -85,7 +85,7 @@ export function ExperimentCharts(props: {
                   }))
                 }
               >
-                <option value={undefined}>
+                <option value="">
                   All participants
                 </option>
                 <option value={MusicalBackground.NaiveListener}>
