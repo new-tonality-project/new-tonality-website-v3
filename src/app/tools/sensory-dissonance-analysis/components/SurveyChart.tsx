@@ -166,6 +166,47 @@ export function SurveyChart(props: {
       })
     })
 
+    if (props.settings.showPnLResults) {
+      const pnlCurves = getPnlCurvesInCents(props.meanFrequency)
+      if (pnlCurves) {
+        const rangeData = pnlCurves.lower.map((lowerPoint, index) => {
+          const upperPoint = pnlCurves.upper[index]
+          return [lowerPoint.x, lowerPoint.y, upperPoint.y]
+        })
+
+        series.push({
+          type: 'arearange',
+          name: pnlLegendName,
+          yAxis: 'dissonance-score',
+          data: rangeData,
+          color: CHART_COLORS.pnl,
+          fillOpacity: 0.2,
+          lineWidth: 0,
+          marker: { enabled: false },
+          enableMouseTracking: false,
+          showInLegend: false,
+        })
+        series.push({
+          type: 'line',
+          name: pnlLegendName,
+          yAxis: 'dissonance-score',
+          data: pnlCurves.mean.map((point) => [point.x, point.y]),
+          color: CHART_COLORS.pnl,
+          lineWidth: 1,
+          marker: {
+            enabled: true,
+            radius: 3,
+            symbol: 'circle',
+            fillColor: 'transparent',
+            lineColor: CHART_COLORS.pnl,
+            lineWidth: 1,
+          },
+          enableMouseTracking: false,
+          showInLegend: true,
+        })
+      }
+    }
+
     graphs.user?.forEach((graph) => {
       series.push({
         type: 'spline',
@@ -198,51 +239,9 @@ export function SurveyChart(props: {
         lineWidth: 2,
         enableMouseTracking: true,
         showInLegend: true,
+        zIndex: 2,
       })
     })
-
-    if (props.settings.showPnLResults) {
-      const pnlCurves = getPnlCurvesInCents(props.meanFrequency)
-      if (pnlCurves) {
-        const rangeData = pnlCurves.lower.map((lowerPoint, index) => {
-          const upperPoint = pnlCurves.upper[index]
-          return [lowerPoint.x, lowerPoint.y, upperPoint.y]
-        })
-
-        series.push({
-          type: 'arearange',
-          name: pnlLegendName,
-          yAxis: 'dissonance-score',
-          data: rangeData,
-          color: CHART_COLORS.pnl,
-          fillOpacity: 0.2,
-          lineWidth: 0,
-          marker: { enabled: false },
-          enableMouseTracking: false,
-          showInLegend: false,
-          zIndex: 1,
-        })
-        series.push({
-          type: 'line',
-          name: pnlLegendName,
-          yAxis: 'dissonance-score',
-          data: pnlCurves.mean.map((point) => [point.x, point.y]),
-          color: CHART_COLORS.pnl,
-          lineWidth: 1,
-          marker: {
-            enabled: true,
-            radius: 3,
-            symbol: 'circle',
-            fillColor: 'transparent',
-            lineColor: CHART_COLORS.pnl,
-            lineWidth: 1,
-          },
-          enableMouseTracking: false,
-          showInLegend: true,
-          zIndex: 2,
-        })
-      }
-    }
 
     if (props.settings.showExponentialFit) {
       series.push({

@@ -124,7 +124,6 @@ export function SurveyChartPublic(props: {
           marker: { enabled: false },
           enableMouseTracking: false,
           showInLegend: false,
-          zIndex: 1,
         })
         series.push({
           type: 'line',
@@ -143,7 +142,6 @@ export function SurveyChartPublic(props: {
           },
           enableMouseTracking: false,
           showInLegend: true,
-          zIndex: 2,
         })
       }
     }

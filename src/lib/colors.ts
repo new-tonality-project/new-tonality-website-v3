@@ -12,21 +12,21 @@ export const COLORS = {
 
 /** Sky blue tints from dark to light, for overlapping participant curves */
 export const SKY_BLUE_TINTS = [
-  '#1a4a63aa',
-  '#2d6d8aaa',
-  '#3f90b1aa',
-  '#56B4E9aa',
-  '#72c0ecaa',
-  '#8eccf0aa',
-  '#aad8f4aa',
-  '#c6e4f8aa',
+  '#1a4a6399',
+  '#2d6d8a99',
+  '#3f90b199',
+  '#56B4E999',
+  '#72c0ec99',
+  '#8eccf099',
+  '#aad8f499',
+  '#c6e4f899',
 ] as const
 
 export const CHART_COLORS = {
   otherParticipants: SKY_BLUE_TINTS,
-  yourResult: COLORS.black,
-  theoreticalFit: COLORS.orange,
-  pnl: COLORS.yellow,
+  yourResult: COLORS.orange,
+  theoreticalFit: COLORS.black,
+  pnl: COLORS.green,
   selectedPoint: COLORS.blue,
   playedIntervalBand: COLORS.orange20,
   playedIntervalBorder: COLORS.orange,
