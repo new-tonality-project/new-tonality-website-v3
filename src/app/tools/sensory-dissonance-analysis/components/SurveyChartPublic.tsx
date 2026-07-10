@@ -85,81 +85,78 @@ export function SurveyChartPublic(props: {
       getPnlMeanFrequencyForSurvey(props.meanFrequency) ?? props.meanFrequency
     const pnlLegendName = `P&L (${pnlMeanFrequency}Hz)`;
 
-    if (props.settings.showOtherParticipants) {
-      (graphs || []).forEach((graph, index) => {
-        series.push({
-          type: 'spline',
-          yAxis: "dissonance-score",
-          data: graph.points.map((point) => [point.x, point.y]),
-          name: index === 0 ? 'Other participants' : undefined,
-          color:
-            CHART_COLORS.otherParticipants[
-              index % CHART_COLORS.otherParticipants.length
-            ],
+    (graphs || []).forEach((graph, index) => {
+      series.push({
+        type: 'spline',
+        yAxis: "dissonance-score",
+        data: graph.points.map((point) => [point.x, point.y]),
+        name: index === 0 ? 'Other participants' : undefined,
+        color:
+          CHART_COLORS.otherParticipants[
+            index % CHART_COLORS.otherParticipants.length
+          ],
+        lineWidth: 1,
+        visible: props.settings.showOtherParticipants,
+        enableMouseTracking: false,
+        showInLegend: index === 0,
+        marker: {
+          enabled: false,
+        },
+      })
+    })
+
+    const pnlCurves = getPnlCurvesInCents(props.meanFrequency)
+    if (pnlCurves) {
+      const rangeData = pnlCurves.lower.map((lowerPoint, index) => {
+        const upperPoint = pnlCurves.upper[index]
+        return [lowerPoint.x, lowerPoint.y, upperPoint.y]
+      })
+
+      series.push({
+        type: 'arearange',
+        name: pnlLegendName,
+        yAxis: 'dissonance-score',
+        data: rangeData,
+        color: CHART_COLORS.pnl,
+        fillOpacity: 0.2,
+        lineWidth: 0,
+        visible: props.settings.showPnLResults,
+        marker: { enabled: false },
+        enableMouseTracking: false,
+        showInLegend: false,
+      })
+      series.push({
+        type: 'line',
+        name: pnlLegendName,
+        yAxis: 'dissonance-score',
+        data: pnlCurves.mean.map((point) => [point.x, point.y]),
+        color: CHART_COLORS.pnl,
+        lineWidth: 1,
+        visible: props.settings.showPnLResults,
+        marker: {
+          enabled: true,
+          radius: 3,
+          symbol: 'circle',
+          fillColor: 'transparent',
+          lineColor: CHART_COLORS.pnl,
           lineWidth: 1,
-          opacity: 0.5,
-          enableMouseTracking: false,
-          showInLegend: index === 0,
-          marker: {
-            enabled: false,
-          },
-        })
+        },
+        enableMouseTracking: false,
+        showInLegend: true,
       })
     }
 
-    if (props.settings.showPnLResults) {
-      const pnlCurves = getPnlCurvesInCents(props.meanFrequency)
-      if (pnlCurves) {
-        const rangeData = pnlCurves.lower.map((lowerPoint, index) => {
-          const upperPoint = pnlCurves.upper[index]
-          return [lowerPoint.x, lowerPoint.y, upperPoint.y]
-        })
-
-        series.push({
-          type: 'arearange',
-          name: pnlLegendName,
-          yAxis: 'dissonance-score',
-          data: rangeData,
-          color: CHART_COLORS.pnl,
-          fillOpacity: 0.2,
-          lineWidth: 0,
-          marker: { enabled: false },
-          enableMouseTracking: false,
-          showInLegend: false,
-        })
-        series.push({
-          type: 'line',
-          name: pnlLegendName,
-          yAxis: 'dissonance-score',
-          data: pnlCurves.mean.map((point) => [point.x, point.y]),
-          color: CHART_COLORS.pnl,
-          lineWidth: 1,
-          marker: {
-            enabled: true,
-            radius: 3,
-            symbol: 'circle',
-            fillColor: 'transparent',
-            lineColor: CHART_COLORS.pnl,
-            lineWidth: 1,
-          },
-          enableMouseTracking: false,
-          showInLegend: true,
-        })
-      }
-    }
-
-    if (props.settings.showExponentialFit) {
-      series.push({
-        type: 'spline',
-        name: 'Theoretical fit',
-        yAxis: "dissonance-curve",
-        data: dissonanceCurve.plotCents(),
-        color: CHART_COLORS.theoreticalFit,
-        lineWidth: 2,
-        enableMouseTracking: false,
-        marker: { enabled: false },
-      });
-    }
+    series.push({
+      type: 'spline',
+      name: 'Theoretical fit',
+      yAxis: "dissonance-curve",
+      data: dissonanceCurve.plotCents(),
+      color: CHART_COLORS.theoreticalFit,
+      lineWidth: 2,
+      visible: props.settings.showExponentialFit,
+      enableMouseTracking: false,
+      marker: { enabled: false },
+    });
 
     return {
       ...baseChartConfig,
