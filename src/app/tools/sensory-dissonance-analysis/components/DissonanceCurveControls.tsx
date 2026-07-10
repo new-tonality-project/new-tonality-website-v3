@@ -13,6 +13,7 @@ import type { ChartSettings } from './types'
 type DissonanceCurveControlsProps = {
   value: ChartSettings
   onChange: (params: ChartSettings) => void
+  yourResultDisabled?: boolean
   secondOrderEnabled: boolean
   thirdOrderEnabled: boolean
   onSecondOrderEnabledChange: (enabled: boolean) => void
@@ -22,6 +23,7 @@ type DissonanceCurveControlsProps = {
 export function DissonanceCurveControls({
   value,
   onChange,
+  yourResultDisabled = false,
   secondOrderEnabled,
   thirdOrderEnabled,
   onSecondOrderEnabledChange,
@@ -29,31 +31,60 @@ export function DissonanceCurveControls({
 }: DissonanceCurveControlsProps) {
   return (
     <div className="flex flex-col gap-4 w-full lg:max-w-none pb-8">
-      <CheckboxField>
-        <Checkbox
-          checked={value.showExponentialFit}
-          onChange={(checked) =>
-            onChange({
-              ...value,
-              showExponentialFit: checked,
-            })
-          }
-        />
-        <Label className="text-sm">Show theoretical fit</Label>
-      </CheckboxField>
+      <div className="grid grid-cols-2 gap-4">
+        <CheckboxField>
+          <Checkbox
+            checked={value.showOtherParticipants}
+            onChange={(checked) =>
+              onChange({
+                ...value,
+                showOtherParticipants: checked,
+              })
+            }
+          />
+          <Label className="text-sm">Show other participant results</Label>
+        </CheckboxField>
 
-      <CheckboxField>
-        <Checkbox
-          checked={value.showPnLResults}
-          onChange={(checked) =>
-            onChange({
-              ...value,
-              showPnLResults: checked,
-            })
-          }
-        />
-        <Label className="text-sm">Show P&amp;L results</Label>
-      </CheckboxField>
+        <CheckboxField>
+          <Checkbox
+            checked={yourResultDisabled ? false : value.showYourResult}
+            disabled={yourResultDisabled}
+            onChange={(checked) =>
+              onChange({
+                ...value,
+                showYourResult: checked,
+              })
+            }
+          />
+          <Label className="text-sm">Show your result</Label>
+        </CheckboxField>
+
+        <CheckboxField>
+          <Checkbox
+            checked={value.showExponentialFit}
+            onChange={(checked) =>
+              onChange({
+                ...value,
+                showExponentialFit: checked,
+              })
+            }
+          />
+          <Label className="text-sm">Show theoretical fit</Label>
+        </CheckboxField>
+
+        <CheckboxField>
+          <Checkbox
+            checked={value.showPnLResults}
+            onChange={(checked) =>
+              onChange({
+                ...value,
+                showPnLResults: checked,
+              })
+            }
+          />
+          <Label className="text-sm">Show P&amp;L results</Label>
+        </CheckboxField>
+      </div>
 
       {value.showExponentialFit && (
         <div className="flex flex-col gap-6">

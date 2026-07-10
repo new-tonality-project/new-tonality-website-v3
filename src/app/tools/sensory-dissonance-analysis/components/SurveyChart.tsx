@@ -146,25 +146,27 @@ export function SurveyChart(props: {
       getPnlMeanFrequencyForSurvey(props.meanFrequency) ?? props.meanFrequency
     const pnlLegendName = `P&L (${pnlMeanFrequency}Hz)`
 
-    graphs.other?.forEach((graph, index) => {
-      series.push({
-        type: 'spline',
-        name: index === 0 ? 'Other participants' : undefined,
-        yAxis: "dissonance-score",
-        data: graph.points.map((point) => [point.x, point.y]),
-        color:
-          CHART_COLORS.otherParticipants[
-            index % CHART_COLORS.otherParticipants.length
-          ],
-        lineWidth: 1,
-        opacity: 0.5,
-        enableMouseTracking: false,
-        showInLegend: index === 0,
-        marker: {
-          enabled: false,
-        },
+    if (props.settings.showOtherParticipants) {
+      graphs.other?.forEach((graph, index) => {
+        series.push({
+          type: 'spline',
+          name: index === 0 ? 'Other participants' : undefined,
+          yAxis: "dissonance-score",
+          data: graph.points.map((point) => [point.x, point.y]),
+          color:
+            CHART_COLORS.otherParticipants[
+              index % CHART_COLORS.otherParticipants.length
+            ],
+          lineWidth: 1,
+          opacity: 0.5,
+          enableMouseTracking: false,
+          showInLegend: index === 0,
+          marker: {
+            enabled: false,
+          },
+        })
       })
-    })
+    }
 
     if (props.settings.showPnLResults) {
       const pnlCurves = getPnlCurvesInCents(props.meanFrequency)
@@ -207,41 +209,43 @@ export function SurveyChart(props: {
       }
     }
 
-    graphs.user?.forEach((graph) => {
-      series.push({
-        type: 'spline',
-        name: 'Your result',
-        yAxis: "dissonance-score",
-        data: graph.points.map((point) => {
-          const isSelected =
-            selectedPoint &&
-            selectedPoint.x === point.x &&
-            selectedPoint.y === point.y
-          return {
-            x: point.x,
-            y: point.y,
-            marker: {
-              enabled: true,
-              radius: isSelected ? 6 : 2,
-              fillColor: isSelected ? CHART_COLORS.selectedPoint : CHART_COLORS.yourResult,
-              lineColor: CHART_COLORS.yourResult,
-              lineWidth: isSelected ? 2 : 2,
-              symbol: 'circle',
-              states: {
-                hover: {
-                  radius: 6,
+    if (props.settings.showYourResult) {
+      graphs.user?.forEach((graph) => {
+        series.push({
+          type: 'spline',
+          name: 'Your result',
+          yAxis: "dissonance-score",
+          data: graph.points.map((point) => {
+            const isSelected =
+              selectedPoint &&
+              selectedPoint.x === point.x &&
+              selectedPoint.y === point.y
+            return {
+              x: point.x,
+              y: point.y,
+              marker: {
+                enabled: true,
+                radius: isSelected ? 6 : 2,
+                fillColor: isSelected ? CHART_COLORS.selectedPoint : CHART_COLORS.yourResult,
+                lineColor: CHART_COLORS.yourResult,
+                lineWidth: isSelected ? 2 : 2,
+                symbol: 'circle',
+                states: {
+                  hover: {
+                    radius: 6,
+                  },
                 },
               },
-            },
-          }
-        }),
-        color: CHART_COLORS.yourResult,
-        lineWidth: 2,
-        enableMouseTracking: true,
-        showInLegend: true,
-        zIndex: 2,
+            }
+          }),
+          color: CHART_COLORS.yourResult,
+          lineWidth: 2,
+          enableMouseTracking: true,
+          showInLegend: true,
+          zIndex: 2,
+        })
       })
-    })
+    }
 
     if (props.settings.showExponentialFit) {
       series.push({
@@ -328,7 +332,7 @@ export function SurveyChart(props: {
       },
       series,
     }
-  }, [graphs.other, graphs.user, props.settings.showExponentialFit, props.settings.showPnLResults, props.settings.xAxisStart, props.settings.xAxisEnd, props.meanFrequency, chartEvents, playedInterval, selectedPoint, dissonanceCurve, handlePointClick])
+  }, [graphs.other, graphs.user, props.settings.showOtherParticipants, props.settings.showYourResult, props.settings.showExponentialFit, props.settings.showPnLResults, props.settings.xAxisStart, props.settings.xAxisEnd, props.meanFrequency, chartEvents, playedInterval, selectedPoint, dissonanceCurve, handlePointClick])
 
   if (userGraph.isLoading || otherGraphs.isLoading || userSettings.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />
