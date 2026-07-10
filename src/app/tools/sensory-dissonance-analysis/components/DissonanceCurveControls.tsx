@@ -13,6 +13,7 @@ import type { ChartSettings } from './types'
 type DissonanceCurveControlsProps = {
   value: ChartSettings
   onChange: (params: ChartSettings) => void
+  yourResultDisabled?: boolean
   secondOrderEnabled: boolean
   thirdOrderEnabled: boolean
   onSecondOrderEnabledChange: (enabled: boolean) => void
@@ -22,6 +23,7 @@ type DissonanceCurveControlsProps = {
 export function DissonanceCurveControls({
   value,
   onChange,
+  yourResultDisabled = false,
   secondOrderEnabled,
   thirdOrderEnabled,
   onSecondOrderEnabledChange,
@@ -29,31 +31,60 @@ export function DissonanceCurveControls({
 }: DissonanceCurveControlsProps) {
   return (
     <div className="flex flex-col gap-4 w-full lg:max-w-none pb-8">
-      <CheckboxField>
-        <Checkbox
-          checked={value.showExponentialFit}
-          onChange={(checked) =>
-            onChange({
-              ...value,
-              showExponentialFit: checked,
-            })
-          }
-        />
-        <Label className="text-sm">Show theoretical fit</Label>
-      </CheckboxField>
+      <div className="grid grid-cols-2 gap-4">
+        <CheckboxField>
+          <Checkbox
+            checked={value.showOtherParticipants}
+            onChange={(checked) =>
+              onChange({
+                ...value,
+                showOtherParticipants: checked,
+              })
+            }
+          />
+          <Label className="text-sm">Show other participant results</Label>
+        </CheckboxField>
 
-      <CheckboxField>
-        <Checkbox
-          checked={value.showPnLResults}
-          onChange={(checked) =>
-            onChange({
-              ...value,
-              showPnLResults: checked,
-            })
-          }
-        />
-        <Label className="text-sm">Show P&amp;L results</Label>
-      </CheckboxField>
+        <CheckboxField>
+          <Checkbox
+            checked={yourResultDisabled ? false : value.showYourResult}
+            disabled={yourResultDisabled}
+            onChange={(checked) =>
+              onChange({
+                ...value,
+                showYourResult: checked,
+              })
+            }
+          />
+          <Label className="text-sm">Show your result</Label>
+        </CheckboxField>
+
+        <CheckboxField>
+          <Checkbox
+            checked={value.showExponentialFit}
+            onChange={(checked) =>
+              onChange({
+                ...value,
+                showExponentialFit: checked,
+              })
+            }
+          />
+          <Label className="text-sm">Show theoretical fit</Label>
+        </CheckboxField>
+
+        <CheckboxField>
+          <Checkbox
+            checked={value.showPnLResults}
+            onChange={(checked) =>
+              onChange({
+                ...value,
+                showPnLResults: checked,
+              })
+            }
+          />
+          <Label className="text-sm">Show P&amp;L results</Label>
+        </CheckboxField>
+      </div>
 
       {value.showExponentialFit && (
         <div className="flex flex-col gap-6">
@@ -79,18 +110,6 @@ export function DissonanceCurveControls({
               whole
               label="End (cents)"
               onChange={(xAxisEnd) => onChange({ ...value, xAxisEnd })}
-            />
-            <DragNumberInput
-              defaultValue={0}
-              value={value.phantomHarmonicsNumber}
-              min={0}
-              minStep={1}
-              max={20}
-              valueRange={10}
-              label="Phantom harmonics"
-              onChange={(phantomHarmonicsNumber) =>
-                onChange({ ...value, phantomHarmonicsNumber })
-              }
             />
           </div>
 
@@ -251,158 +270,158 @@ export function DissonanceCurveControls({
             </CheckboxField>
             {secondOrderEnabled && (
               <div className="flex items-center gap-2 flex-wrap">
-                  <DragNumberInput
-                    defaultValue={
-                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude
-                    }
-                    value={
-                      value.secondOrderDissonance.magnitude ??
-                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude
-                    }
-                    min={0}
-                    max={1}
-                    minStep={0.01}
-                    valueRange={0.5}
-                    label="Magnitude"
-                    onChange={(magnitude) =>
-                      onChange({
-                        ...value,
-                        secondOrderDissonance: {
-                          ...value.secondOrderDissonance,
-                          magnitude,
-                        },
-                      })
-                    }
-                  />
-                  <DragNumberInput
-                    defaultValue={
-                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.x_star
-                    }
-                    value={
-                      value.secondOrderDissonance.x_star ??
-                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.x_star
-                    }
-                    min={0.001}
-                    valueRange={0.1}
-                    label="x*"
-                    onChange={(x_star) =>
-                      onChange({
-                        ...value,
-                        secondOrderDissonance: {
-                          ...value.secondOrderDissonance,
-                          x_star,
-                        },
-                      })
-                    }
-                  />
-                  <DragNumberInput
-                    defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b1}
-                    value={
-                      value.secondOrderDissonance.b1 ??
-                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b1
-                    }
-                    min={0.01}
-                    minStep={0.01}
-                    max={
-                      (value.secondOrderDissonance.b2 ??
-                        DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b2) - 0.01
-                    }
-                    valueRange={1}
-                    label="b1"
-                    onChange={(b1) =>
-                      onChange({
-                        ...value,
-                        secondOrderDissonance: {
-                          ...value.secondOrderDissonance,
-                          b1,
-                        },
-                      })
-                    }
-                  />
-                  <DragNumberInput
-                    defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b2}
-                    value={
-                      value.secondOrderDissonance.b2 ??
-                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b2
-                    }
-                    min={
-                      (value.secondOrderDissonance.b1 ??
-                        DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b1) + 0.01
-                    }
-                    minStep={0.01}
-                    valueRange={1}
-                    label="b2"
-                    onChange={(b2) =>
-                      onChange({
-                        ...value,
-                        secondOrderDissonance: {
-                          ...value.secondOrderDissonance,
-                          b2,
-                        },
-                      })
-                    }
-                  />
-                  <DragNumberInput
-                    defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s1}
-                    value={
-                      value.secondOrderDissonance.s1 ??
-                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s1
-                    }
-                    min={0.001}
-                    valueRange={0.1}
-                    label="s1"
-                    onChange={(s1) =>
-                      onChange({
-                        ...value,
-                        secondOrderDissonance: {
-                          ...value.secondOrderDissonance,
-                          s1,
-                        },
-                      })
-                    }
-                  />
-                  <DragNumberInput
-                    defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s2}
-                    value={
-                      value.secondOrderDissonance.s2 ??
-                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s2
-                    }
-                    min={0.1}
-                    minStep={0.1}
-                    valueRange={10}
-                    label="s2"
-                    onChange={(s2) =>
-                      onChange({
-                        ...value,
-                        secondOrderDissonance: {
-                          ...value.secondOrderDissonance,
-                          s2,
-                        },
-                      })
-                    }
-                  />
-                  <DragNumberInput
-                    defaultValue={
-                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitudeFrequencyDecay
-                    }
-                    value={
-                      value.secondOrderDissonance.magnitudeFrequencyDecay ??
-                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitudeFrequencyDecay
-                    }
-                    min={0}
-                    minStep={0.01}
-                    valueRange={1}
-                    label="Magnitude freq. decay"
-                    onChange={(magnitudeFrequencyDecay) =>
-                      onChange({
-                        ...value,
-                        secondOrderDissonance: {
-                          ...value.secondOrderDissonance,
-                          magnitudeFrequencyDecay,
-                        },
-                      })
-                    }
-                  />
+                <DragNumberInput
+                  defaultValue={
+                    DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude
+                  }
+                  value={
+                    value.secondOrderDissonance.magnitude ??
+                    DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude
+                  }
+                  min={0}
+                  max={1}
+                  minStep={0.01}
+                  valueRange={0.5}
+                  label="Magnitude"
+                  onChange={(magnitude) =>
+                    onChange({
+                      ...value,
+                      secondOrderDissonance: {
+                        ...value.secondOrderDissonance,
+                        magnitude,
+                      },
+                    })
+                  }
+                />
+                <DragNumberInput
+                  defaultValue={
+                    DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.x_star
+                  }
+                  value={
+                    value.secondOrderDissonance.x_star ??
+                    DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.x_star
+                  }
+                  min={0.001}
+                  valueRange={0.1}
+                  label="x*"
+                  onChange={(x_star) =>
+                    onChange({
+                      ...value,
+                      secondOrderDissonance: {
+                        ...value.secondOrderDissonance,
+                        x_star,
+                      },
+                    })
+                  }
+                />
+                <DragNumberInput
+                  defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b1}
+                  value={
+                    value.secondOrderDissonance.b1 ??
+                    DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b1
+                  }
+                  min={0.01}
+                  minStep={0.01}
+                  max={
+                    (value.secondOrderDissonance.b2 ??
+                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b2) - 0.01
+                  }
+                  valueRange={1}
+                  label="b1"
+                  onChange={(b1) =>
+                    onChange({
+                      ...value,
+                      secondOrderDissonance: {
+                        ...value.secondOrderDissonance,
+                        b1,
+                      },
+                    })
+                  }
+                />
+                <DragNumberInput
+                  defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b2}
+                  value={
+                    value.secondOrderDissonance.b2 ??
+                    DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b2
+                  }
+                  min={
+                    (value.secondOrderDissonance.b1 ??
+                      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b1) + 0.01
+                  }
+                  minStep={0.01}
+                  valueRange={1}
+                  label="b2"
+                  onChange={(b2) =>
+                    onChange({
+                      ...value,
+                      secondOrderDissonance: {
+                        ...value.secondOrderDissonance,
+                        b2,
+                      },
+                    })
+                  }
+                />
+                <DragNumberInput
+                  defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s1}
+                  value={
+                    value.secondOrderDissonance.s1 ??
+                    DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s1
+                  }
+                  min={0.001}
+                  valueRange={0.1}
+                  label="s1"
+                  onChange={(s1) =>
+                    onChange({
+                      ...value,
+                      secondOrderDissonance: {
+                        ...value.secondOrderDissonance,
+                        s1,
+                      },
+                    })
+                  }
+                />
+                <DragNumberInput
+                  defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s2}
+                  value={
+                    value.secondOrderDissonance.s2 ??
+                    DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s2
+                  }
+                  min={0.1}
+                  minStep={0.1}
+                  valueRange={10}
+                  label="s2"
+                  onChange={(s2) =>
+                    onChange({
+                      ...value,
+                      secondOrderDissonance: {
+                        ...value.secondOrderDissonance,
+                        s2,
+                      },
+                    })
+                  }
+                />
+                <DragNumberInput
+                  defaultValue={
+                    DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitudeFrequencyDecay
+                  }
+                  value={
+                    value.secondOrderDissonance.magnitudeFrequencyDecay ??
+                    DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitudeFrequencyDecay
+                  }
+                  min={0}
+                  minStep={0.01}
+                  valueRange={1}
+                  label="Magnitude freq. decay"
+                  onChange={(magnitudeFrequencyDecay) =>
+                    onChange({
+                      ...value,
+                      secondOrderDissonance: {
+                        ...value.secondOrderDissonance,
+                        magnitudeFrequencyDecay,
+                      },
+                    })
+                  }
+                />
               </div>
             )}
           </div>
@@ -432,7 +451,20 @@ export function DissonanceCurveControls({
                 </Label>
               </CheckboxField>
               {thirdOrderEnabled && (
-                <div className="flex items-center gap-2 flex-wrap">
+                <>
+                  <DragNumberInput
+                    defaultValue={3}
+                    value={value.phantomHarmonicsNumber}
+                    min={0}
+                    minStep={1}
+                    max={20}
+                    valueRange={10}
+                    label="Phantom harmonics"
+                    onChange={(phantomHarmonicsNumber) =>
+                      onChange({ ...value, phantomHarmonicsNumber })
+                    }
+                  />
+                  <div className="flex items-center gap-2 flex-wrap">
                     <DragNumberInput
                       defaultValue={
                         DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitude
@@ -585,7 +617,8 @@ export function DissonanceCurveControls({
                         })
                       }
                     />
-                </div>
+                  </div>
+                </>
               )}
             </div>
           )}

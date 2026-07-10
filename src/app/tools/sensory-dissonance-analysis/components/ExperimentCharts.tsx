@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
+import { useAuth } from '@clerk/nextjs'
 import { db } from '@/db'
 import { EXPERIMENTS } from '../utils'
 import { MusicalBackground } from '@/lib/types'
@@ -36,6 +37,8 @@ export function ExperimentCharts(props: {
 }) {
   const [settings, setSettings] = useState<ChartSettings>({
     showAverage: false,
+    showOtherParticipants: true,
+    showYourResult: true,
     showExponentialFit: true,
     showPnLResults: false,
     userBackground: undefined,
@@ -50,9 +53,12 @@ export function ExperimentCharts(props: {
   const [secondOrderEnabled, setSecondOrderEnabled] = useState(false)
   const [thirdOrderEnabled, setThirdOrderEnabled] = useState(false)
 
+  const { isSignedIn } = useAuth()
+
   const effectiveSettings = useMemo(
     () => ({
       ...settings,
+      showYourResult: isSignedIn ? settings.showYourResult : false,
       secondOrderDissonance: secondOrderEnabled
         ? settings.secondOrderDissonance
         : { ...settings.secondOrderDissonance, magnitude: 0 },
@@ -60,7 +66,7 @@ export function ExperimentCharts(props: {
         ? settings.thirdOrderDissonance
         : { ...settings.thirdOrderDissonance, magnitude: 0 },
     }),
-    [settings, secondOrderEnabled, thirdOrderEnabled]
+    [settings, secondOrderEnabled, thirdOrderEnabled, isSignedIn]
   )
 
   return (
@@ -97,6 +103,7 @@ export function ExperimentCharts(props: {
           <DissonanceCurveControls
             value={settings}
             onChange={setSettings}
+            yourResultDisabled={!isSignedIn}
             secondOrderEnabled={secondOrderEnabled}
             thirdOrderEnabled={thirdOrderEnabled}
             onSecondOrderEnabledChange={(enabled) => {

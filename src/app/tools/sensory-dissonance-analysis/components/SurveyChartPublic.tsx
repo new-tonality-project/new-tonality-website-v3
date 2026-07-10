@@ -85,25 +85,27 @@ export function SurveyChartPublic(props: {
       getPnlMeanFrequencyForSurvey(props.meanFrequency) ?? props.meanFrequency
     const pnlLegendName = `P&L (${pnlMeanFrequency}Hz)`;
 
-    (graphs || []).forEach((graph, index) => {
-      series.push({
-        type: 'spline',
-        yAxis: "dissonance-score",
-        data: graph.points.map((point) => [point.x, point.y]),
-        name: index === 0 ? 'Other participants' : undefined,
-        color:
-          CHART_COLORS.otherParticipants[
-            index % CHART_COLORS.otherParticipants.length
-          ],
-        lineWidth: 1,
-        opacity: 0.5,
-        enableMouseTracking: false,
-        showInLegend: index === 0,
-        marker: {
-          enabled: false,
-        },
+    if (props.settings.showOtherParticipants) {
+      (graphs || []).forEach((graph, index) => {
+        series.push({
+          type: 'spline',
+          yAxis: "dissonance-score",
+          data: graph.points.map((point) => [point.x, point.y]),
+          name: index === 0 ? 'Other participants' : undefined,
+          color:
+            CHART_COLORS.otherParticipants[
+              index % CHART_COLORS.otherParticipants.length
+            ],
+          lineWidth: 1,
+          opacity: 0.5,
+          enableMouseTracking: false,
+          showInLegend: index === 0,
+          marker: {
+            enabled: false,
+          },
+        })
       })
-    })
+    }
 
     if (props.settings.showPnLResults) {
       const pnlCurves = getPnlCurvesInCents(props.meanFrequency)
@@ -124,7 +126,6 @@ export function SurveyChartPublic(props: {
           marker: { enabled: false },
           enableMouseTracking: false,
           showInLegend: false,
-          zIndex: 1,
         })
         series.push({
           type: 'line',
@@ -143,7 +144,6 @@ export function SurveyChartPublic(props: {
           },
           enableMouseTracking: false,
           showInLegend: true,
-          zIndex: 2,
         })
       }
     }

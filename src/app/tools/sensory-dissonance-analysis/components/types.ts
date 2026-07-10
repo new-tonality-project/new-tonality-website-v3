@@ -3,6 +3,8 @@ import type { DissonanceParams } from 'sethares-dissonance'
 
 export type ChartSettings = Required<DissonanceParams> & {
   showAverage: boolean
+  showOtherParticipants: boolean
+  showYourResult: boolean
   showExponentialFit: boolean
   showPnLResults: boolean
   userBackground: MusicalBackground | undefined
