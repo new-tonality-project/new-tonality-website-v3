@@ -4,11 +4,12 @@ import { db } from '@/db'
 import { useMemo, useState } from 'react'
 import { Chart } from '@highcharts/react'
 import Highcharts from 'highcharts'
+import 'highcharts/highcharts-more';
 import { Spectrum } from 'tuning-core'
 import { SignInButton } from '@clerk/nextjs'
 import { ChartHeader } from './ChartHeader'
 import { Button } from '@/components'
-import { baseChartConfig } from './chartConfig'
+import { baseChartConfig, chartCredits } from './chartConfig'
 import type { ChartSettings } from './types'
 import { useDissonanceCurve, type UseDissonanceCurveOptions } from '@/hooks'
 import {
@@ -16,6 +17,8 @@ import {
   DissonanceChartOverlay,
 } from './DissonanceChartOverlay'
 import { getVolumeForFrequency } from '../utils'
+import { getPnlCurvesInCents, getPnlMeanFrequencyForSurvey } from '../const'
+import { CHART_COLORS } from '@/lib/colors'
 
 export function SurveyChartPublic(props: {
   meanFrequency: number
@@ -61,6 +64,7 @@ export function SurveyChartPublic(props: {
       xAxisEnd,
       showAverage,
       showExponentialFit,
+      showPnLResults,
       userBackground,
       ...dissonanceParams
     } = props.settings
@@ -77,6 +81,9 @@ export function SurveyChartPublic(props: {
 
   const chartOptions = useMemo(() => {
     const series: Highcharts.SeriesOptionsType[] = [];
+    const pnlMeanFrequency =
+      getPnlMeanFrequencyForSurvey(props.meanFrequency) ?? props.meanFrequency
+    const pnlLegendName = `P&L (${pnlMeanFrequency}Hz)`;
 
     (graphs || []).forEach((graph, index) => {
       series.push({
@@ -84,6 +91,10 @@ export function SurveyChartPublic(props: {
         yAxis: "dissonance-score",
         data: graph.points.map((point) => [point.x, point.y]),
         name: index === 0 ? 'Other participants' : undefined,
+        color:
+          CHART_COLORS.otherParticipants[
+            index % CHART_COLORS.otherParticipants.length
+          ],
         lineWidth: 1,
         opacity: 0.5,
         enableMouseTracking: false,
@@ -94,13 +105,56 @@ export function SurveyChartPublic(props: {
       })
     })
 
+    if (props.settings.showPnLResults) {
+      const pnlCurves = getPnlCurvesInCents(props.meanFrequency)
+      if (pnlCurves) {
+        const rangeData = pnlCurves.lower.map((lowerPoint, index) => {
+          const upperPoint = pnlCurves.upper[index]
+          return [lowerPoint.x, lowerPoint.y, upperPoint.y]
+        })
+
+        series.push({
+          type: 'arearange',
+          name: pnlLegendName,
+          yAxis: 'dissonance-score',
+          data: rangeData,
+          color: CHART_COLORS.pnl,
+          fillOpacity: 0.2,
+          lineWidth: 0,
+          marker: { enabled: false },
+          enableMouseTracking: false,
+          showInLegend: false,
+          zIndex: 1,
+        })
+        series.push({
+          type: 'line',
+          name: pnlLegendName,
+          yAxis: 'dissonance-score',
+          data: pnlCurves.mean.map((point) => [point.x, point.y]),
+          color: CHART_COLORS.pnl,
+          lineWidth: 1,
+          marker: {
+            enabled: true,
+            radius: 3,
+            symbol: 'circle',
+            fillColor: 'transparent',
+            lineColor: CHART_COLORS.pnl,
+            lineWidth: 1,
+          },
+          enableMouseTracking: false,
+          showInLegend: true,
+          zIndex: 2,
+        })
+      }
+    }
+
     if (props.settings.showExponentialFit) {
       series.push({
         type: 'spline',
         name: 'Theoretical fit',
         yAxis: "dissonance-curve",
         data: dissonanceCurve.plotCents(),
-        color: 'black',
+        color: CHART_COLORS.theoreticalFit,
         lineWidth: 2,
         enableMouseTracking: false,
         marker: { enabled: false },
@@ -123,23 +177,15 @@ export function SurveyChartPublic(props: {
                 {
                   from: playedInterval - 7.5,
                   to: playedInterval + 7.5,
-                  color: 'rgba(255, 0, 0, 0.2)',
-                  borderColor: 'red',
+                  color: CHART_COLORS.playedIntervalBand,
+                  borderColor: CHART_COLORS.playedIntervalBorder,
                   borderWidth: 1,
                   zIndex: 1,
                 },
               ]
             : [],
       },
-      credits: {
-        enabled: true,
-        text: '* press and drag on the chart to play intervals',
-        style: {
-          fontSize: '12px',
-          fontStyle: 'italic',
-          color: '#999',
-        },
-      },
+      credits: chartCredits,
       yAxis: [
         {
           id: "dissonance-score",
@@ -176,7 +222,7 @@ export function SurveyChartPublic(props: {
       },
       series,
     } as Highcharts.Options
-  }, [graphs, dissonanceCurve, props.settings, chartEvents, playedInterval])
+  }, [graphs, dissonanceCurve, props.settings, props.meanFrequency, chartEvents, playedInterval])
 
   if (allGraphs.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />

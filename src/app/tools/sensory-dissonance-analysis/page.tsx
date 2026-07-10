@@ -8,7 +8,7 @@ import {
   YouTubeIcon,
   MailIcon,
 } from '@/components'
-import { ExperimentCharts } from './components'
+import { ExperimentCharts } from './components/ExperimentCharts'
 import { UnfinishedExperimentsModal } from './components/UnfinishedExperimentsModal'
 import { FirefoxWarningModal } from './components/FirefoxWarningModal'
 import { db } from '@/db'

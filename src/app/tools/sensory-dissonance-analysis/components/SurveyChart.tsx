@@ -4,10 +4,11 @@ import { db } from '@/db'
 import { useMemo, useState, useCallback, useRef } from 'react'
 import { Chart } from '@highcharts/react'
 import Highcharts from 'highcharts'
+import 'highcharts/highcharts-more';
 import { SurveyMachineProvider } from '@/state/machines'
 import { Survey } from './Survey'
 import { ChartHeader } from './ChartHeader'
-import { baseChartConfig } from './chartConfig'
+import { baseChartConfig, chartCredits } from './chartConfig'
 import type { ChartSettings } from './types'
 import { useDissonanceCurve, type UseDissonanceCurveOptions } from '@/hooks'
 import { Spectrum } from 'tuning-core'
@@ -16,6 +17,8 @@ import {
   DissonanceChartOverlay,
 } from './DissonanceChartOverlay'
 import { getVolumeForFrequency } from '../utils'
+import { getPnlCurvesInCents, getPnlMeanFrequencyForSurvey } from '../const'
+import { CHART_COLORS } from '@/lib/colors'
 
 export function SurveyChart(props: {
   meanFrequency: number
@@ -38,6 +41,7 @@ export function SurveyChart(props: {
       xAxisEnd,
       showAverage,
       showExponentialFit,
+      showPnLResults,
       userBackground,
       ...dissonanceParams
     } = props.settings
@@ -138,6 +142,9 @@ export function SurveyChart(props: {
 
   const chartOptions = useMemo(() => {
     const series: Highcharts.SeriesOptionsType[] = []
+    const pnlMeanFrequency =
+      getPnlMeanFrequencyForSurvey(props.meanFrequency) ?? props.meanFrequency
+    const pnlLegendName = `P&L (${pnlMeanFrequency}Hz)`
 
     graphs.other?.forEach((graph, index) => {
       series.push({
@@ -145,6 +152,10 @@ export function SurveyChart(props: {
         name: index === 0 ? 'Other participants' : undefined,
         yAxis: "dissonance-score",
         data: graph.points.map((point) => [point.x, point.y]),
+        color:
+          CHART_COLORS.otherParticipants[
+            index % CHART_COLORS.otherParticipants.length
+          ],
         lineWidth: 1,
         opacity: 0.5,
         enableMouseTracking: false,
@@ -171,8 +182,8 @@ export function SurveyChart(props: {
             marker: {
               enabled: true,
               radius: isSelected ? 6 : 2,
-              fillColor: isSelected ? '#85ffa9' : '#000',
-              lineColor: isSelected ? 'black' : '#000',
+              fillColor: isSelected ? CHART_COLORS.selectedPoint : CHART_COLORS.yourResult,
+              lineColor: CHART_COLORS.yourResult,
               lineWidth: isSelected ? 2 : 2,
               symbol: 'circle',
               states: {
@@ -183,12 +194,55 @@ export function SurveyChart(props: {
             },
           }
         }),
-        color: '#000',
+        color: CHART_COLORS.yourResult,
         lineWidth: 2,
         enableMouseTracking: true,
         showInLegend: true,
       })
     })
+
+    if (props.settings.showPnLResults) {
+      const pnlCurves = getPnlCurvesInCents(props.meanFrequency)
+      if (pnlCurves) {
+        const rangeData = pnlCurves.lower.map((lowerPoint, index) => {
+          const upperPoint = pnlCurves.upper[index]
+          return [lowerPoint.x, lowerPoint.y, upperPoint.y]
+        })
+
+        series.push({
+          type: 'arearange',
+          name: pnlLegendName,
+          yAxis: 'dissonance-score',
+          data: rangeData,
+          color: CHART_COLORS.pnl,
+          fillOpacity: 0.2,
+          lineWidth: 0,
+          marker: { enabled: false },
+          enableMouseTracking: false,
+          showInLegend: false,
+          zIndex: 1,
+        })
+        series.push({
+          type: 'line',
+          name: pnlLegendName,
+          yAxis: 'dissonance-score',
+          data: pnlCurves.mean.map((point) => [point.x, point.y]),
+          color: CHART_COLORS.pnl,
+          lineWidth: 1,
+          marker: {
+            enabled: true,
+            radius: 3,
+            symbol: 'circle',
+            fillColor: 'transparent',
+            lineColor: CHART_COLORS.pnl,
+            lineWidth: 1,
+          },
+          enableMouseTracking: false,
+          showInLegend: true,
+          zIndex: 2,
+        })
+      }
+    }
 
     if (props.settings.showExponentialFit) {
       series.push({
@@ -196,7 +250,7 @@ export function SurveyChart(props: {
         name: 'Theoretical fit',
         yAxis: "dissonance-curve",
         data: dissonanceCurve.plotCents(),
-        color: '#0099FF',
+        color: CHART_COLORS.theoreticalFit,
         lineWidth: 2,
         enableMouseTracking: false,
         marker: { enabled: false },
@@ -219,8 +273,8 @@ export function SurveyChart(props: {
               {
                 from: playedInterval - 7.5,
                 to: playedInterval + 7.5,
-                color: 'rgba(255, 0, 0, 0.2)',
-                borderColor: 'red',
+                color: CHART_COLORS.playedIntervalBand,
+                borderColor: CHART_COLORS.playedIntervalBorder,
                 borderWidth: 1,
                 zIndex: 1,
               },
@@ -257,15 +311,7 @@ export function SurveyChart(props: {
           },
         },
       ],
-      credits: {
-        enabled: graphs.user && graphs.user.length > 0 ? true : false,
-        text: '* press and drag on the chart to play intervals',
-        style: {
-          fontSize: '12px',
-          fontStyle: 'italic',
-          color: '#999',
-        },
-      },
+      credits: chartCredits,
       plotOptions: {
         spline: {
           animation: false,
@@ -283,7 +329,7 @@ export function SurveyChart(props: {
       },
       series,
     }
-  }, [graphs.other, graphs.user, props.settings.showExponentialFit, props.settings.xAxisStart, props.settings.xAxisEnd, chartEvents, playedInterval, selectedPoint, dissonanceCurve, handlePointClick])
+  }, [graphs.other, graphs.user, props.settings.showExponentialFit, props.settings.showPnLResults, props.settings.xAxisStart, props.settings.xAxisEnd, props.meanFrequency, chartEvents, playedInterval, selectedPoint, dissonanceCurve, handlePointClick])
 
   if (userGraph.isLoading || otherGraphs.isLoading || userSettings.isLoading) {
     return <div className="h-[300px] w-full rounded bg-neutral-100" />
@@ -298,7 +344,7 @@ export function SurveyChart(props: {
       <div className="w-full overflow-x-auto lg:overflow-x-visible">
         <div className="relative grid min-w-[600px] lg:w-full lg:min-w-0 *:col-start-1 *:row-start-1">
           {/* @ts-expect-error - Highcharts Options type incompatible with @highcharts/react props (version mismatch) */}
-          <Chart options={chartOptions} containerProps={{ className: 'w-full min-h-[300px]' }} />
+          <Chart highcharts={Highcharts} options={chartOptions} containerProps={{ className: 'w-full min-h-[300px]' }} />
           <DissonanceChartOverlay
             plotBounds={plotBounds}
             meanFrequency={props.meanFrequency}

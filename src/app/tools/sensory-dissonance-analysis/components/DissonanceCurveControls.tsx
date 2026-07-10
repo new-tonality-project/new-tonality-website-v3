@@ -42,6 +42,19 @@ export function DissonanceCurveControls({
         <Label className="text-sm">Show theoretical fit</Label>
       </CheckboxField>
 
+      <CheckboxField>
+        <Checkbox
+          checked={value.showPnLResults}
+          onChange={(checked) =>
+            onChange({
+              ...value,
+              showPnLResults: checked,
+            })
+          }
+        />
+        <Label className="text-sm">Show P&amp;L results</Label>
+      </CheckboxField>
+
       {value.showExponentialFit && (
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-2 flex-wrap">

@@ -1,8 +1,8 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { db } from '@/db'
-import { SurveyChart, SurveyChartPublic } from './'
 import { EXPERIMENTS } from '../utils'
 import { MusicalBackground } from '@/lib/types'
 import type { ChartSettings } from './types'
@@ -22,12 +22,22 @@ import {
   DEFAULT_PHANTOM_HARMONICS_NUMBER,
 } from 'sethares-dissonance'
 
+const SurveyChart = dynamic(
+  () => import('./SurveyChart').then((module) => module.SurveyChart),
+  { ssr: false, loading: () => <div className="h-[300px] w-full rounded bg-neutral-100" /> },
+)
+const SurveyChartPublic = dynamic(
+  () => import('./SurveyChartPublic').then((module) => module.SurveyChartPublic),
+  { ssr: false, loading: () => <div className="h-[300px] w-full rounded bg-neutral-100" /> },
+)
+
 export function ExperimentCharts(props: {
   onTakeSurvey?: (open?: boolean) => void
 }) {
   const [settings, setSettings] = useState<ChartSettings>({
     showAverage: false,
     showExponentialFit: true,
+    showPnLResults: false,
     userBackground: undefined,
     firstOrderDissonance: DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
     secondOrderDissonance: DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
@@ -100,19 +110,19 @@ export function ExperimentCharts(props: {
       <db.SignedOut>
         <SurveyChartPublic
           meanFrequency={EXPERIMENTS[0].frequency}
-          title={EXPERIMENTS[0].title}
+          title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
           settings={effectiveSettings}
         />
 
         <SurveyChartPublic
           meanFrequency={EXPERIMENTS[1].frequency}
-          title={EXPERIMENTS[1].title}
+          title={`${EXPERIMENTS[1].title} (${EXPERIMENTS[1].frequency}Hz)`}
           settings={effectiveSettings}
         />
 
         <SurveyChartPublic
           meanFrequency={EXPERIMENTS[2].frequency}
-          title={EXPERIMENTS[2].title}
+          title={`${EXPERIMENTS[2].title} (${EXPERIMENTS[2].frequency}Hz)`}
           settings={effectiveSettings}
         />
       </db.SignedOut>
@@ -120,21 +130,21 @@ export function ExperimentCharts(props: {
       <db.SignedIn>
         <SurveyChart
           meanFrequency={EXPERIMENTS[0].frequency}
-          title={EXPERIMENTS[0].title}
+          title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
           settings={effectiveSettings}
           onTakeSurvey={props.onTakeSurvey}
         />
 
         <SurveyChart
           meanFrequency={EXPERIMENTS[1].frequency}
-          title={EXPERIMENTS[1].title}
+          title={`${EXPERIMENTS[1].title} (${EXPERIMENTS[1].frequency}Hz)`}
           settings={effectiveSettings}
           onTakeSurvey={props.onTakeSurvey}
         />
 
         <SurveyChart
           meanFrequency={EXPERIMENTS[2].frequency}
-          title={EXPERIMENTS[2].title}
+          title={`${EXPERIMENTS[2].title} (${EXPERIMENTS[2].frequency}Hz)`}
           settings={effectiveSettings}
           onTakeSurvey={props.onTakeSurvey}
         />

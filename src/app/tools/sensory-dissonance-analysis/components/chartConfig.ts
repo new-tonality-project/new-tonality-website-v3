@@ -1,21 +1,8 @@
 import type Highcharts from 'highcharts'
-
-/** Palette for "other participants" graphs — excludes bluish colors so user graph (#0099FF) stands out */
-export const otherParticipantsColors = [
-  '#e74c3c', // red
-  '#27ae60', // green
-  '#f39c12', // orange
-  '#9b59b6', // purple
-  '#e67e22', // dark orange
-  '#ec4899', // pink
-  '#84cc16', // lime
-  '#059669', // emerald
-  '#d97706', // amber
-  '#dc2626', // darker red
-]
+import { CHART_COLORS } from '@/lib/colors'
 
 export const baseChartConfig: Partial<Highcharts.Options> = {
-  colors: otherParticipantsColors,
+  colors: Array.from(CHART_COLORS.otherParticipants),
   chart: {
     height: 300,
     backgroundColor: 'transparent',
@@ -57,6 +44,16 @@ export const baseChartConfig: Partial<Highcharts.Options> = {
   },
   tooltip: {
     enabled: false,
+  },
+}
+
+export const chartCredits: Highcharts.CreditsOptions = {
+  enabled: true,
+  text: '* press and drag on the chart to play intervals',
+  style: {
+    fontSize: '12px',
+    fontStyle: 'italic',
+    color: '#999',
   },
 }
 
