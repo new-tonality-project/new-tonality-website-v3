@@ -8,7 +8,7 @@ import 'highcharts/highcharts-more';
 import { SurveyMachineProvider } from '@/state/machines'
 import { Survey } from './Survey'
 import { ChartHeader } from './ChartHeader'
-import { baseChartConfig } from './chartConfig'
+import { baseChartConfig, chartCredits } from './chartConfig'
 import type { ChartSettings } from './types'
 import { useDissonanceCurve, type UseDissonanceCurveOptions } from '@/hooks'
 import { Spectrum } from 'tuning-core'
@@ -311,15 +311,7 @@ export function SurveyChart(props: {
           },
         },
       ],
-      credits: {
-        enabled: graphs.user && graphs.user.length > 0 ? true : false,
-        text: '* press and drag on the chart to play intervals',
-        style: {
-          fontSize: '12px',
-          fontStyle: 'italic',
-          color: '#999',
-        },
-      },
+      credits: chartCredits,
       plotOptions: {
         spline: {
           animation: false,

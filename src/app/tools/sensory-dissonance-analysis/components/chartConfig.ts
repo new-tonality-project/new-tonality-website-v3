@@ -47,3 +47,13 @@ export const baseChartConfig: Partial<Highcharts.Options> = {
   },
 }
 
+export const chartCredits: Highcharts.CreditsOptions = {
+  enabled: true,
+  text: '* press and drag on the chart to play intervals',
+  style: {
+    fontSize: '12px',
+    fontStyle: 'italic',
+    color: '#999',
+  },
+}
+

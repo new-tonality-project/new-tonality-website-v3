@@ -9,7 +9,7 @@ import { Spectrum } from 'tuning-core'
 import { SignInButton } from '@clerk/nextjs'
 import { ChartHeader } from './ChartHeader'
 import { Button } from '@/components'
-import { baseChartConfig } from './chartConfig'
+import { baseChartConfig, chartCredits } from './chartConfig'
 import type { ChartSettings } from './types'
 import { useDissonanceCurve, type UseDissonanceCurveOptions } from '@/hooks'
 import {
@@ -185,15 +185,7 @@ export function SurveyChartPublic(props: {
               ]
             : [],
       },
-      credits: {
-        enabled: true,
-        text: '* press and drag on the chart to play intervals',
-        style: {
-          fontSize: '12px',
-          fontStyle: 'italic',
-          color: '#999',
-        },
-      },
+      credits: chartCredits,
       yAxis: [
         {
           id: "dissonance-score",
