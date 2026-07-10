@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
+import { useAuth } from '@clerk/nextjs'
 import { db } from '@/db'
 import { EXPERIMENTS } from '../utils'
 import { MusicalBackground } from '@/lib/types'
@@ -52,8 +53,7 @@ export function ExperimentCharts(props: {
   const [secondOrderEnabled, setSecondOrderEnabled] = useState(false)
   const [thirdOrderEnabled, setThirdOrderEnabled] = useState(false)
 
-  const user = db.useUser()
-  const isSignedIn = !!user?.id
+  const { isSignedIn } = useAuth()
 
   const effectiveSettings = useMemo(
     () => ({
