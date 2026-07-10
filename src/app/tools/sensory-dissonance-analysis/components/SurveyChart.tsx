@@ -18,20 +18,7 @@ import {
 } from './DissonanceChartOverlay'
 import { getVolumeForFrequency } from '../utils'
 import { getPnlCurvesInCents, getPnlMeanFrequencyForSurvey } from '../const'
-
-const OTHER_PARTICIPANT_TEAL_TINTS = [
-  '#1f5d56',
-  '#2d7f76',
-  '#3d988d',
-  '#50ad9f',
-  '#72bfb4',
-  '#94d1c8',
-  '#b5e2dc',
-  '#d7f4ef',
-]
-const YOUR_RESULT_COLOR = '#000000'
-const THEORETICAL_FIT_COLOR = '#bc272d'
-const PNL_COLOR = '#e9c716'
+import { CHART_COLORS } from '@/lib/colors'
 
 export function SurveyChart(props: {
   meanFrequency: number
@@ -166,8 +153,8 @@ export function SurveyChart(props: {
         yAxis: "dissonance-score",
         data: graph.points.map((point) => [point.x, point.y]),
         color:
-          OTHER_PARTICIPANT_TEAL_TINTS[
-            index % OTHER_PARTICIPANT_TEAL_TINTS.length
+          CHART_COLORS.otherParticipants[
+            index % CHART_COLORS.otherParticipants.length
           ],
         lineWidth: 1,
         opacity: 0.5,
@@ -195,8 +182,8 @@ export function SurveyChart(props: {
             marker: {
               enabled: true,
               radius: isSelected ? 6 : 2,
-              fillColor: isSelected ? '#7f8cff' : YOUR_RESULT_COLOR,
-              lineColor: isSelected ? YOUR_RESULT_COLOR : YOUR_RESULT_COLOR,
+              fillColor: isSelected ? CHART_COLORS.selectedPoint : CHART_COLORS.yourResult,
+              lineColor: CHART_COLORS.yourResult,
               lineWidth: isSelected ? 2 : 2,
               symbol: 'circle',
               states: {
@@ -207,7 +194,7 @@ export function SurveyChart(props: {
             },
           }
         }),
-        color: YOUR_RESULT_COLOR,
+        color: CHART_COLORS.yourResult,
         lineWidth: 2,
         enableMouseTracking: true,
         showInLegend: true,
@@ -227,7 +214,7 @@ export function SurveyChart(props: {
           name: pnlLegendName,
           yAxis: 'dissonance-score',
           data: rangeData,
-          color: PNL_COLOR,
+          color: CHART_COLORS.pnl,
           fillOpacity: 0.2,
           lineWidth: 0,
           marker: { enabled: false },
@@ -240,14 +227,14 @@ export function SurveyChart(props: {
           name: pnlLegendName,
           yAxis: 'dissonance-score',
           data: pnlCurves.mean.map((point) => [point.x, point.y]),
-          color: PNL_COLOR,
+          color: CHART_COLORS.pnl,
           lineWidth: 1,
           marker: {
             enabled: true,
             radius: 3,
             symbol: 'circle',
             fillColor: 'transparent',
-            lineColor: PNL_COLOR,
+            lineColor: CHART_COLORS.pnl,
             lineWidth: 1,
           },
           enableMouseTracking: false,
@@ -263,7 +250,7 @@ export function SurveyChart(props: {
         name: 'Theoretical fit',
         yAxis: "dissonance-curve",
         data: dissonanceCurve.plotCents(),
-        color: THEORETICAL_FIT_COLOR,
+        color: CHART_COLORS.theoreticalFit,
         lineWidth: 2,
         enableMouseTracking: false,
         marker: { enabled: false },
@@ -286,8 +273,8 @@ export function SurveyChart(props: {
               {
                 from: playedInterval - 7.5,
                 to: playedInterval + 7.5,
-                color: 'rgba(255, 0, 0, 0.2)',
-                borderColor: 'red',
+                color: CHART_COLORS.playedIntervalBand,
+                borderColor: CHART_COLORS.playedIntervalBorder,
                 borderWidth: 1,
                 zIndex: 1,
               },
