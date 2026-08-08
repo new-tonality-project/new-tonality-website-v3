@@ -31,6 +31,16 @@ export function getMaxHarmonicRatio(harmonics: SpectrumHarmonic[]) {
   return Math.max(...harmonics.map((harmonic) => harmonic.ratio), 1)
 }
 
+export function cloneHarmonics(harmonics: SpectrumHarmonic[]): SpectrumHarmonic[] {
+  return harmonics.map((harmonic) => ({ ...harmonic }))
+}
+
+export function getMaxHarmonicRatioAcross(
+  ...spectra: SpectrumHarmonic[][]
+): number {
+  return Math.max(...spectra.map((harmonics) => getMaxHarmonicRatio(harmonics)), 1)
+}
+
 export function parseHarmonicsJson(value: string | undefined | null) {
   if (!value) {
     return null

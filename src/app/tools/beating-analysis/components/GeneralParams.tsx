@@ -46,7 +46,8 @@ export function GeneralParams() {
         intervalCents: settings.intervalCents,
         amplitude: settings.amplitude,
         phaseDegrees: settings.phaseDegrees,
-        harmonics: settings.harmonics,
+        referenceHarmonics: settings.referenceHarmonics,
+        intervalHarmonics: settings.intervalHarmonics,
       })
     } finally {
       setIsDownloading(false)

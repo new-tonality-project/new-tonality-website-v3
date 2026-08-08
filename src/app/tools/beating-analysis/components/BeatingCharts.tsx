@@ -180,7 +180,8 @@ export function BeatingCharts({
     intervalCents,
     amplitude,
     phaseDegrees,
-    harmonics,
+    referenceHarmonics,
+    intervalHarmonics,
     realHarmonicsNumber,
     phantomHarmonicsNumber,
     secondOrderBeatingContribution,
@@ -198,7 +199,8 @@ export function BeatingCharts({
         intervalCents,
         amplitude,
         phaseDegrees,
-        harmonics,
+        referenceHarmonics,
+        intervalHarmonics,
       }),
     [
       referenceFrequency,
@@ -206,7 +208,8 @@ export function BeatingCharts({
       intervalCents,
       amplitude,
       phaseDegrees,
-      harmonics,
+      referenceHarmonics,
+      intervalHarmonics,
     ],
   )
 
@@ -269,7 +272,8 @@ export function BeatingCharts({
         referenceFrequency={referenceFrequency}
         intervalCents={intervalCents}
         amplitude={amplitude}
-        harmonics={harmonics}
+        referenceHarmonics={referenceHarmonics}
+        intervalHarmonics={intervalHarmonics}
         phantomHarmonicsNumber={phantomHarmonicsNumber}
         secondOrderBeatingContribution={secondOrderBeatingContribution}
         thirdOrderBeatingContribution={thirdOrderBeatingContribution}
@@ -322,6 +326,3 @@ export function BeatingCharts({
     </div>
   )
 }
-
-// TODO:
-// - add independent mode for interval spectrum

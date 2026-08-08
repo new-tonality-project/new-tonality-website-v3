@@ -18,7 +18,8 @@ export type SynthSpectrumParams = {
   intervalCents: number
   amplitude: number
   phaseDegrees: number
-  harmonics: SpectrumHarmonic[]
+  referenceHarmonics: SpectrumHarmonic[]
+  intervalHarmonics: SpectrumHarmonic[]
 }
 
 export type PlaybackMode = 'reference' | 'interval' | 'combined'
@@ -39,10 +40,13 @@ function toSpectrum(partials: Partial[]): Spectrum {
 
 export function buildReferenceSynthSpectrum({
   referenceFrequency,
-  harmonics,
-}: Pick<SynthSpectrumParams, 'referenceFrequency' | 'harmonics'>): Spectrum {
+  referenceHarmonics,
+}: Pick<
+  SynthSpectrumParams,
+  'referenceFrequency' | 'referenceHarmonics'
+>): Spectrum {
   return toSpectrum(
-    harmonics.map((harmonic) => ({
+    referenceHarmonics.map((harmonic) => ({
       rate: referenceFrequency * harmonic.ratio,
       amplitude: harmonic.amplitude,
     })),
@@ -54,7 +58,7 @@ export function buildIntervalSynthSpectrum({
   intervalCents,
   amplitude,
   phaseDegrees,
-  harmonics,
+  intervalHarmonics,
 }: SynthSpectrumParams): Spectrum {
   const intervalFrequency = frequencyFromCents(
     referenceFrequency,
@@ -63,7 +67,7 @@ export function buildIntervalSynthSpectrum({
   const phaseRad = (phaseDegrees * Math.PI) / 180
 
   return toSpectrum(
-    harmonics.map((harmonic) => ({
+    intervalHarmonics.map((harmonic) => ({
       rate: intervalFrequency * harmonic.ratio,
       amplitude: amplitude * harmonic.amplitude,
       phase: harmonic.ratio * phaseRad,

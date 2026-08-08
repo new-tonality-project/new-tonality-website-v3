@@ -176,7 +176,8 @@ export function useBeatingAnalysisAudio() {
       intervalCents: settings.intervalCents,
       amplitude: settings.amplitude,
       phaseDegrees: settings.phaseDegrees,
-      harmonics: settings.harmonics,
+      referenceHarmonics: settings.referenceHarmonics,
+      intervalHarmonics: settings.intervalHarmonics,
     }
 
     for (const mode of activeModes) {
@@ -184,9 +185,10 @@ export function useBeatingAnalysisAudio() {
     }
   }, [
     settings.amplitude,
-    settings.harmonics,
+    settings.intervalHarmonics,
     settings.intervalCents,
     settings.phaseDegrees,
     settings.referenceFrequency,
+    settings.referenceHarmonics,
   ])
 }

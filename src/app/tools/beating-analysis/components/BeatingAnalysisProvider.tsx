@@ -20,12 +20,13 @@ export type { BeatingAnalysisState }
 
 const persistSettings = debounceTransaction(
   (settingsId: string, settings: BeatingAnalysisState) => {
-    const { harmonics, ...rest } = settings
+    const { referenceHarmonics, intervalHarmonics, ...rest } = settings
 
     db.transact(
       db.tx.beatingAnalysisSettings[settingsId].update({
         ...rest,
-        harmonicsJson: serializeHarmonicsJson(harmonics),
+        harmonicsJson: serializeHarmonicsJson(referenceHarmonics),
+        intervalHarmonicsJson: serializeHarmonicsJson(intervalHarmonics),
         updatedAt: Date.now(),
       }),
     )

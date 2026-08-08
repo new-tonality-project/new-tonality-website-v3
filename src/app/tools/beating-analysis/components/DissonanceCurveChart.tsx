@@ -142,7 +142,8 @@ export function DissonanceCurveChart({
   referenceFrequency,
   intervalCents,
   amplitude,
-  harmonics,
+  referenceHarmonics,
+  intervalHarmonics,
   phantomHarmonicsNumber,
   secondOrderBeatingContribution,
   thirdOrderBeatingContribution,
@@ -152,7 +153,8 @@ export function DissonanceCurveChart({
   referenceFrequency: number
   intervalCents: number
   amplitude: number
-  harmonics: SpectrumHarmonic[]
+  referenceHarmonics: SpectrumHarmonic[]
+  intervalHarmonics: SpectrumHarmonic[]
   phantomHarmonicsNumber: number
   secondOrderBeatingContribution: number
   thirdOrderBeatingContribution: number
@@ -163,14 +165,23 @@ export function DissonanceCurveChart({
   const maxCents = Math.max(dissonanceCurveMinCents, dissonanceCurveMaxCents)
 
   const referenceSpectrum = useMemo(
-    () => createSpectrumFromHarmonics(referenceFrequency, harmonics, 1),
-    [referenceFrequency, harmonics],
+    () => createSpectrumFromHarmonics(referenceFrequency, referenceHarmonics, 1),
+    [referenceFrequency, referenceHarmonics],
+  )
+  const intervalSpectrum = useMemo(
+    () =>
+      createSpectrumFromHarmonics(
+        referenceFrequency,
+        intervalHarmonics,
+        amplitude,
+      ),
+    [amplitude, intervalHarmonics, referenceFrequency],
   )
 
   const dissonanceCurveOptions = useMemo((): UseDissonanceCurveOptions => {
     return {
       context: referenceSpectrum,
-      complement: referenceSpectrum,
+      complement: intervalSpectrum,
       start: centsToRatio(minCents),
       end: centsToRatio(maxCents),
       firstOrderDissonance: DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
@@ -186,6 +197,7 @@ export function DissonanceCurveChart({
       normalize: { min: 0, max: 1 },
     }
   }, [
+    intervalSpectrum,
     maxCents,
     minCents,
     phantomHarmonicsNumber,
@@ -206,7 +218,7 @@ export function DissonanceCurveChart({
         referenceFrequency,
         0,
         1,
-        harmonics,
+        referenceHarmonics,
         phantomHarmonicsNumber,
       ),
       minCents,
@@ -217,7 +229,7 @@ export function DissonanceCurveChart({
         referenceFrequency,
         intervalCents,
         amplitude,
-        harmonics,
+        intervalHarmonics,
         phantomHarmonicsNumber,
       ),
       minCents,
@@ -228,23 +240,23 @@ export function DissonanceCurveChart({
       getHarmonicsAmplitudeAxisBounds(visiblePartials)
     const centsAxisTicks = getCentsAxisTickConfig(minCents, maxCents)
 
-    const referenceHarmonics = createHarmonicSeries({
+    const referenceHarmonicSeries = createHarmonicSeries({
       name: 'Reference tone',
       partials: referencePartials,
       color: COLORS.blue,
     })
 
-    const intervalHarmonics = createHarmonicSeries({
+    const intervalHarmonicSeries = createHarmonicSeries({
       name: 'Interval tone',
       partials: intervalPartials,
       color: COLORS.orange,
     })
 
     const harmonicSeries = [
-      referenceHarmonics.real,
-      intervalHarmonics.real,
-      referenceHarmonics.phantom,
-      intervalHarmonics.phantom,
+      referenceHarmonicSeries.real,
+      intervalHarmonicSeries.real,
+      referenceHarmonicSeries.phantom,
+      intervalHarmonicSeries.phantom,
     ].filter((series): series is Highcharts.SeriesOptionsType => series !== null)
 
     return {
@@ -355,11 +367,12 @@ export function DissonanceCurveChart({
     amplitude,
     dissonanceCurve,
     intervalCents,
+    intervalHarmonics,
     maxCents,
     minCents,
     phantomHarmonicsNumber,
-    harmonics,
     referenceFrequency,
+    referenceHarmonics,
   ])
 
   return (
