@@ -1,4 +1,5 @@
 import { Spectrum } from 'tuning-core'
+import { SpectrumWithLoudness } from 'sethares-dissonance/dist/classes/private/SpectrumWithLoudness.js'
 
 export const DEFAULT_REFERENCE_FREQUENCY = 440
 export const DEFAULT_PERIODS = 50
@@ -9,8 +10,18 @@ export const DISSONANCE_CURVE_START_RATIO = 1
 export const DISSONANCE_CURVE_END_RATIO = 4
 
 export function ratioToCents(ratio: number) {
-  return (1200 * Math.log2(ratio))
+  return 1200 * Math.log2(ratio)
 }
+
+export function centsToRatio(cents: number) {
+  return Math.pow(2, cents / 1200)
+}
+
+export const DEFAULT_REAL_HARMONICS_NUMBER = 1
+export const DEFAULT_DISSONANCE_CURVE_MIN_CENTS = 0
+export const DEFAULT_DISSONANCE_CURVE_MAX_CENTS = ratioToCents(
+  DISSONANCE_CURVE_END_RATIO,
+)
 
 export const DISSONANCE_CURVE_MAX_CENTS = ratioToCents(DISSONANCE_CURVE_END_RATIO)
 
@@ -26,6 +37,7 @@ export type WaveformParams = {
   intervalCents: number
   amplitude: number
   phaseDegrees: number
+  realHarmonicsNumber: number
 }
 
 export type SpectrumPartial = {
@@ -34,55 +46,79 @@ export type SpectrumPartial = {
   phantom: boolean
 }
 
-/** Pure-tone spectrum passed to DissonanceCurve as context/complement (becomes SpectrumWithLoudness internally). */
-export function createPureToneSpectrum(frequency: number, amplitude: number) {
-  return new Spectrum().add(frequency, amplitude, 0)
-}
-
-/** Partials after phantom-harmonic multiplication, in cents relative to the reference frequency. */
-export function getPureToneSpectrumPartials(
-  centsFromReference: number,
-  amplitude: number,
-  phantomHarmonicsNumber: number,
-): SpectrumPartial[] {
-  const phantomCount = phantomHarmonicsNumber + 1
-  const partials: SpectrumPartial[] = []
-
-  for (let harmonicNumber = 1; harmonicNumber <= phantomCount; harmonicNumber++) {
-    partials.push({
-      cents: centsFromReference + ratioToCents(harmonicNumber),
-      amplitude: amplitude / harmonicNumber,
-      phantom: harmonicNumber > 1,
-    })
+/** Tone spectrum passed to DissonanceCurve as context/complement. */
+export function createToneSpectrum(
+  frequency: number,
+  realHarmonicsNumber: number,
+) {
+  if (realHarmonicsNumber <= 1) {
+    return new Spectrum().add(frequency, 1, 0)
   }
 
-  return partials
+  return Spectrum.harmonic(realHarmonicsNumber, frequency)
 }
 
-export function getHarmonicsMaxCents(
-  intervalCents: number,
+function scaleSpectrumAmplitude(spectrum: Spectrum, amplitude: number) {
+  if (amplitude === 1) {
+    return spectrum
+  }
+
+  const scaled = new Spectrum()
+
+  for (const harmonic of spectrum.getHarmonics()) {
+    scaled.add(
+      Number(harmonic.frequency),
+      harmonic.amplitude * amplitude,
+      harmonic.phase ?? 0,
+    )
+  }
+
+  return scaled
+}
+
+/** Partials after real and phantom harmonics, in cents relative to the reference frequency. */
+export function getToneSpectrumPartials(
+  referenceFrequency: number,
+  centsFromReference: number,
   amplitude: number,
+  realHarmonicsNumber: number,
   phantomHarmonicsNumber: number,
-  paddingRatio = 1.05,
-) {
-  const partials = [
-    ...getPureToneSpectrumPartials(0, 1, phantomHarmonicsNumber),
-    ...getPureToneSpectrumPartials(
-      intervalCents,
-      amplitude,
-      phantomHarmonicsNumber,
-    ),
-  ]
+): SpectrumPartial[] {
+  const fundamentalFrequency = frequencyFromCents(
+    referenceFrequency,
+    centsFromReference,
+  )
+  const toneSpectrum = scaleSpectrumAmplitude(
+    createToneSpectrum(fundamentalFrequency, realHarmonicsNumber),
+    amplitude,
+  )
+  const phantomCount = phantomHarmonicsNumber + 1
+  const phantomHarmonics = SpectrumWithLoudness.harmonic(phantomCount, 1, true)
+  const spectrumWithPhantoms = new SpectrumWithLoudness(toneSpectrum).mul(
+    phantomHarmonics,
+  )
 
-  const maxCents = Math.max(...partials.map((partial) => partial.cents))
-
-  return maxCents * paddingRatio
+  return spectrumWithPhantoms
+    .getHarmonics()
+    .map((harmonic) => ({
+      cents: ratioToCents(Number(harmonic.frequency) / referenceFrequency),
+      amplitude: harmonic.amplitude,
+      phantom: harmonic.phantom,
+    }))
+    .sort((left, right) => left.cents - right.cents)
 }
 
 export function getHarmonicsAmplitudeAxisBounds(partials: SpectrumPartial[]) {
   const amplitudes = partials
     .map((partial) => partial.amplitude)
     .filter((amplitude) => amplitude > 0)
+
+  if (amplitudes.length === 0) {
+    return {
+      min: 0.001,
+      max: 1,
+    }
+  }
 
   const minAmplitude = Math.min(...amplitudes)
   const maxAmplitude = Math.max(...amplitudes)
@@ -180,17 +216,43 @@ export function computeRmsEnvelope(
   return rms
 }
 
+function sampleHarmonicTone(
+  timeSec: number,
+  fundamentalFrequency: number,
+  realHarmonicsNumber: number,
+  amplitude: number,
+  phaseRad: number,
+) {
+  let sample = 0
+
+  for (
+    let harmonicNumber = 1;
+    harmonicNumber <= realHarmonicsNumber;
+    harmonicNumber++
+  ) {
+    sample +=
+      (amplitude / harmonicNumber) *
+      Math.sin(
+        2 * Math.PI * fundamentalFrequency * harmonicNumber * timeSec +
+          harmonicNumber * phaseRad,
+      )
+  }
+
+  return sample
+}
+
 export function generateWaveforms({
   referenceFrequency,
   periods,
   intervalCents,
   amplitude,
   phaseDegrees,
+  realHarmonicsNumber,
 }: WaveformParams) {
   const durationSec = periods / referenceFrequency
   const intervalFrequency = frequencyFromCents(referenceFrequency, intervalCents)
   const phaseRad = (phaseDegrees * Math.PI) / 180
-  const sampleCount = Math.max(1000, Math.round(periods * 20))
+  const sampleCount = Math.max(1000, Math.round(periods * 40))
 
   const reference: WaveformPoint[] = []
   const intervalTone: WaveformPoint[] = []
@@ -199,9 +261,20 @@ export function generateWaveforms({
   for (let i = 0; i <= sampleCount; i++) {
     const timeSec = (i / sampleCount) * durationSec
     const timeMs = timeSec * 1000
-    const referenceSample = Math.sin(2 * Math.PI * referenceFrequency * timeSec)
-    const intervalSample =
-      amplitude * Math.sin(2 * Math.PI * intervalFrequency * timeSec + phaseRad)
+    const referenceSample = sampleHarmonicTone(
+      timeSec,
+      referenceFrequency,
+      realHarmonicsNumber,
+      1,
+      0,
+    )
+    const intervalSample = sampleHarmonicTone(
+      timeSec,
+      intervalFrequency,
+      realHarmonicsNumber,
+      amplitude,
+      phaseRad,
+    )
 
     reference.push([timeMs, referenceSample])
     intervalTone.push([timeMs, intervalSample])

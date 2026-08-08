@@ -179,7 +179,10 @@ export function BeatingCharts({
     intervalCents,
     amplitude,
     phaseDegrees,
+    realHarmonicsNumber,
     phantomHarmonicsNumber,
+    dissonanceCurveMinCents,
+    dissonanceCurveMaxCents,
     showEnvelope,
     showRms,
   } = settings
@@ -191,8 +194,16 @@ export function BeatingCharts({
         intervalCents,
         amplitude,
         phaseDegrees,
+        realHarmonicsNumber,
       }),
-    [referenceFrequency, periods, intervalCents, amplitude, phaseDegrees],
+    [
+      referenceFrequency,
+      periods,
+      intervalCents,
+      amplitude,
+      phaseDegrees,
+      realHarmonicsNumber,
+    ],
   )
 
   const sumEnvelope = useMemo(
@@ -254,7 +265,10 @@ export function BeatingCharts({
         referenceFrequency={referenceFrequency}
         intervalCents={intervalCents}
         amplitude={amplitude}
+        realHarmonicsNumber={realHarmonicsNumber}
         phantomHarmonicsNumber={phantomHarmonicsNumber}
+        dissonanceCurveMinCents={dissonanceCurveMinCents}
+        dissonanceCurveMaxCents={dissonanceCurveMaxCents}
       />
 
       <button

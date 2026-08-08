@@ -12,19 +12,18 @@ import {
   DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
 } from 'sethares-dissonance'
 import {
-  createPureToneSpectrum,
-  DISSONANCE_CURVE_END_RATIO,
-  DISSONANCE_CURVE_START_RATIO,
+  centsToRatio,
+  createToneSpectrum,
   getHarmonicsAmplitudeAxisBounds,
-  getHarmonicsMaxCents,
-  getPureToneSpectrumPartials,
+  getToneSpectrumPartials,
   type SpectrumPartial,
 } from '../utils'
 
 const GRID_LINE_EVERY_CENTS = 100
 
-function getCentsAxisTickConfig(maxCents: number) {
-  const tickInterval = maxCents > 1200 ? 200 : 100
+function getCentsAxisTickConfig(minCents: number, maxCents: number) {
+  const range = maxCents - minCents
+  const tickInterval = range > 1200 ? 200 : 100
 
   if (tickInterval === GRID_LINE_EVERY_CENTS) {
     return {
@@ -45,61 +44,58 @@ function getCentsAxisTickConfig(maxCents: number) {
   }
 }
 
+function filterPartialsInRange(
+  partials: SpectrumPartial[],
+  minCents: number,
+  maxCents: number,
+) {
+  return partials.filter(
+    (partial) => partial.cents >= minCents && partial.cents <= maxCents,
+  )
+}
+
 function createRealHarmonicSeries({
   name,
-  intervalCents,
-  amplitude,
+  partials,
   color,
 }: {
   name: string
-  intervalCents: number
-  amplitude: number
+  partials: SpectrumPartial[]
   color: string
-}): Highcharts.SeriesOptionsType[] {
-  return [
-    {
-      type: 'column',
-      name,
-      yAxis: 'amplitude',
-      data: [{ x: intervalCents, y: amplitude }],
-      color,
-      opacity: 1,
-      borderWidth: 0,
-      pointWidth: 3,
-      grouping: false,
-      legendSymbol: 'lineMarker',
-      enableMouseTracking: false,
-      showInLegend: true,
-    },
-    {
-      type: 'scatter',
-      name: `${name} marker`,
-      yAxis: 'amplitude',
-      data: [[intervalCents, amplitude]],
-      color,
-      marker: {
-        enabled: true,
-        radius: 3,
-        symbol: 'circle',
-      },
-      enableMouseTracking: false,
-      showInLegend: false,
-    },
-  ]
+}): Highcharts.SeriesOptionsType | null {
+  const realPartials = partials.filter((partial) => !partial.phantom)
+
+  if (realPartials.length === 0) {
+    return null
+  }
+
+  return {
+    type: 'column',
+    name,
+    yAxis: 'amplitude',
+    data: realPartials.map((partial) => ({
+      x: partial.cents,
+      y: partial.amplitude,
+    })),
+    color,
+    opacity: 1,
+    borderWidth: 0,
+    pointWidth: 3,
+    grouping: false,
+    legendSymbol: 'lineMarker',
+    enableMouseTracking: false,
+    showInLegend: true,
+  }
 }
 
 function createPhantomHarmonicSeries({
   partials,
   color,
-  maxCents,
 }: {
   partials: SpectrumPartial[]
   color: string
-  maxCents: number
 }): Highcharts.SeriesOptionsType | null {
-  const phantomPartials = partials.filter(
-    (partial) => partial.phantom && partial.cents <= maxCents,
-  )
+  const phantomPartials = partials.filter((partial) => partial.phantom)
 
   if (phantomPartials.length === 0) {
     return null
@@ -125,31 +121,19 @@ function createPhantomHarmonicSeries({
 
 function createHarmonicSeries({
   name,
-  intervalCents,
-  amplitude,
+  partials,
   color,
-  phantomHarmonicsNumber,
-  maxCents,
 }: {
   name: string
-  intervalCents: number
-  amplitude: number
+  partials: SpectrumPartial[]
   color: string
-  phantomHarmonicsNumber: number
-  maxCents: number
 }): {
-  real: Highcharts.SeriesOptionsType[]
+  real: Highcharts.SeriesOptionsType | null
   phantom: Highcharts.SeriesOptionsType | null
 } {
-  const partials = getPureToneSpectrumPartials(
-    intervalCents,
-    amplitude,
-    phantomHarmonicsNumber,
-  )
-
   return {
-    real: createRealHarmonicSeries({ name, intervalCents, amplitude, color }),
-    phantom: createPhantomHarmonicSeries({ partials, color, maxCents }),
+    real: createRealHarmonicSeries({ name, partials, color }),
+    phantom: createPhantomHarmonicSeries({ partials, color }),
   }
 }
 
@@ -157,24 +141,33 @@ export function DissonanceCurveChart({
   referenceFrequency,
   intervalCents,
   amplitude,
+  realHarmonicsNumber,
   phantomHarmonicsNumber,
+  dissonanceCurveMinCents,
+  dissonanceCurveMaxCents,
 }: {
   referenceFrequency: number
   intervalCents: number
   amplitude: number
+  realHarmonicsNumber: number
   phantomHarmonicsNumber: number
+  dissonanceCurveMinCents: number
+  dissonanceCurveMaxCents: number
 }) {
+  const minCents = Math.min(dissonanceCurveMinCents, dissonanceCurveMaxCents)
+  const maxCents = Math.max(dissonanceCurveMinCents, dissonanceCurveMaxCents)
+
   const referenceSpectrum = useMemo(
-    () => createPureToneSpectrum(referenceFrequency, 1),
-    [referenceFrequency],
+    () => createToneSpectrum(referenceFrequency, realHarmonicsNumber),
+    [referenceFrequency, realHarmonicsNumber],
   )
 
   const dissonanceCurveOptions = useMemo((): UseDissonanceCurveOptions => {
     return {
       context: referenceSpectrum,
       complement: referenceSpectrum,
-      start: DISSONANCE_CURVE_START_RATIO,
-      end: DISSONANCE_CURVE_END_RATIO,
+      start: centsToRatio(minCents),
+      end: centsToRatio(maxCents),
       firstOrderDissonance: DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
       secondOrderDissonance: {
         ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
@@ -185,48 +178,62 @@ export function DissonanceCurveChart({
       phantomHarmonicsNumber,
       normalize: { min: 0, max: 1 },
     }
-  }, [phantomHarmonicsNumber, referenceSpectrum])
+  }, [
+    maxCents,
+    minCents,
+    phantomHarmonicsNumber,
+    referenceSpectrum,
+  ])
 
   const dissonanceCurve = useDissonanceCurve(dissonanceCurveOptions)
 
   const options = useMemo((): Highcharts.Options => {
-    const dissonanceData = dissonanceCurve.plotCents()
-    const allPartials = [
-      ...getPureToneSpectrumPartials(0, 1, phantomHarmonicsNumber),
-      ...getPureToneSpectrumPartials(
-        intervalCents,
-        amplitude,
+    const dissonanceData = dissonanceCurve
+      .plotCents()
+      .filter(([cents]) => cents >= minCents && cents <= maxCents)
+
+    const referencePartials = filterPartialsInRange(
+      getToneSpectrumPartials(
+        referenceFrequency,
+        0,
+        1,
+        realHarmonicsNumber,
         phantomHarmonicsNumber,
       ),
-    ]
-    const maxCents = getHarmonicsMaxCents(
-      intervalCents,
-      amplitude,
-      phantomHarmonicsNumber,
+      minCents,
+      maxCents,
     )
+    const intervalPartials = filterPartialsInRange(
+      getToneSpectrumPartials(
+        referenceFrequency,
+        intervalCents,
+        amplitude,
+        realHarmonicsNumber,
+        phantomHarmonicsNumber,
+      ),
+      minCents,
+      maxCents,
+    )
+    const visiblePartials = [...referencePartials, ...intervalPartials]
     const { min: amplitudeAxisMin, max: amplitudeAxisMax } =
-      getHarmonicsAmplitudeAxisBounds(allPartials)
-    const centsAxisTicks = getCentsAxisTickConfig(maxCents)
+      getHarmonicsAmplitudeAxisBounds(visiblePartials)
+    const centsAxisTicks = getCentsAxisTickConfig(minCents, maxCents)
 
     const referenceHarmonics = createHarmonicSeries({
       name: 'Reference tone',
-      intervalCents: 0,
-      amplitude: 1,
+      partials: referencePartials,
       color: COLORS.blue,
-      phantomHarmonicsNumber,
-      maxCents,
     })
 
     const intervalHarmonics = createHarmonicSeries({
       name: 'Interval tone',
-      intervalCents,
-      amplitude,
+      partials: intervalPartials,
       color: COLORS.orange,
-      phantomHarmonicsNumber,
-      maxCents,
     })
 
-    const phantomHarmonicSeries = [
+    const harmonicSeries = [
+      referenceHarmonics.real,
+      intervalHarmonics.real,
       referenceHarmonics.phantom,
       intervalHarmonics.phantom,
     ].filter((series): series is Highcharts.SeriesOptionsType => series !== null)
@@ -260,7 +267,7 @@ export function DissonanceCurveChart({
       },
       xAxis: {
         type: 'linear',
-        min: 0,
+        min: minCents,
         max: maxCents,
         title: { text: 'Interval (cents)', margin: 12 },
         ...centsAxisTicks,
@@ -300,14 +307,6 @@ export function DissonanceCurveChart({
             inactive: { enabled: false },
           },
         },
-        scatter: {
-          animation: false,
-          enableMouseTracking: false,
-          states: {
-            hover: { enabled: false },
-            inactive: { enabled: false },
-          },
-        },
         column: {
           animation: false,
           enableMouseTracking: false,
@@ -329,9 +328,7 @@ export function DissonanceCurveChart({
           color: COLORS.black,
           lineWidth: 1.5,
         },
-        ...referenceHarmonics.real,
-        ...intervalHarmonics.real,
-        ...phantomHarmonicSeries,
+        ...harmonicSeries,
         {
           type: 'line',
           name: 'Sum',
@@ -345,7 +342,16 @@ export function DissonanceCurveChart({
         },
       ],
     }
-  }, [amplitude, dissonanceCurve, intervalCents, phantomHarmonicsNumber])
+  }, [
+    amplitude,
+    dissonanceCurve,
+    intervalCents,
+    maxCents,
+    minCents,
+    phantomHarmonicsNumber,
+    realHarmonicsNumber,
+    referenceFrequency,
+  ])
 
   return (
     <div className="mb-8 -ml-8 -mr-14">
