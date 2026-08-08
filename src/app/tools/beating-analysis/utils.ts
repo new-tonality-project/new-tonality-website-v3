@@ -115,7 +115,7 @@ export function generateWaveforms({
   const durationSec = periods / referenceFrequency
   const intervalFrequency = frequencyFromCents(referenceFrequency, intervalCents)
   const phaseRad = (phaseDegrees * Math.PI) / 180
-  const sampleCount = Math.max(1000, Math.round(periods * 40))
+  const sampleCount = Math.max(1000, Math.round(periods * 20))
 
   const reference: WaveformPoint[] = []
   const intervalTone: WaveformPoint[] = []

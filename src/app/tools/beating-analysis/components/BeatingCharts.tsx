@@ -76,6 +76,9 @@ function WaveformChart({
   showXAxis = false,
   showYAxisTitle = false,
   overlaySeries = [],
+  height,
+  yAxisMin,
+  yAxisMax,
 }: {
   title: string
   data: [number, number][]
@@ -85,14 +88,19 @@ function WaveformChart({
   showXAxis?: boolean
   showYAxisTitle?: boolean
   overlaySeries?: OverlaySeries[]
+  height?: number
+  yAxisMin?: number
+  yAxisMax?: number
 }) {
+  const chartHeight = height ?? (showXAxis ? 160 : 130)
+
   const options = useMemo(
     (): Highcharts.Options =>
       ({
         ...baseChartOptions,
         chart: {
           ...baseChartOptions.chart,
-          height: showXAxis ? 160 : 130,
+          height: chartHeight,
           marginBottom: showXAxis ? 56 : 8,
         },
         title: {
@@ -118,6 +126,8 @@ function WaveformChart({
         },
         yAxis: {
           ...baseChartOptions.yAxis,
+          min: yAxisMin ?? -2.2,
+          max: yAxisMax ?? 2.2,
           title: showYAxisTitle ? { text: 'Amplitude' } : undefined,
         },
         series: [
@@ -134,7 +144,7 @@ function WaveformChart({
           })),
         ],
       }) as Highcharts.Options,
-    [title, data, color, durationMs, periodGridTicks, showXAxis, showYAxisTitle, overlaySeries],
+    [title, data, color, durationMs, periodGridTicks, showXAxis, showYAxisTitle, overlaySeries, chartHeight, yAxisMin, yAxisMax],
   )
 
   return (
@@ -233,7 +243,7 @@ export function BeatingCharts({
         aria-pressed={sidebarOpen}
         className="absolute top-1 -left-4 z-10 flex size-9 cursor-pointer items-center justify-center rounded-lg text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
       >
-        <SettingsIcon className="size-5" />
+        <SettingsIcon className="size-4" />
       </button>
 
       <WaveformChart
@@ -242,6 +252,9 @@ export function BeatingCharts({
         color={COLORS.blue}
         durationMs={waveforms.durationMs}
         periodGridTicks={periodGridTicks}
+        height={75}
+        yAxisMin={-2}
+        yAxisMax={2}
       />
       <WaveformChart
         title={`Interval tone (${waveforms.intervalFrequency.toFixed(2)} Hz)`}
@@ -250,6 +263,9 @@ export function BeatingCharts({
         durationMs={waveforms.durationMs}
         periodGridTicks={periodGridTicks}
         showYAxisTitle
+        height={75}
+        yAxisMin={-2}
+        yAxisMax={2}
       />
       <WaveformChart
         title="Sum"
