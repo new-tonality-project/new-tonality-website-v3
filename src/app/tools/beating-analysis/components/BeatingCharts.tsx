@@ -12,6 +12,7 @@ import {
   ENVELOPE_WINDOW_PERIODS,
   generateWaveforms,
   getReferencePeriodGridTicks,
+  REAL_HARMONICS_ARTIFACT_WARNING_THRESHOLD,
 } from '../utils'
 import { useBeatingAnalysisSettings } from './BeatingAnalysisProvider'
 import { DissonanceCurveChart } from './DissonanceCurveChart'
@@ -308,6 +309,11 @@ export function BeatingCharts({
         showYAxisTitle
         overlaySeries={sumOverlaySeries}
       />
+      {realHarmonicsNumber > REAL_HARMONICS_ARTIFACT_WARNING_THRESHOLD && (
+        <p className="px-2 text-sm text-red-600 dark:text-red-400">
+          Warning, visible artifacts may appear in the waveforms due to discretization errors.
+        </p>
+      )}
     </div>
   )
 }

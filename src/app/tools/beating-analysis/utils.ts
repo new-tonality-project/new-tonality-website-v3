@@ -4,6 +4,8 @@ import { SpectrumWithLoudness } from 'sethares-dissonance/dist/classes/private/S
 export const DEFAULT_REFERENCE_FREQUENCY = 440
 export const DEFAULT_PERIODS = 50
 export const DEFAULT_PHASE_DEGREES = 0
+export const BASE_SAMPLES_PER_REFERENCE_PERIOD = 20
+export const EXTRA_SAMPLES_PER_REAL_HARMONIC = 10
 export const ENVELOPE_WINDOW_PERIODS = 2
 export const MAX_REFERENCE_PERIOD_GRID_LINES = 12
 export const DISSONANCE_CURVE_START_RATIO = 1
@@ -28,6 +30,15 @@ export const DISSONANCE_CURVE_MAX_CENTS = ratioToCents(DISSONANCE_CURVE_END_RATI
 export function frequencyFromCents(baseFrequency: number, cents: number): number {
   return baseFrequency * Math.pow(2, cents / 1200)
 }
+
+export function getSamplesPerReferencePeriod(realHarmonicsNumber: number) {
+  return (
+    BASE_SAMPLES_PER_REFERENCE_PERIOD +
+    EXTRA_SAMPLES_PER_REAL_HARMONIC * Math.max(0, realHarmonicsNumber - 1)
+  )
+}
+
+export const REAL_HARMONICS_ARTIFACT_WARNING_THRESHOLD = 3
 
 export type WaveformPoint = [timeMs: number, amplitude: number]
 
@@ -251,8 +262,10 @@ export function generateWaveforms({
 }: WaveformParams) {
   const durationSec = periods / referenceFrequency
   const intervalFrequency = frequencyFromCents(referenceFrequency, intervalCents)
+  const samplesPerReferencePeriod =
+    getSamplesPerReferencePeriod(realHarmonicsNumber)
   const phaseRad = (phaseDegrees * Math.PI) / 180
-  const sampleCount = Math.max(1000, Math.round(periods * 40))
+  const sampleCount = periods * samplesPerReferencePeriod
 
   const reference: WaveformPoint[] = []
   const intervalTone: WaveformPoint[] = []
@@ -280,8 +293,6 @@ export function generateWaveforms({
     intervalTone.push([timeMs, intervalSample])
     sum.push([timeMs, referenceSample + intervalSample])
   }
-
-  const samplesPerReferencePeriod = sampleCount / periods
 
   return {
     reference,
