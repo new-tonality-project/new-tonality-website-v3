@@ -4,7 +4,11 @@ import { useEffect, useRef, type Dispatch, type SetStateAction } from 'react'
 import { id } from '@instantdb/react'
 import { db } from '@/db'
 import type { BeatingAnalysisSettings } from '@/lib'
-import { DEFAULT_PHANTOM_HARMONICS_NUMBER } from 'sethares-dissonance'
+import {
+  DEFAULT_PHANTOM_HARMONICS_NUMBER,
+  DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
+  DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
+} from 'sethares-dissonance'
 import {
   createDefaultHarmonicSeries,
   DEFAULT_SPECTRUM_HARMONICS,
@@ -33,6 +37,8 @@ export type BeatingAnalysisState = {
   harmonics: SpectrumHarmonic[]
   realHarmonicsNumber: number
   phantomHarmonicsNumber: number
+  secondOrderBeatingContribution: number
+  thirdOrderBeatingContribution: number
   dissonanceCurveMinCents: number
   dissonanceCurveMaxCents: number
   showEnvelope: boolean
@@ -48,6 +54,10 @@ export const DEFAULT_BEATING_ANALYSIS_STATE: BeatingAnalysisState = {
   harmonics: DEFAULT_SPECTRUM_HARMONICS,
   realHarmonicsNumber: DEFAULT_REAL_HARMONICS_NUMBER,
   phantomHarmonicsNumber: DEFAULT_PHANTOM_HARMONICS_NUMBER,
+  secondOrderBeatingContribution:
+    DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude,
+  thirdOrderBeatingContribution:
+    DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitude,
   dissonanceCurveMinCents: DEFAULT_DISSONANCE_CURVE_MIN_CENTS,
   dissonanceCurveMaxCents: DEFAULT_DISSONANCE_CURVE_MAX_CENTS,
   showEnvelope: true,
@@ -76,6 +86,12 @@ function mapRecordToState(record: BeatingAnalysisSettings): BeatingAnalysisState
     phantomHarmonicsNumber:
       record.phantomHarmonicsNumber ??
       DEFAULT_BEATING_ANALYSIS_STATE.phantomHarmonicsNumber,
+    secondOrderBeatingContribution:
+      record.secondOrderBeatingContribution ??
+      DEFAULT_BEATING_ANALYSIS_STATE.secondOrderBeatingContribution,
+    thirdOrderBeatingContribution:
+      record.thirdOrderBeatingContribution ??
+      DEFAULT_BEATING_ANALYSIS_STATE.thirdOrderBeatingContribution,
     dissonanceCurveMinCents:
       record.dissonanceCurveMinCents ??
       DEFAULT_BEATING_ANALYSIS_STATE.dissonanceCurveMinCents,

@@ -61,8 +61,10 @@ const _schema = i.schema({
       phantomHarmonicsNumber: i.number(),
       realHarmonicsNumber: i.number(),
       referenceFrequency: i.number(),
+      secondOrderBeatingContribution: i.number().optional(),
       showEnvelope: i.boolean(),
       showRms: i.boolean(),
+      thirdOrderBeatingContribution: i.number().optional(),
     }),
   },
   links: {

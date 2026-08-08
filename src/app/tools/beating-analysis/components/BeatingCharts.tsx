@@ -183,6 +183,8 @@ export function BeatingCharts({
     harmonics,
     realHarmonicsNumber,
     phantomHarmonicsNumber,
+    secondOrderBeatingContribution,
+    thirdOrderBeatingContribution,
     dissonanceCurveMinCents,
     dissonanceCurveMaxCents,
     showEnvelope,
@@ -269,6 +271,8 @@ export function BeatingCharts({
         amplitude={amplitude}
         harmonics={harmonics}
         phantomHarmonicsNumber={phantomHarmonicsNumber}
+        secondOrderBeatingContribution={secondOrderBeatingContribution}
+        thirdOrderBeatingContribution={thirdOrderBeatingContribution}
         dissonanceCurveMinCents={dissonanceCurveMinCents}
         dissonanceCurveMaxCents={dissonanceCurveMaxCents}
       />
@@ -320,8 +324,6 @@ export function BeatingCharts({
 }
 
 // TODO:
-// - tabs in settings: waveform, dissonance params, context spectrum, complement spectrum
+// - add intrinsic dissonance display
+// - add independent mode for interval spectrum
 // - add playback and download of sample
-
-// (DECIDE WHAT IS NECESSARY FOR VIDEO)
-

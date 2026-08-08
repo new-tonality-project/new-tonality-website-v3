@@ -7,13 +7,15 @@ export const DEFAULT_SPECTRUM_HARMONICS: SpectrumHarmonic[] = [
   { ratio: 1, amplitude: 1 },
 ]
 
+export function getDefaultHarmonic(index: number): SpectrumHarmonic {
+  const ratio = index + 1
+  return { ratio, amplitude: 1 / ratio }
+}
+
 export function createDefaultHarmonicSeries(count: number): SpectrumHarmonic[] {
   const safeCount = Math.max(1, Math.floor(count))
 
-  return Array.from({ length: safeCount }, (_, index) => {
-    const ratio = index + 1
-    return { ratio, amplitude: 1 / ratio }
-  })
+  return Array.from({ length: safeCount }, (_, index) => getDefaultHarmonic(index))
 }
 
 export function getNextHarmonic(harmonics: SpectrumHarmonic[]): SpectrumHarmonic {

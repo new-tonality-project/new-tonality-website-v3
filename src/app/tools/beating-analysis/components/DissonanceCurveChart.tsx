@@ -144,6 +144,8 @@ export function DissonanceCurveChart({
   amplitude,
   harmonics,
   phantomHarmonicsNumber,
+  secondOrderBeatingContribution,
+  thirdOrderBeatingContribution,
   dissonanceCurveMinCents,
   dissonanceCurveMaxCents,
 }: {
@@ -152,6 +154,8 @@ export function DissonanceCurveChart({
   amplitude: number
   harmonics: SpectrumHarmonic[]
   phantomHarmonicsNumber: number
+  secondOrderBeatingContribution: number
+  thirdOrderBeatingContribution: number
   dissonanceCurveMinCents: number
   dissonanceCurveMaxCents: number
 }) {
@@ -172,9 +176,11 @@ export function DissonanceCurveChart({
       firstOrderDissonance: DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
       secondOrderDissonance: {
         ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
+        magnitude: secondOrderBeatingContribution,
       },
       thirdOrderDissonance: {
         ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
+        magnitude: thirdOrderBeatingContribution,
       },
       phantomHarmonicsNumber,
       normalize: { min: 0, max: 1 },
@@ -184,6 +190,8 @@ export function DissonanceCurveChart({
     minCents,
     phantomHarmonicsNumber,
     referenceSpectrum,
+    secondOrderBeatingContribution,
+    thirdOrderBeatingContribution,
   ])
 
   const dissonanceCurve = useDissonanceCurve(dissonanceCurveOptions)
@@ -355,7 +363,10 @@ export function DissonanceCurveChart({
   ])
 
   return (
-    <div className="mb-8 -ml-8 -mr-14">
+    <div className="relative mb-8 -ml-8 -mr-14">
+      <div className="absolute top-6.5 right-14 z-10 text-xs text-zinc-600 dark:text-zinc-400">
+        {`Intrinsic dissonance: ${roundToDecimals(dissonanceCurve.intrinsicDissonance?.dissonance ?? 0, 2)}`}
+      </div>
       {/* @ts-expect-error - Highcharts Options type causes excessive stack depth when comparing with @highcharts/react props */}
       <Chart options={options} />
     </div>

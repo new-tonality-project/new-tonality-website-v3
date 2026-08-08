@@ -4,6 +4,7 @@ import { DragNumberInput } from '@/components'
 import { CloseIcon, PlusIcon } from '@/components/Icons'
 import { SidebarSection } from '@/components/SidebarSection'
 import {
+  getDefaultHarmonic,
   getNextHarmonic,
   type SpectrumHarmonic,
 } from '@/lib/spectrum'
@@ -37,11 +38,12 @@ function HarmonicRow({
   onRemove: () => void
 }) {
   const isFundamental = index === 0
+  const defaultHarmonic = getDefaultHarmonic(index)
 
   return (
     <div className="flex items-center gap-1.5">
       <DragNumberInput
-        defaultValue={harmonic.ratio}
+        defaultValue={defaultHarmonic.ratio}
         value={harmonic.ratio}
         min={1}
         max={64}
@@ -54,7 +56,7 @@ function HarmonicRow({
         onChange={onRatioChange}
       />
       <DragNumberInput
-        defaultValue={harmonic.amplitude}
+        defaultValue={defaultHarmonic.amplitude}
         value={harmonic.amplitude}
         min={0}
         max={2}
@@ -71,9 +73,9 @@ function HarmonicRow({
           type="button"
           onClick={onRemove}
           aria-label="Remove harmonic"
-          className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 transition hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-700 dark:border-zinc-700 dark:hover:border-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
+          className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-full border border-zinc-200 text-zinc-500 transition hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-700 dark:border-zinc-700 dark:hover:border-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
         >
-          <CloseIcon className="size-3.5" stroke="currentColor" />
+          <CloseIcon className="size-4" stroke="currentColor" />
         </button>
       )}
     </div>
