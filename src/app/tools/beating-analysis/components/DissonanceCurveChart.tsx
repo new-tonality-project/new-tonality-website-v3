@@ -13,11 +13,12 @@ import {
 } from 'sethares-dissonance'
 import {
   centsToRatio,
-  createToneSpectrum,
+  createSpectrumFromHarmonics,
   getHarmonicsAmplitudeAxisBounds,
   getToneSpectrumPartials,
   type SpectrumPartial,
 } from '../utils'
+import type { SpectrumHarmonic } from '@/lib/spectrum'
 
 const GRID_LINE_EVERY_CENTS = 100
 
@@ -141,7 +142,7 @@ export function DissonanceCurveChart({
   referenceFrequency,
   intervalCents,
   amplitude,
-  realHarmonicsNumber,
+  harmonics,
   phantomHarmonicsNumber,
   dissonanceCurveMinCents,
   dissonanceCurveMaxCents,
@@ -149,7 +150,7 @@ export function DissonanceCurveChart({
   referenceFrequency: number
   intervalCents: number
   amplitude: number
-  realHarmonicsNumber: number
+  harmonics: SpectrumHarmonic[]
   phantomHarmonicsNumber: number
   dissonanceCurveMinCents: number
   dissonanceCurveMaxCents: number
@@ -158,8 +159,8 @@ export function DissonanceCurveChart({
   const maxCents = Math.max(dissonanceCurveMinCents, dissonanceCurveMaxCents)
 
   const referenceSpectrum = useMemo(
-    () => createToneSpectrum(referenceFrequency, realHarmonicsNumber),
-    [referenceFrequency, realHarmonicsNumber],
+    () => createSpectrumFromHarmonics(referenceFrequency, harmonics, 1),
+    [referenceFrequency, harmonics],
   )
 
   const dissonanceCurveOptions = useMemo((): UseDissonanceCurveOptions => {
@@ -197,7 +198,7 @@ export function DissonanceCurveChart({
         referenceFrequency,
         0,
         1,
-        realHarmonicsNumber,
+        harmonics,
         phantomHarmonicsNumber,
       ),
       minCents,
@@ -208,7 +209,7 @@ export function DissonanceCurveChart({
         referenceFrequency,
         intervalCents,
         amplitude,
-        realHarmonicsNumber,
+        harmonics,
         phantomHarmonicsNumber,
       ),
       minCents,
@@ -349,7 +350,7 @@ export function DissonanceCurveChart({
     maxCents,
     minCents,
     phantomHarmonicsNumber,
-    realHarmonicsNumber,
+    harmonics,
     referenceFrequency,
   ])
 

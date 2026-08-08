@@ -180,6 +180,7 @@ export function BeatingCharts({
     intervalCents,
     amplitude,
     phaseDegrees,
+    harmonics,
     realHarmonicsNumber,
     phantomHarmonicsNumber,
     dissonanceCurveMinCents,
@@ -195,7 +196,7 @@ export function BeatingCharts({
         intervalCents,
         amplitude,
         phaseDegrees,
-        realHarmonicsNumber,
+        harmonics,
       }),
     [
       referenceFrequency,
@@ -203,7 +204,7 @@ export function BeatingCharts({
       intervalCents,
       amplitude,
       phaseDegrees,
-      realHarmonicsNumber,
+      harmonics,
     ],
   )
 
@@ -266,7 +267,7 @@ export function BeatingCharts({
         referenceFrequency={referenceFrequency}
         intervalCents={intervalCents}
         amplitude={amplitude}
-        realHarmonicsNumber={realHarmonicsNumber}
+        harmonics={harmonics}
         phantomHarmonicsNumber={phantomHarmonicsNumber}
         dissonanceCurveMinCents={dissonanceCurveMinCents}
         dissonanceCurveMaxCents={dissonanceCurveMaxCents}

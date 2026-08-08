@@ -54,6 +54,7 @@ const _schema = i.schema({
       amplitude: i.number(),
       dissonanceCurveMaxCents: i.number(),
       dissonanceCurveMinCents: i.number(),
+      harmonicsJson: i.string().optional(),
       intervalCents: i.number(),
       periods: i.number(),
       phaseDegrees: i.number(),
