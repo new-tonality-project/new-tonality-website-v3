@@ -14,6 +14,7 @@ import {
   getReferencePeriodGridTicks,
 } from '../utils'
 import { useBeatingAnalysisSettings } from './BeatingAnalysisProvider'
+import { DissonanceCurveChart } from './DissonanceCurveChart'
 
 const baseChartOptions: Highcharts.Options = {
   chart: {
@@ -236,6 +237,13 @@ export function BeatingCharts({
 
   return (
     <div className="relative flex flex-col md:-ml-7">
+
+      <DissonanceCurveChart
+        referenceFrequency={referenceFrequency}
+        intervalCents={intervalCents}
+        amplitude={amplitude}
+      />
+
       <button
         type="button"
         onClick={onToggleSidebar}

@@ -1,8 +1,12 @@
+import { Spectrum } from 'tuning-core'
+
 export const DEFAULT_REFERENCE_FREQUENCY = 440
 export const DEFAULT_PERIODS = 50
 export const DEFAULT_PHASE_DEGREES = 0
 export const ENVELOPE_WINDOW_PERIODS = 2
 export const MAX_REFERENCE_PERIOD_GRID_LINES = 12
+export const DISSONANCE_CURVE_START_RATIO = 1
+export const DISSONANCE_CURVE_END_RATIO = 4
 
 export function frequencyFromCents(baseFrequency: number, cents: number): number {
   return baseFrequency * Math.pow(2, cents / 1200)
@@ -16,6 +20,11 @@ export type WaveformParams = {
   intervalCents: number
   amplitude: number
   phaseDegrees: number
+}
+
+/** Pure-tone spectrum passed to DissonanceCurve as context/complement (becomes SpectrumWithLoudness internally). */
+export function createPureToneSpectrum(frequency: number, amplitude: number) {
+  return new Spectrum().add(frequency, amplitude, 0)
 }
 
 function getReferencePeriodGridStep(periods: number) {
