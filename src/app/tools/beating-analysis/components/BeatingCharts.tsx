@@ -325,4 +325,3 @@ export function BeatingCharts({
 
 // TODO:
 // - add independent mode for interval spectrum
-// - add download of sample

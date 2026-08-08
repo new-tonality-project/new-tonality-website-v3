@@ -1,42 +1,11 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { AdditiveSynth, type Spectrum } from 'new-tonality-web-synth'
-import type { SpectrumHarmonic } from '@/lib/spectrum'
-import { frequencyFromCents } from '../utils'
+import { AdditiveSynth } from 'new-tonality-web-synth'
+import { buildCombinedSynthSpectrum } from '../downloadSamples'
 import { useBeatingAnalysisSettings } from './BeatingAnalysisProvider'
 
 const SYNTH_ADSR = { attack: 0.05, decay: 0, sustain: 1, release: 0.1 }
-
-function buildCombinedSpectrum({
-  referenceFrequency,
-  intervalCents,
-  amplitude,
-  harmonics,
-}: {
-  referenceFrequency: number
-  intervalCents: number
-  amplitude: number
-  harmonics: SpectrumHarmonic[]
-}): Spectrum {
-  const intervalFrequency = frequencyFromCents(
-    referenceFrequency,
-    intervalCents,
-  )
-
-  const partials = [
-    ...harmonics.map((harmonic) => ({
-      rate: referenceFrequency * harmonic.ratio,
-      amplitude: harmonic.amplitude,
-    })),
-    ...harmonics.map((harmonic) => ({
-      rate: intervalFrequency * harmonic.ratio,
-      amplitude: amplitude * harmonic.amplitude,
-    })),
-  ].filter((partial) => partial.rate >= 20 && partial.rate <= 20000)
-
-  return [{ partials }]
-}
 
 function isTypingTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) {
@@ -73,7 +42,7 @@ export function useBeatingAnalysisSynth() {
 
       const audioContext = new AudioContext()
       const synth = new AdditiveSynth({
-        spectrum: buildCombinedSpectrum(settingsRef.current),
+        spectrum: buildCombinedSynthSpectrum(settingsRef.current),
         audioContext,
         adsr: SYNTH_ADSR,
       })
@@ -89,7 +58,7 @@ export function useBeatingAnalysisSynth() {
         return
       }
 
-      synth.update(buildCombinedSpectrum(settingsRef.current))
+      synth.update(buildCombinedSynthSpectrum(settingsRef.current))
 
       if (audioContext.state === 'suspended') {
         await audioContext.resume()
@@ -158,10 +127,11 @@ export function useBeatingAnalysisSynth() {
     }
 
     synthRef.current.update(
-      buildCombinedSpectrum({
+      buildCombinedSynthSpectrum({
         referenceFrequency: settings.referenceFrequency,
         intervalCents: settings.intervalCents,
         amplitude: settings.amplitude,
+        phaseDegrees: settings.phaseDegrees,
         harmonics: settings.harmonics,
       }),
     )
@@ -169,6 +139,7 @@ export function useBeatingAnalysisSynth() {
     settings.amplitude,
     settings.harmonics,
     settings.intervalCents,
+    settings.phaseDegrees,
     settings.referenceFrequency,
   ])
 }
