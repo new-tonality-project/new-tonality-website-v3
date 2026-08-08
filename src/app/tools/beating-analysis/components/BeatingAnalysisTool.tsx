@@ -5,7 +5,7 @@ import { Container, Prose, CollapsibleDescription } from '@/components'
 import { BeatingAnalysisProvider } from './BeatingAnalysisProvider'
 import { BeatingAnalysisSidebar } from './BeatingAnalysisSidebar'
 import { BeatingCharts } from './BeatingCharts'
-import { useBeatingAnalysisSynth } from './useBeatingAnalysisSynth'
+import { useBeatingAnalysisAudio } from './useBeatingAnalysisAudio'
 
 function BeatingAnalysisToolContent({
   sidebarOpen,
@@ -16,7 +16,7 @@ function BeatingAnalysisToolContent({
   onToggleSidebar: () => void
   onCloseSidebar: () => void
 }) {
-  useBeatingAnalysisSynth()
+  useBeatingAnalysisAudio()
 
   return (
     <>

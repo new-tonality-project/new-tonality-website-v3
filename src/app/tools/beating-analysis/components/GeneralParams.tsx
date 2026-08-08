@@ -15,8 +15,16 @@ import {
   MAX_SAMPLE_DURATION_SECONDS,
   MIN_SAMPLE_DURATION_SECONDS,
   downloadBeatingAnalysisSamples,
-} from '../downloadSamples'
+} from '../audio'
 import { useBeatingAnalysisSettings } from './BeatingAnalysisProvider'
+
+function Kbd({ children }: { children: string }) {
+  return (
+    <kbd className="rounded border border-zinc-300 px-1.5 py-0.5 font-sans text-xs dark:border-zinc-600">
+      {children}
+    </kbd>
+  )
+}
 
 export function GeneralParams() {
   const { settings, update } = useBeatingAnalysisSettings()
@@ -47,44 +55,6 @@ export function GeneralParams() {
 
   return (
     <div className="flex flex-col gap-6">
-      <SidebarSection title="Playback">
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Hold{' '}
-          <kbd className="rounded border border-zinc-300 px-1.5 py-0.5 font-sans text-xs dark:border-zinc-600">
-            P
-          </kbd>{' '}
-          to play the combined reference and interval spectrum (real harmonics
-          only).
-        </p>
-      </SidebarSection>
-
-      <SidebarSection title="Sample download">
-        <DragNumberInput
-          defaultValue={DEFAULT_SAMPLE_DURATION_SECONDS}
-          value={sampleDurationSeconds}
-          min={MIN_SAMPLE_DURATION_SECONDS}
-          max={MAX_SAMPLE_DURATION_SECONDS}
-          minStep={0.5}
-          valueRange={10}
-          label="Duration (s)"
-          onChange={setSampleDurationSeconds}
-        />
-        <Button
-          type="button"
-          variant="secondary"
-          disabled={isDownloading}
-          onClick={() => {
-            void handleDownload()
-          }}
-          className="w-full"
-        >
-          {isDownloading ? 'Preparing zip…' : 'Download samples'}
-        </Button>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
-          Downloads a zip with reference, interval, and combined WAV files.
-        </p>
-      </SidebarSection>
-
       <SidebarSection title="Dissonance curve">
         <DragNumberInput
           defaultValue={DEFAULT_DISSONANCE_CURVE_MIN_CENTS}
@@ -140,6 +110,37 @@ export function GeneralParams() {
           />
           <Label className="text-sm">Show RMS</Label>
         </CheckboxField>
+      </SidebarSection>
+
+      <SidebarSection title="Audio">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          Hold <Kbd>R</Kbd> and/or <Kbd>I</Kbd> for reference and interval
+          (together = combined), or <Kbd>P</Kbd> for combined alone.
+        </p>
+        <DragNumberInput
+          defaultValue={DEFAULT_SAMPLE_DURATION_SECONDS}
+          value={sampleDurationSeconds}
+          min={MIN_SAMPLE_DURATION_SECONDS}
+          max={MAX_SAMPLE_DURATION_SECONDS}
+          minStep={0.5}
+          valueRange={10}
+          label="Sample duration (s)"
+          onChange={setSampleDurationSeconds}
+        />
+        <Button
+          type="button"
+          variant="primary"
+          disabled={isDownloading}
+          onClick={() => {
+            void handleDownload()
+          }}
+          className="w-full py-2.5 text-base font-semibold"
+        >
+          {isDownloading ? 'Preparing zip…' : 'Download samples'}
+        </Button>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          Zip archive with reference, interval, and combined WAV files.
+        </p>
       </SidebarSection>
     </div>
   )

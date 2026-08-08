@@ -9,7 +9,6 @@ export function IntervalSpectrumParams() {
 
   return (
     <div className="flex flex-col gap-6">
-      <SpectrumParamsPanel />
       <DragNumberInput
         defaultValue={10}
         value={settings.intervalCents}
@@ -20,6 +19,7 @@ export function IntervalSpectrumParams() {
         label="Interval (cents)"
         onChange={(intervalCents) => update({ intervalCents })}
       />
+      <SpectrumParamsPanel />
     </div>
   )
 }

@@ -2,10 +2,14 @@
 
 import { useEffect, useRef } from 'react'
 import { AdditiveSynth } from 'new-tonality-web-synth'
-import { buildCombinedSynthSpectrum } from '../downloadSamples'
+import {
+  PLAYBACK_KEY_MODES,
+  SYNTH_ADSR,
+  SYNTH_VELOCITY,
+  buildSynthSpectrumForMode,
+  type PlaybackMode,
+} from '../audio'
 import { useBeatingAnalysisSettings } from './BeatingAnalysisProvider'
-
-const SYNTH_ADSR = { attack: 0.05, decay: 0, sustain: 1, release: 0.1 }
 
 function isTypingTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) {
@@ -21,11 +25,18 @@ function isTypingTarget(target: EventTarget | null) {
   )
 }
 
-export function useBeatingAnalysisSynth() {
+function getPlaybackMode(code: string): PlaybackMode | null {
+  if (code in PLAYBACK_KEY_MODES) {
+    return PLAYBACK_KEY_MODES[code as keyof typeof PLAYBACK_KEY_MODES]
+  }
+  return null
+}
+
+export function useBeatingAnalysisAudio() {
   const { settings } = useBeatingAnalysisSettings()
   const synthRef = useRef<AdditiveSynth | null>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
-  const isPlayingRef = useRef(false)
+  const activeModesRef = useRef(new Set<PlaybackMode>())
   const settingsRef = useRef(settings)
 
   settingsRef.current = settings
@@ -42,7 +53,7 @@ export function useBeatingAnalysisSynth() {
 
       const audioContext = new AudioContext()
       const synth = new AdditiveSynth({
-        spectrum: buildCombinedSynthSpectrum(settingsRef.current),
+        spectrum: buildSynthSpectrumForMode('combined', settingsRef.current),
         audioContext,
         adsr: SYNTH_ADSR,
       })
@@ -51,35 +62,66 @@ export function useBeatingAnalysisSynth() {
       return synth
     }
 
-    const startPlaying = async () => {
-      const synth = ensureSynth()
-      const audioContext = audioContextRef.current
-      if (!synth || !audioContext || isPlayingRef.current) {
+    const releaseMode = (mode: PlaybackMode) => {
+      if (!synthRef.current || !activeModesRef.current.has(mode)) {
         return
       }
 
-      synth.update(buildCombinedSynthSpectrum(settingsRef.current))
+      synthRef.current.release(mode)
+      activeModesRef.current.delete(mode)
+    }
+
+    const releaseConflictingModes = (mode: PlaybackMode) => {
+      if (mode === 'combined') {
+        releaseMode('reference')
+        releaseMode('interval')
+        return
+      }
+
+      releaseMode('combined')
+    }
+
+    const startPlaying = async (mode: PlaybackMode) => {
+      const synth = ensureSynth()
+      const audioContext = audioContextRef.current
+      if (!synth || !audioContext || activeModesRef.current.has(mode)) {
+        return
+      }
+
+      releaseConflictingModes(mode)
+
+      // Update default spectrum for the new voice without touching other voices.
+      synth.update(buildSynthSpectrumForMode(mode, settingsRef.current), mode)
 
       if (audioContext.state === 'suspended') {
         await audioContext.resume()
       }
 
-      synth.play({ pitch: 1, velocity: 0.35, voiceId: 'beating-analysis' })
-      isPlayingRef.current = true
+      synth.play({
+        pitch: 1,
+        velocity: SYNTH_VELOCITY,
+        voiceId: mode,
+      })
+      activeModesRef.current.add(mode)
     }
 
-    const stopPlaying = () => {
-      if (!synthRef.current || !isPlayingRef.current) {
+    const stopPlaying = (mode: PlaybackMode) => {
+      releaseMode(mode)
+    }
+
+    const stopAll = () => {
+      if (!synthRef.current || activeModesRef.current.size === 0) {
         return
       }
 
       synthRef.current.releaseAll()
-      isPlayingRef.current = false
+      activeModesRef.current.clear()
     }
 
     const onKeyDown = (event: KeyboardEvent) => {
+      const mode = getPlaybackMode(event.code)
       if (
-        event.code !== 'KeyP' ||
+        !mode ||
         event.repeat ||
         event.metaKey ||
         event.ctrlKey ||
@@ -90,20 +132,21 @@ export function useBeatingAnalysisSynth() {
       }
 
       event.preventDefault()
-      void startPlaying()
+      void startPlaying(mode)
     }
 
     const onKeyUp = (event: KeyboardEvent) => {
-      if (event.code !== 'KeyP') {
+      const mode = getPlaybackMode(event.code)
+      if (!mode || !activeModesRef.current.has(mode)) {
         return
       }
 
       event.preventDefault()
-      stopPlaying()
+      stopPlaying(mode)
     }
 
     const onBlur = () => {
-      stopPlaying()
+      stopAll()
     }
 
     window.addEventListener('keydown', onKeyDown)
@@ -114,7 +157,7 @@ export function useBeatingAnalysisSynth() {
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('keyup', onKeyUp)
       window.removeEventListener('blur', onBlur)
-      stopPlaying()
+      stopAll()
       void audioContextRef.current?.close()
       audioContextRef.current = null
       synthRef.current = null
@@ -122,19 +165,23 @@ export function useBeatingAnalysisSynth() {
   }, [])
 
   useEffect(() => {
-    if (!synthRef.current || !isPlayingRef.current) {
+    const synth = synthRef.current
+    const activeModes = activeModesRef.current
+    if (!synth || activeModes.size === 0) {
       return
     }
 
-    synthRef.current.update(
-      buildCombinedSynthSpectrum({
-        referenceFrequency: settings.referenceFrequency,
-        intervalCents: settings.intervalCents,
-        amplitude: settings.amplitude,
-        phaseDegrees: settings.phaseDegrees,
-        harmonics: settings.harmonics,
-      }),
-    )
+    const params = {
+      referenceFrequency: settings.referenceFrequency,
+      intervalCents: settings.intervalCents,
+      amplitude: settings.amplitude,
+      phaseDegrees: settings.phaseDegrees,
+      harmonics: settings.harmonics,
+    }
+
+    for (const mode of activeModes) {
+      synth.update(buildSynthSpectrumForMode(mode, params), mode)
+    }
   }, [
     settings.amplitude,
     settings.harmonics,

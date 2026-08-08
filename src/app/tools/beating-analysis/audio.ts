@@ -7,17 +7,27 @@ export const DEFAULT_SAMPLE_DURATION_SECONDS = 2
 export const MIN_SAMPLE_DURATION_SECONDS = 0.5
 export const MAX_SAMPLE_DURATION_SECONDS = 30
 
-const SYNTH_ADSR = { attack: 0.05, decay: 0, sustain: 1, release: 0.1 }
+export const SYNTH_ADSR = { attack: 0.05, decay: 0, sustain: 1, release: 0.1 }
+export const SYNTH_VELOCITY = 0.35
+
 const AUDIBLE_MIN_HZ = 20
 const AUDIBLE_MAX_HZ = 20000
 
-type SampleSpectrumParams = {
+export type SynthSpectrumParams = {
   referenceFrequency: number
   intervalCents: number
   amplitude: number
   phaseDegrees: number
   harmonics: SpectrumHarmonic[]
 }
+
+export type PlaybackMode = 'reference' | 'interval' | 'combined'
+
+export const PLAYBACK_KEY_MODES = {
+  KeyR: 'reference',
+  KeyI: 'interval',
+  KeyP: 'combined',
+} as const satisfies Record<string, PlaybackMode>
 
 function isAudible(rate: number) {
   return rate >= AUDIBLE_MIN_HZ && rate <= AUDIBLE_MAX_HZ
@@ -30,7 +40,7 @@ function toSpectrum(partials: Partial[]): Spectrum {
 export function buildReferenceSynthSpectrum({
   referenceFrequency,
   harmonics,
-}: Pick<SampleSpectrumParams, 'referenceFrequency' | 'harmonics'>): Spectrum {
+}: Pick<SynthSpectrumParams, 'referenceFrequency' | 'harmonics'>): Spectrum {
   return toSpectrum(
     harmonics.map((harmonic) => ({
       rate: referenceFrequency * harmonic.ratio,
@@ -45,7 +55,7 @@ export function buildIntervalSynthSpectrum({
   amplitude,
   phaseDegrees,
   harmonics,
-}: SampleSpectrumParams): Spectrum {
+}: SynthSpectrumParams): Spectrum {
   const intervalFrequency = frequencyFromCents(
     referenceFrequency,
     intervalCents,
@@ -62,11 +72,25 @@ export function buildIntervalSynthSpectrum({
 }
 
 export function buildCombinedSynthSpectrum(
-  params: SampleSpectrumParams,
+  params: SynthSpectrumParams,
 ): Spectrum {
   const reference = buildReferenceSynthSpectrum(params)[0]?.partials ?? []
   const interval = buildIntervalSynthSpectrum(params)[0]?.partials ?? []
   return toSpectrum([...reference, ...interval])
+}
+
+export function buildSynthSpectrumForMode(
+  mode: PlaybackMode,
+  params: SynthSpectrumParams,
+): Spectrum {
+  switch (mode) {
+    case 'reference':
+      return buildReferenceSynthSpectrum(params)
+    case 'interval':
+      return buildIntervalSynthSpectrum(params)
+    case 'combined':
+      return buildCombinedSynthSpectrum(params)
+  }
 }
 
 function audioBufferToWav(buffer: AudioBuffer): Uint8Array {
@@ -141,7 +165,7 @@ function triggerDownload(filename: string, data: Uint8Array) {
 export async function downloadBeatingAnalysisSamples({
   durationSeconds,
   ...params
-}: SampleSpectrumParams & { durationSeconds: number }) {
+}: SynthSpectrumParams & { durationSeconds: number }) {
   if (typeof AudioContext === 'undefined') {
     throw new Error('AudioContext is not available in this environment')
   }
