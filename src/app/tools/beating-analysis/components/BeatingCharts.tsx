@@ -275,7 +275,7 @@ export function BeatingCharts({
       <button
         type="button"
         onClick={onToggleSidebar}
-        aria-label={sidebarOpen ? 'Close settings' : 'Open settings'}
+        aria-label={sidebarOpen ? 'Close parameters' : 'Open parameters'}
         aria-pressed={sidebarOpen}
         className="absolute -top-1 left-2 z-10 flex size-9 cursor-pointer items-center justify-center rounded-lg text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
       >
@@ -317,3 +317,10 @@ export function BeatingCharts({
     </div>
   )
 }
+
+// TODO:
+// - tabs in settings: waveform, dissonance params, context spectrum, complement spectrum
+// - add playback and download of sample
+
+// (DECIDE WHAT IS NECESSARY FOR VIDEO)
+
