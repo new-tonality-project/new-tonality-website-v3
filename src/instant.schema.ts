@@ -55,6 +55,7 @@ const _schema = i.schema({
       intervalCents: i.number(),
       periods: i.number(),
       phaseDegrees: i.number(),
+      phantomHarmonicsNumber: i.number(),
       referenceFrequency: i.number(),
       showEnvelope: i.boolean(),
       showRms: i.boolean(),

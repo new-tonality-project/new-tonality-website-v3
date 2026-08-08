@@ -1,5 +1,6 @@
 'use client'
 
+import { DEFAULT_PHANTOM_HARMONICS_NUMBER } from 'sethares-dissonance'
 import { DragNumberInput } from '@/components'
 import { Checkbox, CheckboxField } from '@/components/catalyst/checkbox'
 import { Label } from '@headlessui/react'
@@ -68,6 +69,19 @@ export function BeatingControls() {
           whole
           label="Periods"
           onChange={(periods) => update({ periods })}
+        />
+        <DragNumberInput
+          defaultValue={DEFAULT_PHANTOM_HARMONICS_NUMBER}
+          value={settings.phantomHarmonicsNumber}
+          min={0}
+          max={20}
+          minStep={1}
+          valueRange={10}
+          whole
+          label="Phantom harmonics"
+          onChange={(phantomHarmonicsNumber) =>
+            update({ phantomHarmonicsNumber })
+          }
         />
       </div>
 

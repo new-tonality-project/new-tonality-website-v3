@@ -179,6 +179,7 @@ export function BeatingCharts({
     intervalCents,
     amplitude,
     phaseDegrees,
+    phantomHarmonicsNumber,
     showEnvelope,
     showRms,
   } = settings
@@ -253,6 +254,7 @@ export function BeatingCharts({
         referenceFrequency={referenceFrequency}
         intervalCents={intervalCents}
         amplitude={amplitude}
+        phantomHarmonicsNumber={phantomHarmonicsNumber}
       />
 
       <button

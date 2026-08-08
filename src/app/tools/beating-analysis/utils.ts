@@ -28,9 +28,69 @@ export type WaveformParams = {
   phaseDegrees: number
 }
 
+export type SpectrumPartial = {
+  cents: number
+  amplitude: number
+  phantom: boolean
+}
+
 /** Pure-tone spectrum passed to DissonanceCurve as context/complement (becomes SpectrumWithLoudness internally). */
 export function createPureToneSpectrum(frequency: number, amplitude: number) {
   return new Spectrum().add(frequency, amplitude, 0)
+}
+
+/** Partials after phantom-harmonic multiplication, in cents relative to the reference frequency. */
+export function getPureToneSpectrumPartials(
+  centsFromReference: number,
+  amplitude: number,
+  phantomHarmonicsNumber: number,
+): SpectrumPartial[] {
+  const phantomCount = phantomHarmonicsNumber + 1
+  const partials: SpectrumPartial[] = []
+
+  for (let harmonicNumber = 1; harmonicNumber <= phantomCount; harmonicNumber++) {
+    partials.push({
+      cents: centsFromReference + ratioToCents(harmonicNumber),
+      amplitude: amplitude / harmonicNumber,
+      phantom: harmonicNumber > 1,
+    })
+  }
+
+  return partials
+}
+
+export function getHarmonicsMaxCents(
+  intervalCents: number,
+  amplitude: number,
+  phantomHarmonicsNumber: number,
+  paddingRatio = 1.05,
+) {
+  const partials = [
+    ...getPureToneSpectrumPartials(0, 1, phantomHarmonicsNumber),
+    ...getPureToneSpectrumPartials(
+      intervalCents,
+      amplitude,
+      phantomHarmonicsNumber,
+    ),
+  ]
+
+  const maxCents = Math.max(...partials.map((partial) => partial.cents))
+
+  return maxCents * paddingRatio
+}
+
+export function getHarmonicsAmplitudeAxisBounds(partials: SpectrumPartial[]) {
+  const amplitudes = partials
+    .map((partial) => partial.amplitude)
+    .filter((amplitude) => amplitude > 0)
+
+  const minAmplitude = Math.min(...amplitudes)
+  const maxAmplitude = Math.max(...amplitudes)
+
+  return {
+    min: minAmplitude / 10,
+    max: maxAmplitude * 2,
+  }
 }
 
 function getReferencePeriodGridStep(periods: number) {
