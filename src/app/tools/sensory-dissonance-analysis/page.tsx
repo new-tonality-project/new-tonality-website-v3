@@ -11,20 +11,21 @@ import {
 import { ExperimentCharts } from './components/ExperimentCharts'
 import { UnfinishedExperimentsModal } from './components/UnfinishedExperimentsModal'
 import { FirefoxWarningModal } from './components/FirefoxWarningModal'
-import { db } from '@/db'
+import { useAuth } from '@clerk/nextjs'
 import { TextLink } from '@/components/catalyst/text'
 import { SOCIAL_MEDIA_LINKS } from '@/lib'
 import { useState } from 'react'
 
 export default function DissonanceSurveyPage() {
   const [surveyOpen, setSurveyOpen] = useState(false)
+  const { isSignedIn } = useAuth()
   
   return (
     <Container className="mt-16 lg:mt-32">
       <FirefoxWarningModal />
-      <db.SignedIn>
+      {isSignedIn && (
         <UnfinishedExperimentsModal active={!surveyOpen} />
-      </db.SignedIn>
+      )}
       <Container>
         <header>
           <h1 className="mt-6 text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">

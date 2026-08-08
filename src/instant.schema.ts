@@ -48,6 +48,17 @@ const _schema = i.schema({
       updatedAt: i.date(),
       userBackground: i.string().indexed().optional(),
     }),
+    beatingAnalysisSettings: i.entity({
+      createdAt: i.number(),
+      updatedAt: i.number(),
+      amplitude: i.number(),
+      intervalCents: i.number(),
+      periods: i.number(),
+      phaseDegrees: i.number(),
+      referenceFrequency: i.number(),
+      showEnvelope: i.boolean(),
+      showRms: i.boolean(),
+    }),
   },
   links: {
     $usersLinkedPrimaryUser: {
@@ -114,6 +125,20 @@ const _schema = i.schema({
         on: '$users',
         has: 'one',
         label: 'userSettings',
+      },
+    },
+    beatingAnalysisSettings$users: {
+      forward: {
+        on: 'beatingAnalysisSettings',
+        has: 'one',
+        label: '$users',
+        required: true,
+        onDelete: 'cascade',
+      },
+      reverse: {
+        on: '$users',
+        has: 'one',
+        label: 'beatingAnalysisSettings',
       },
     },
   },

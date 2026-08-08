@@ -7,8 +7,11 @@ import { useEffect } from 'react'
 export default function InstantDBAuthSync() {
   const { isSignedIn } = useUser()
   const { getToken } = useAuth()
+  const { user: instantUser, isLoading: isInstantLoading } = db.useAuth()
 
   useEffect(() => {
+    if (isInstantLoading) return
+
     if (isSignedIn) {
       getToken()
         .then((token) => {
@@ -20,12 +23,29 @@ export default function InstantDBAuthSync() {
         .catch((error) => {
           console.error('Error signing in with Instant', error)
         })
-    } else {
-      db.auth.signOut()
+      return
     }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSignedIn])
+    // Clerk is signed out. InstantDB persists guest sessions in the browser,
+    // so keep an existing guest rather than signing out and creating a new one.
+    if (instantUser?.isGuest) {
+      return
+    }
+
+    if (instantUser) {
+      db.auth
+        .signOut()
+        .then(() => db.auth.signInAsGuest())
+        .catch((error) => {
+          console.error('Error switching to guest auth', error)
+        })
+      return
+    }
+
+    db.auth.signInAsGuest().catch((error) => {
+      console.error('Error signing in as guest', error)
+    })
+  }, [isSignedIn, isInstantLoading, instantUser?.id, instantUser?.isGuest, getToken])
 
   return null
 }

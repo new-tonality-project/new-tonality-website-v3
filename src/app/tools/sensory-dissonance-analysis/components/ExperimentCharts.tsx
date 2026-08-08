@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
-import { useAuth } from '@clerk/nextjs'
 import { db } from '@/db'
 import { EXPERIMENTS } from '../utils'
 import { MusicalBackground } from '@/lib/types'
@@ -53,12 +52,13 @@ export function ExperimentCharts(props: {
   const [secondOrderEnabled, setSecondOrderEnabled] = useState(false)
   const [thirdOrderEnabled, setThirdOrderEnabled] = useState(false)
 
-  const { isSignedIn } = useAuth()
+  const { user, isLoading: isAuthLoading } = db.useAuth()
+  const isAuthenticatedUser = Boolean(user && !user.isGuest)
 
   const effectiveSettings = useMemo(
     () => ({
       ...settings,
-      showYourResult: isSignedIn ? settings.showYourResult : false,
+      showYourResult: isAuthenticatedUser ? settings.showYourResult : false,
       secondOrderDissonance: secondOrderEnabled
         ? settings.secondOrderDissonance
         : { ...settings.secondOrderDissonance, magnitude: 0 },
@@ -66,7 +66,7 @@ export function ExperimentCharts(props: {
         ? settings.thirdOrderDissonance
         : { ...settings.thirdOrderDissonance, magnitude: 0 },
     }),
-    [settings, secondOrderEnabled, thirdOrderEnabled, isSignedIn]
+    [settings, secondOrderEnabled, thirdOrderEnabled, isAuthenticatedUser]
   )
 
   return (
@@ -103,7 +103,7 @@ export function ExperimentCharts(props: {
           <DissonanceCurveControls
             value={settings}
             onChange={setSettings}
-            yourResultDisabled={!isSignedIn}
+            yourResultDisabled={!isAuthenticatedUser}
             secondOrderEnabled={secondOrderEnabled}
             thirdOrderEnabled={thirdOrderEnabled}
             onSecondOrderEnabledChange={(enabled) => {
@@ -114,48 +114,50 @@ export function ExperimentCharts(props: {
           />
         </Fieldset>
       </CollapsiblePanel>
-      <db.SignedOut>
-        <SurveyChartPublic
-          meanFrequency={EXPERIMENTS[0].frequency}
-          title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
-          settings={effectiveSettings}
-        />
+      {isAuthLoading ? null : !isAuthenticatedUser ? (
+        <>
+          <SurveyChartPublic
+            meanFrequency={EXPERIMENTS[0].frequency}
+            title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
+            settings={effectiveSettings}
+          />
 
-        <SurveyChartPublic
-          meanFrequency={EXPERIMENTS[1].frequency}
-          title={`${EXPERIMENTS[1].title} (${EXPERIMENTS[1].frequency}Hz)`}
-          settings={effectiveSettings}
-        />
+          <SurveyChartPublic
+            meanFrequency={EXPERIMENTS[1].frequency}
+            title={`${EXPERIMENTS[1].title} (${EXPERIMENTS[1].frequency}Hz)`}
+            settings={effectiveSettings}
+          />
 
-        <SurveyChartPublic
-          meanFrequency={EXPERIMENTS[2].frequency}
-          title={`${EXPERIMENTS[2].title} (${EXPERIMENTS[2].frequency}Hz)`}
-          settings={effectiveSettings}
-        />
-      </db.SignedOut>
+          <SurveyChartPublic
+            meanFrequency={EXPERIMENTS[2].frequency}
+            title={`${EXPERIMENTS[2].title} (${EXPERIMENTS[2].frequency}Hz)`}
+            settings={effectiveSettings}
+          />
+        </>
+      ) : (
+        <>
+          <SurveyChart
+            meanFrequency={EXPERIMENTS[0].frequency}
+            title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
+            settings={effectiveSettings}
+            onTakeSurvey={props.onTakeSurvey}
+          />
 
-      <db.SignedIn>
-        <SurveyChart
-          meanFrequency={EXPERIMENTS[0].frequency}
-          title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
-          settings={effectiveSettings}
-          onTakeSurvey={props.onTakeSurvey}
-        />
+          <SurveyChart
+            meanFrequency={EXPERIMENTS[1].frequency}
+            title={`${EXPERIMENTS[1].title} (${EXPERIMENTS[1].frequency}Hz)`}
+            settings={effectiveSettings}
+            onTakeSurvey={props.onTakeSurvey}
+          />
 
-        <SurveyChart
-          meanFrequency={EXPERIMENTS[1].frequency}
-          title={`${EXPERIMENTS[1].title} (${EXPERIMENTS[1].frequency}Hz)`}
-          settings={effectiveSettings}
-          onTakeSurvey={props.onTakeSurvey}
-        />
-
-        <SurveyChart
-          meanFrequency={EXPERIMENTS[2].frequency}
-          title={`${EXPERIMENTS[2].title} (${EXPERIMENTS[2].frequency}Hz)`}
-          settings={effectiveSettings}
-          onTakeSurvey={props.onTakeSurvey}
-        />
-      </db.SignedIn>
+          <SurveyChart
+            meanFrequency={EXPERIMENTS[2].frequency}
+            title={`${EXPERIMENTS[2].title} (${EXPERIMENTS[2].frequency}Hz)`}
+            settings={effectiveSettings}
+            onTakeSurvey={props.onTakeSurvey}
+          />
+        </>
+      )}
     </>
   )
 }
