@@ -16,6 +16,12 @@ export function GeneralParams() {
 
   return (
     <div className="flex flex-col gap-6">
+      <SidebarSection title="Playback">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          Hold <kbd className="rounded border border-zinc-300 px-1.5 py-0.5 font-sans text-xs dark:border-zinc-600">P</kbd> to play the combined reference and interval spectrum (real harmonics only).
+        </p>
+      </SidebarSection>
+
       <SidebarSection title="Dissonance curve">
         <DragNumberInput
           defaultValue={DEFAULT_DISSONANCE_CURVE_MIN_CENTS}

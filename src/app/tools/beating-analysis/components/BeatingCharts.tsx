@@ -324,6 +324,5 @@ export function BeatingCharts({
 }
 
 // TODO:
-// - add intrinsic dissonance display
 // - add independent mode for interval spectrum
-// - add playback and download of sample
+// - add download of sample
