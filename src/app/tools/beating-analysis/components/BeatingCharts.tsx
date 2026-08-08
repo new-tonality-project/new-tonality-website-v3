@@ -39,9 +39,7 @@ const baseChartOptions: Highcharts.Options = {
     min: -2.2,
     max: 2.2,
     tickInterval: 1,
-    gridLineColor: '#ddd',
-    gridLineDashStyle: 'Dash',
-    gridLineWidth: 1,
+    gridLineWidth: 0,
   },
   plotOptions: {
     line: {
@@ -69,7 +67,6 @@ type OverlaySeries = {
 }
 
 function WaveformChart({
-  title,
   data,
   color,
   durationMs,
@@ -81,7 +78,6 @@ function WaveformChart({
   yAxisMin,
   yAxisMax,
 }: {
-  title: string
   data: [number, number][]
   color: string
   durationMs: number
@@ -94,6 +90,7 @@ function WaveformChart({
   yAxisMax?: number
 }) {
   const chartHeight = height ?? (showXAxis ? 160 : 130)
+  const isCompactYAxis = yAxisMin !== undefined && yAxisMax !== undefined
 
   const options = useMemo(
     (): Highcharts.Options =>
@@ -103,12 +100,10 @@ function WaveformChart({
           ...baseChartOptions.chart,
           height: chartHeight,
           marginBottom: showXAxis ? 56 : 8,
+          spacingTop: 0,
         },
         title: {
-          text: title,
-          align: 'right',
-          margin: 0,
-          style: { fontSize: '14px', fontWeight: '600' },
+          text: undefined,
         },
         xAxis: {
           ...baseChartOptions.xAxis,
@@ -126,10 +121,26 @@ function WaveformChart({
           tickLength: showXAxis ? 5 : 0,
         },
         yAxis: {
-          ...baseChartOptions.yAxis,
+          title: showYAxisTitle ? { text: 'Amplitude' } : undefined,
           min: yAxisMin ?? -2.2,
           max: yAxisMax ?? 2.2,
-          title: showYAxisTitle ? { text: 'Amplitude' } : undefined,
+          tickInterval: 1,
+          gridLineWidth: 0,
+          ...(isCompactYAxis
+            ? {
+                startOnTick: false,
+                endOnTick: false,
+                labels: {
+                  formatter: function (
+                    this: Highcharts.AxisLabelsFormatterContextObject,
+                  ) {
+                    const value = this.value as number
+                    if (value !== -1 && value !== 0 && value !== 1) return ''
+                    return String(value)
+                  },
+                },
+              }
+            : {}),
         },
         series: [
           {
@@ -145,7 +156,7 @@ function WaveformChart({
           })),
         ],
       }) as Highcharts.Options,
-    [title, data, color, durationMs, periodGridTicks, showXAxis, showYAxisTitle, overlaySeries, chartHeight, yAxisMin, yAxisMax],
+    [data, color, durationMs, periodGridTicks, showXAxis, showYAxisTitle, overlaySeries, chartHeight, yAxisMin, yAxisMax, isCompactYAxis],
   )
 
   return (
@@ -249,39 +260,36 @@ export function BeatingCharts({
         onClick={onToggleSidebar}
         aria-label={sidebarOpen ? 'Close settings' : 'Open settings'}
         aria-pressed={sidebarOpen}
-        className="absolute top-1 -left-4 z-10 flex size-9 cursor-pointer items-center justify-center rounded-lg text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+        className="absolute -top-1 left-2 z-10 flex size-9 cursor-pointer items-center justify-center rounded-lg text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
       >
         <SettingsIcon className="size-4" />
       </button>
 
       <WaveformChart
-        title={`Reference tone (${referenceFrequency} Hz)`}
         data={waveforms.reference}
         color={COLORS.blue}
         durationMs={waveforms.durationMs}
         periodGridTicks={periodGridTicks}
         height={75}
-        yAxisMin={-2}
-        yAxisMax={2}
+        yAxisMin={-1.8}
+        yAxisMax={1.8}
       />
       <WaveformChart
-        title={`Interval tone (${waveforms.intervalFrequency.toFixed(2)} Hz)`}
         data={waveforms.intervalTone}
         color={COLORS.orange}
         durationMs={waveforms.durationMs}
         periodGridTicks={periodGridTicks}
-        showYAxisTitle
         height={75}
-        yAxisMin={-2}
-        yAxisMax={2}
+        yAxisMin={-1.8}
+        yAxisMax={1.8}
       />
       <WaveformChart
-        title="Sum"
         data={waveforms.sum}
         color={COLORS.green}
         durationMs={waveforms.durationMs}
         periodGridTicks={periodGridTicks}
         showXAxis
+        showYAxisTitle
         overlaySeries={sumOverlaySeries}
       />
     </div>

@@ -8,25 +8,48 @@ import { COLORS } from '@/lib/colors'
 import { roundToDecimals } from '@/lib/utils'
 import {
   DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
-  DEFAULT_PHANTOM_HARMONICS_NUMBER,
   DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
   DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
 } from 'sethares-dissonance'
 import {
   createPureToneSpectrum,
   DISSONANCE_CURVE_END_RATIO,
+  DISSONANCE_CURVE_MAX_CENTS,
   DISSONANCE_CURVE_START_RATIO,
-  frequencyFromCents,
 } from '../utils'
+
+const GRID_LINE_EVERY_CENTS = 100
+
+function getCentsAxisTickConfig(maxCents: number) {
+  const tickInterval = maxCents > 1200 ? 200 : 100
+
+  if (tickInterval === GRID_LINE_EVERY_CENTS) {
+    return {
+      tickInterval,
+      gridLineWidth: 1,
+      gridLineColor: '#ddd',
+      gridLineDashStyle: 'Dash' as const,
+    }
+  }
+
+  return {
+    tickInterval,
+    gridLineWidth: 0,
+    minorTickInterval: GRID_LINE_EVERY_CENTS,
+    minorGridLineWidth: 1,
+    minorGridLineColor: '#ddd',
+    minorGridLineDashStyle: 'Dash' as const,
+  }
+}
 
 function createToneStemSeries({
   name,
-  frequency,
+  intervalCents,
   amplitude,
   color,
 }: {
   name: string
-  frequency: number
+  intervalCents: number
   amplitude: number
   color: string
 }): Highcharts.SeriesOptionsType[] {
@@ -36,8 +59,8 @@ function createToneStemSeries({
       name,
       yAxis: 'amplitude',
       data: [
-        [frequency, 0],
-        [frequency, amplitude],
+        [intervalCents, 0],
+        [intervalCents, amplitude],
       ],
       color,
       lineWidth: 1.5,
@@ -49,7 +72,7 @@ function createToneStemSeries({
       type: 'scatter',
       name: `${name} marker`,
       yAxis: 'amplitude',
-      data: [[frequency, amplitude]],
+      data: [[intervalCents, amplitude]],
       color,
       marker: {
         enabled: true,
@@ -71,12 +94,7 @@ export function DissonanceCurveChart({
   intervalCents: number
   amplitude: number
 }) {
-  const intervalFrequency = frequencyFromCents(referenceFrequency, intervalCents)
-  const minFrequency = referenceFrequency * DISSONANCE_CURVE_START_RATIO
-  const maxFrequency = Math.max(
-    referenceFrequency * DISSONANCE_CURVE_END_RATIO,
-    intervalFrequency * 1.05,
-  )
+  const maxCents = Math.max(DISSONANCE_CURVE_MAX_CENTS, intervalCents * 1.05)
 
   const referenceSpectrum = useMemo(
     () => createPureToneSpectrum(referenceFrequency, 1),
@@ -104,11 +122,9 @@ export function DissonanceCurveChart({
   const dissonanceCurve = useDissonanceCurve(dissonanceCurveOptions)
 
   const options = useMemo((): Highcharts.Options => {
-    const dissonanceData = dissonanceCurve
-      .plot()
-      .map(([ratio, dissonance]) => [referenceFrequency * ratio, dissonance])
-
+    const dissonanceData = dissonanceCurve.plotCents()
     const amplitudeAxisMax = Math.max(1, amplitude) * 1.25
+    const centsAxisTicks = getCentsAxisTickConfig(maxCents)
 
     return {
       chart: {
@@ -123,24 +139,26 @@ export function DissonanceCurveChart({
       credits: { enabled: false },
       legend: {
         enabled: true,
-        align: 'right',
+        align: 'left',
         verticalAlign: 'top',
+        x: 64,
+        y: 0,
       },
       tooltip: { enabled: false },
       title: {
-        text: 'Sensory dissonance curve',
-        align: 'right',
+        text: 'Beating analysis',
+        align: 'left',
         margin: 0,
+        x: 68,
+        y: 10,
         style: { fontSize: '14px', fontWeight: '600' },
       },
       xAxis: {
         type: 'linear',
-        min: minFrequency,
-        max: maxFrequency,
-        title: { text: 'Frequency (Hz)', margin: 12 },
-        gridLineColor: '#ddd',
-        gridLineDashStyle: 'Dash',
-        gridLineWidth: 1,
+        min: 0,
+        max: maxCents,
+        title: { text: 'Interval (cents)', margin: 12 },
+        ...centsAxisTicks,
         labels: {
           formatter: function (this: Highcharts.AxisLabelsFormatterContextObject) {
             return String(roundToDecimals(this.value as number))
@@ -196,29 +214,33 @@ export function DissonanceCurveChart({
         },
         ...createToneStemSeries({
           name: 'Reference tone',
-          frequency: referenceFrequency,
+          intervalCents: 0,
           amplitude: 1,
           color: COLORS.blue,
         }),
         ...createToneStemSeries({
           name: 'Interval tone',
-          frequency: intervalFrequency,
+          intervalCents,
           amplitude,
           color: COLORS.orange,
         }),
+        {
+          type: 'line',
+          name: 'Sum',
+          color: COLORS.green,
+          data: [],
+          showInLegend: true,
+          enableMouseTracking: false,
+          lineWidth: 2,
+          marker: { enabled: false },
+          states: { inactive: { enabled: false } },
+        },
       ],
     }
-  }, [
-    amplitude,
-    dissonanceCurve,
-    intervalFrequency,
-    maxFrequency,
-    minFrequency,
-    referenceFrequency,
-  ])
+  }, [amplitude, dissonanceCurve, intervalCents, maxCents])
 
   return (
-    <div className='mb-8 -ml-8 -mr-14'>
+    <div className="mb-8 -ml-8 -mr-14">
       {/* @ts-expect-error - Highcharts Options type causes excessive stack depth when comparing with @highcharts/react props */}
       <Chart options={options} />
     </div>

@@ -8,6 +8,12 @@ export const MAX_REFERENCE_PERIOD_GRID_LINES = 12
 export const DISSONANCE_CURVE_START_RATIO = 1
 export const DISSONANCE_CURVE_END_RATIO = 4
 
+export function ratioToCents(ratio: number) {
+  return (1200 * Math.log2(ratio))
+}
+
+export const DISSONANCE_CURVE_MAX_CENTS = ratioToCents(DISSONANCE_CURVE_END_RATIO)
+
 export function frequencyFromCents(baseFrequency: number, cents: number): number {
   return baseFrequency * Math.pow(2, cents / 1200)
 }
