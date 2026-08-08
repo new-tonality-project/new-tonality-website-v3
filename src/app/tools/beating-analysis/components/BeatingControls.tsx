@@ -15,10 +15,6 @@ export function BeatingControls() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-        Controls
-      </h2>
-
       <div className="flex flex-col gap-3">
         <DragNumberInput
           defaultValue={10}

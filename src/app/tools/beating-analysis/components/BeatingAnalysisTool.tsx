@@ -1,21 +1,22 @@
 'use client'
 
+import { useState } from 'react'
 import { Container, Prose, CollapsibleDescription } from '@/components'
 import { BeatingAnalysisProvider } from './BeatingAnalysisProvider'
+import { BeatingAnalysisSidebar } from './BeatingAnalysisSidebar'
 import { BeatingCharts } from './BeatingCharts'
-import { BeatingControls } from './BeatingControls'
 
 export function BeatingAnalysisTool() {
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+
   return (
     <BeatingAnalysisProvider>
-      <aside className="fixed inset-y-0 left-0 z-20 w-72 overflow-y-auto border-r border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="px-6 py-8">
-          <BeatingControls />
-        </div>
-      </aside>
+      <BeatingAnalysisSidebar
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
 
-      <div className="pl-72">
-        <Container className="mt-16 lg:mt-32">
+      <Container className="mt-16 lg:mt-32">
           <Container>
             <header>
               <h1 className="mt-6 text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
@@ -41,10 +42,12 @@ export function BeatingAnalysisTool() {
               <div className="h-4 md:h-2" />
             </Prose>
 
-            <BeatingCharts />
+            <BeatingCharts
+              sidebarOpen={sidebarOpen}
+              onToggleSidebar={() => setSidebarOpen((open) => !open)}
+            />
           </Container>
         </Container>
-      </div>
     </BeatingAnalysisProvider>
   )
 }

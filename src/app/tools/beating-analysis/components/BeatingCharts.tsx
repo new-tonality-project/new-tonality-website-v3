@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 import { Chart } from '@highcharts/react'
 import type Highcharts from 'highcharts'
+import { SettingsIcon } from '@/components'
 import { COLORS } from '@/lib/colors'
 import { roundToDecimals } from '@/lib/utils'
 import {
@@ -142,7 +143,13 @@ function WaveformChart({
   )
 }
 
-export function BeatingCharts() {
+export function BeatingCharts({
+  sidebarOpen,
+  onToggleSidebar,
+}: {
+  sidebarOpen: boolean
+  onToggleSidebar: () => void
+}) {
   const { settings } = useBeatingAnalysisSettings()
   const {
     referenceFrequency,
@@ -218,7 +225,17 @@ export function BeatingCharts() {
   }, [showEnvelope, showRms, sumEnvelope, sumRms])
 
   return (
-    <div className="flex flex-col md:-ml-7">
+    <div className="relative flex flex-col md:-ml-7">
+      <button
+        type="button"
+        onClick={onToggleSidebar}
+        aria-label={sidebarOpen ? 'Close settings' : 'Open settings'}
+        aria-pressed={sidebarOpen}
+        className="absolute top-1 -left-4 z-10 flex size-9 cursor-pointer items-center justify-center rounded-lg text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+      >
+        <SettingsIcon className="size-5" />
+      </button>
+
       <WaveformChart
         title={`Reference tone (${referenceFrequency} Hz)`}
         data={waveforms.reference}
