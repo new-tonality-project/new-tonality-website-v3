@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { LatestUpdate } from './LatestUpdate'
 import Image from 'next/image'
 import frontCover from '@/images/front-cover.jpg'
-import { EBOOK_LINKS, SOCIAL_MEDIA_LINKS, tools } from '@/lib'
+import { BOOK_LINKS, SOCIAL_MEDIA_LINKS, tools } from '@/lib'
 
 export default async function Home() {
   return (
@@ -59,32 +59,38 @@ export default async function Home() {
           <Prose className="flex w-full flex-col justify-center md:order-2 md:basis-1/2">
             <p className="m-0 font-thin">eBook</p>
             <h2 className="mt-0 text-xl font-bold">
-              Set theoretic solution <br /> for the tuning problem
+              Set-theoretic solution <br /> for the tuning problem
             </h2>
             <p className="mb-0">
               My goal is to make microtonality easy and accessible and to
               popularize that topic. During my research I found that various
               tuning systems have pros and cons. In the attempt to simplify the
               theory of William Sethares I stumbled upon the idea of using set
-              theory to derive tuning. After 2 years of R&D I wrote this eBook
-              to lay out haw that can be done and compre it with other tuning
-              systems.
+              theory to derive tuning. After 2 years of research I wrote this book
+              to lay out how set theory can be used to derive tuning and how
+              it compares to other tuning systems.
             </p>
 
             <div className="flex flex-col gap-1">
               <Link
-                href={EBOOK_LINKS.payhip}
+                href={BOOK_LINKS.eBook}
                 className="flex items-center gap-1 text-sky-600"
               >
-                Support on Payhip
+                Buy Hardcover
                 <ChevronRightIcon className="h-4 w-4 stroke-current" />
               </Link>
-
               <Link
-                href={EBOOK_LINKS.arxiv}
+                href={BOOK_LINKS.eBook}
                 className="flex items-center gap-1 text-sky-600"
               >
-                Download on Arxiv
+                Buy eBook (PDF)
+                <ChevronRightIcon className="h-4 w-4 stroke-current" />
+              </Link>
+              <Link
+                href={BOOK_LINKS.arxiv}
+                className="flex items-center gap-1 text-sky-600"
+              >
+                Free download
                 <ChevronRightIcon className="h-4 w-4 stroke-current" />
               </Link>
             </div>
