@@ -1,5 +1,5 @@
 import { ChevronRightIcon } from '@/components'
-import { EBOOK_LINKS } from '@/lib'
+import { BOOK_LINKS } from '@/lib'
 import Link from 'next/link'
 
 export function LatestUpdate() {
@@ -14,23 +14,30 @@ export function LatestUpdate() {
         </h3>
         <p className="pb-2 font-thin">
           There are many theories that attempt to explain consonance and
-          dissonance in music. In this eBook, I explore the boundaries of
+          dissonance in music. In this book, I explore the boundaries of
           today’s most compelling theories and introduce a new approach rooted
           in mathematical set theory.
         </p>
         <Link
-          href={EBOOK_LINKS.payhip}
-          className="mt-2 flex items-center gap-1 text-amber-600"
+          href={BOOK_LINKS.hardcover}
+          className="mt-1 flex items-center gap-1 text-amber-600"
         >
-          Support on Payhip
+          Buy Hardcover
+          <ChevronRightIcon className="h-4 w-4 stroke-current" />
+        </Link>
+        <Link
+          href={BOOK_LINKS.eBook}
+          className="mt-1 flex items-center gap-1 text-amber-600"
+        >
+          Buy eBook (PDF)
           <ChevronRightIcon className="h-4 w-4 stroke-current" />
         </Link>
 
         <Link
-          href={EBOOK_LINKS.arxiv}
+          href={BOOK_LINKS.arxiv}
           className="mt-1 flex items-center gap-1 text-amber-600"
         >
-          Download on Arxiv
+          Free download
           <ChevronRightIcon className="h-4 w-4 stroke-current" />
         </Link>
       </div>

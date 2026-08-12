@@ -1,7 +1,8 @@
 import { type BasicLink } from './types'
 
-export const EBOOK_LINKS = {
-  payhip: 'https://payhip.com/b/TtdJB',
+export const BOOK_LINKS = {
+  hardcover: 'https://www.lulu.com/shop/vsevolod-deriushkin/set-theoretic-solution-for-the-tuning-problem-hardcover/hardcover/product-rm462vk.html?page=1&pageSize=4',
+  eBook: 'https://www.lulu.com/shop/vsevolod-deriushkin/set-theoretic-solution-for-the-tuning-problem-ebook/ebook/product-m2ee2mr.html?page=1&pageSize=4',
   arxiv: 'https://arxiv.org/abs/2506.13969',
 }
 
@@ -9,7 +10,6 @@ export const NAV_ITEMS: BasicLink[] = [
   { label: 'Home', href: '/' },
   { label: 'Tools', href: '/tools' },
   { label: 'About', href: '/about' },
-  { label: 'eBook', href: EBOOK_LINKS.payhip },
 ]
 
 export const SOCIAL_MEDIA_LINKS = {
