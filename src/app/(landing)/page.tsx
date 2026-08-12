@@ -57,7 +57,7 @@ export default async function Home() {
           </div>
 
           <Prose className="flex w-full flex-col justify-center md:order-2 md:basis-1/2">
-            <p className="m-0 font-thin">eBook</p>
+            <p className="m-0 font-thin">Book</p>
             <h2 className="mt-0 text-xl font-bold">
               Set-theoretic solution <br /> for the tuning problem
             </h2>
@@ -73,7 +73,7 @@ export default async function Home() {
 
             <div className="flex flex-col gap-1">
               <Link
-                href={BOOK_LINKS.eBook}
+                href={BOOK_LINKS.hardcover}
                 className="flex items-center gap-1 text-sky-600"
               >
                 Buy Hardcover
