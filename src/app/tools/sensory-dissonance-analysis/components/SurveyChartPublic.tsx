@@ -7,7 +7,7 @@ import Highcharts from 'highcharts'
 import 'highcharts/highcharts-more';
 import { Spectrum } from 'tuning-core'
 import { SignInButton } from '@clerk/nextjs'
-import { ChartHeader } from './ChartHeader'
+import { ChartHeader, PlotBorders } from './ChartHeader'
 import { Button } from '@/components'
 import { baseChartConfig, chartCredits, getStackedChartLayout } from './chartConfig'
 import type { ChartSettings } from './types'
@@ -27,6 +27,10 @@ export function SurveyChartPublic(props: {
   volume?: number
   hideLegend?: boolean
   hideXAxis?: boolean
+  hideYAxisTitles?: boolean
+  plotBorderTop?: boolean
+  plotBorderBottom?: boolean
+  zIndex?: number
 }) {
   const allGraphs = db.useQuery({
     dissonanceGraphs: {
@@ -201,29 +205,45 @@ export function SurveyChartPublic(props: {
       yAxis: [
         {
           id: "dissonance-score",
-          title: { text: 'Dissonance score', rotation: -90 },
+          title: props.hideYAxisTitles
+            ? { text: undefined }
+            : { text: 'Dissonance score', rotation: -90 },
           min: 1,
-          max: 7,
+          max: 7.5,
+          endOnTick: false,
           tickInterval: 1,
           gridLineColor: '#ccc',
           gridLineDashStyle: 'Dash',
           alignTicks: false,
+          labels: {
+            overflow: 'allow',
+            crop: false,
+          },
         },
         {
           id: "dissonance-curve",
           min: 0,
-          max: 1,
+          max: 1.2,
           endOnTick: false,
           maxPadding: 0,
+          tickInterval: 0.5,
           opposite: true,
           visible: true,
           gridLineWidth: 0,
-          title: {
-            text: "Sensory dissonance D(f)",
-            style: { color: props.settings.showExponentialFit ? undefined : 'transparent' },
-          },
+          title: props.hideYAxisTitles
+            ? { text: undefined }
+            : {
+                text: 'Sensory dissonance D(f)',
+                style: {
+                  color: props.settings.showExponentialFit ? undefined : 'transparent',
+                },
+              },
           labels: {
-            style: { color: props.settings.showExponentialFit ? undefined : 'transparent' },
+            overflow: 'allow',
+            crop: false,
+            style: {
+              color: props.settings.showExponentialFit ? undefined : 'transparent',
+            },
           },
         },
       ],
@@ -234,7 +254,7 @@ export function SurveyChartPublic(props: {
       },
       series,
     } as Highcharts.Options
-  }, [graphs, dissonanceCurve, props.settings, props.meanFrequency, chartEvents, playedInterval, props.hideLegend, props.hideXAxis])
+  }, [graphs, dissonanceCurve, props.settings, props.meanFrequency, chartEvents, playedInterval, props.hideLegend, props.hideXAxis, props.hideYAxisTitles])
 
   if (allGraphs.isLoading) {
     return <div className="w-full rounded bg-neutral-100" style={{ height: stackedLayout.height }} />
@@ -245,10 +265,10 @@ export function SurveyChartPublic(props: {
   }
 
   return (
-    <div className="relative w-full">
-      <div className="relative grid w-full *:col-start-1 *:row-start-1">
+    <div className="relative w-full overflow-visible" style={{ zIndex: props.zIndex }}>
+      <div className="relative grid w-full overflow-visible *:col-start-1 *:row-start-1">
           {/* @ts-expect-error - Highcharts Options type causes excessive stack depth when comparing with @highcharts/react props */}
-          <Chart highcharts={Highcharts} options={chartOptions} containerProps={{ className: 'w-full' }} />
+          <Chart highcharts={Highcharts} options={chartOptions} containerProps={{ className: 'w-full overflow-visible!', style: { overflow: 'visible' } }} />
           <DissonanceChartOverlay
             plotBounds={plotBounds}
             meanFrequency={props.meanFrequency}
@@ -272,6 +292,11 @@ export function SurveyChartPublic(props: {
               {playedInterval} cents
             </div>
           )}
+          <PlotBorders
+            plotBounds={plotBounds}
+            top={props.plotBorderTop}
+            bottom={props.plotBorderBottom}
+          />
           <ChartHeader
             title={props.title}
             plotBounds={plotBounds}

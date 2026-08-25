@@ -115,13 +115,15 @@ export function ExperimentCharts(props: {
         </Fieldset>
       </CollapsiblePanel>
       {isAuthLoading ? null : !isAuthenticatedUser ? (
-        <div className="w-full overflow-x-auto lg:overflow-x-visible">
-          <div className="min-w-[600px] lg:min-w-0">
+        <div className="w-full overflow-x-auto overflow-y-visible lg:overflow-x-visible">
+          <div className="min-w-[600px] overflow-visible lg:min-w-0">
             <SurveyChartPublic
               meanFrequency={EXPERIMENTS[0].frequency}
               title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
               settings={effectiveSettings}
               hideXAxis
+              hideYAxisTitles
+              zIndex={1}
             />
 
             <SurveyChartPublic
@@ -130,6 +132,9 @@ export function ExperimentCharts(props: {
               settings={effectiveSettings}
               hideLegend
               hideXAxis
+              plotBorderTop
+              plotBorderBottom
+              zIndex={2}
             />
 
             <SurveyChartPublic
@@ -137,18 +142,22 @@ export function ExperimentCharts(props: {
               title={`${EXPERIMENTS[2].title} (${EXPERIMENTS[2].frequency}Hz)`}
               settings={effectiveSettings}
               hideLegend
+              hideYAxisTitles
+              zIndex={3}
             />
           </div>
         </div>
       ) : (
-        <div className="w-full overflow-x-auto lg:overflow-x-visible">
-          <div className="min-w-[600px] lg:min-w-0">
+        <div className="w-full overflow-x-auto overflow-y-visible lg:overflow-x-visible">
+          <div className="min-w-[600px] overflow-visible lg:min-w-0">
             <SurveyChart
               meanFrequency={EXPERIMENTS[0].frequency}
               title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
               settings={effectiveSettings}
               onTakeSurvey={props.onTakeSurvey}
               hideXAxis
+              hideYAxisTitles
+              zIndex={1}
             />
 
             <SurveyChart
@@ -158,6 +167,9 @@ export function ExperimentCharts(props: {
               onTakeSurvey={props.onTakeSurvey}
               hideLegend
               hideXAxis
+              plotBorderTop
+              plotBorderBottom
+              zIndex={2}
             />
 
             <SurveyChart
@@ -166,6 +178,8 @@ export function ExperimentCharts(props: {
               settings={effectiveSettings}
               onTakeSurvey={props.onTakeSurvey}
               hideLegend
+              hideYAxisTitles
+              zIndex={3}
             />
           </div>
         </div>
@@ -173,4 +187,3 @@ export function ExperimentCharts(props: {
     </>
   )
 }
-

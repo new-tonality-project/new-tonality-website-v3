@@ -28,6 +28,9 @@ export function getStackedChartLayout(
       spacingRight: 10,
       spacingBottom: 0,
       spacingLeft: 10,
+      // Let top/bottom axis labels paint outside the SVG so stacked charts
+      // can stay flush without clipping tick values.
+      style: { overflow: 'visible' },
       ...(hideLegend ? { marginTop: STACKED_MARGIN_TOP } : {}),
     } satisfies Highcharts.ChartOptions,
     legend: {
@@ -45,7 +48,7 @@ export function getStackedChartLayout(
         : { text: 'Interval (cents)', margin: 8 },
       labels: { enabled: !hideXAxis },
       tickLength: hideXAxis ? 0 : 8,
-      lineWidth: 1,
+      lineWidth: hideXAxis ? 0 : 1,
     } satisfies Highcharts.XAxisOptions,
   }
 }

@@ -18,7 +18,7 @@ export function ChartHeader({
 
   return (
     <div
-      className="pointer-events-none absolute z-20 flex items-center gap-2 rounded-md bg-white/85 px-2 py-0.5 dark:bg-zinc-950/85"
+      className="pointer-events-none absolute z-20 flex flex-col items-end gap-1 rounded-md bg-white/85 px-2 py-1 dark:bg-zinc-950/85"
       style={{
         top: plotBounds.top + 8,
         left: plotBounds.left + plotBounds.width - 8,
@@ -36,5 +36,44 @@ export function ChartHeader({
         </div>
       )}
     </div>
+  )
+}
+
+export function PlotBorders({
+  plotBounds,
+  top = false,
+  bottom = false,
+}: {
+  plotBounds: PlotBounds | null
+  top?: boolean
+  bottom?: boolean
+}) {
+  if (!plotBounds || (!top && !bottom)) return null
+
+  return (
+    <>
+      {top && (
+        <div
+          className="pointer-events-none absolute z-10 bg-black"
+          style={{
+            left: plotBounds.left,
+            top: plotBounds.top,
+            width: plotBounds.width,
+            height: 1,
+          }}
+        />
+      )}
+      {bottom && (
+        <div
+          className="pointer-events-none absolute z-10 bg-black"
+          style={{
+            left: plotBounds.left,
+            top: plotBounds.top + plotBounds.height - 1,
+            width: plotBounds.width,
+            height: 1,
+          }}
+        />
+      )}
+    </>
   )
 }
