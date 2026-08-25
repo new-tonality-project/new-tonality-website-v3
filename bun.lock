@@ -34,9 +34,9 @@
         "react": "19.2.5",
         "react-dom": "19.2.5",
         "remark-gfm": "^4.0.1",
-        "sethares-dissonance": "^5.0.0",
+        "sethares-dissonance": "^5.1.0",
         "tailwindcss": "^4.2.4",
-        "tuning-core": "^1.2.0",
+        "tuning-core": "^1.5.2",
         "typescript": "^6.0.3",
         "xstate": "^5.31.0",
       },
@@ -1138,7 +1138,7 @@
 
     "set-proto": ["set-proto@1.0.0", "", { "dependencies": { "dunder-proto": "^1.0.1", "es-errors": "^1.3.0", "es-object-atoms": "^1.0.0" } }, "sha512-RJRdvCo6IAnPdsvP/7m6bsQqNnn1FCBX5ZNtFL98MmFF/4xAIJTIg1YbHW5DC2W5SKZanrC6i4HsJqlajw/dZw=="],
 
-    "sethares-dissonance": ["sethares-dissonance@5.0.0", "", { "dependencies": { "fraction.js": "^5.3.4", "tuning-core": "^1.2.0" }, "peerDependencies": { "typescript": "^5" } }, "sha512-KyEEaS2Kxll+ojJhI6RdU5mdQ0Qt8lmFp5h6HX+Htjpw5r2TP+LDRKI0svUCsoUr4XCMKdtcBbdVlrQ5G9uqgw=="],
+    "sethares-dissonance": ["sethares-dissonance@5.1.0", "", { "dependencies": { "fraction.js": "^5.3.4", "tuning-core": "^1.5.2" }, "peerDependencies": { "typescript": "^5" } }, "sha512-0dRs5juFaDUvfXmCNpgtZasRjXm/+If9ofENp5A0oEKxSdyIPlxzYQRuclsuVad3tnScJmtFBbkP8rZgMXdAWQ=="],
 
     "sharp": ["sharp@0.34.5", "", { "dependencies": { "@img/colour": "^1.0.0", "detect-libc": "^2.1.2", "semver": "^7.7.3" }, "optionalDependencies": { "@img/sharp-darwin-arm64": "0.34.5", "@img/sharp-darwin-x64": "0.34.5", "@img/sharp-libvips-darwin-arm64": "1.2.4", "@img/sharp-libvips-darwin-x64": "1.2.4", "@img/sharp-libvips-linux-arm": "1.2.4", "@img/sharp-libvips-linux-arm64": "1.2.4", "@img/sharp-libvips-linux-ppc64": "1.2.4", "@img/sharp-libvips-linux-riscv64": "1.2.4", "@img/sharp-libvips-linux-s390x": "1.2.4", "@img/sharp-libvips-linux-x64": "1.2.4", "@img/sharp-libvips-linuxmusl-arm64": "1.2.4", "@img/sharp-libvips-linuxmusl-x64": "1.2.4", "@img/sharp-linux-arm": "0.34.5", "@img/sharp-linux-arm64": "0.34.5", "@img/sharp-linux-ppc64": "0.34.5", "@img/sharp-linux-riscv64": "0.34.5", "@img/sharp-linux-s390x": "0.34.5", "@img/sharp-linux-x64": "0.34.5", "@img/sharp-linuxmusl-arm64": "0.34.5", "@img/sharp-linuxmusl-x64": "0.34.5", "@img/sharp-wasm32": "0.34.5", "@img/sharp-win32-arm64": "0.34.5", "@img/sharp-win32-ia32": "0.34.5", "@img/sharp-win32-x64": "0.34.5" } }, "sha512-Ou9I5Ft9WNcCbXrU9cMgPBcCK8LiwLqcbywW3t4oDV37n1pzpuNLsYiAV8eODnjbtQlSDwZ2cUEeQz4E54Hltg=="],
 
@@ -1212,7 +1212,7 @@
 
     "tslib": ["tslib@2.8.1", "", {}, "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="],
 
-    "tuning-core": ["tuning-core@1.2.0", "", { "dependencies": { "fraction.js": "^5.3.4" }, "peerDependencies": { "typescript": "^5" } }, "sha512-XNdIwrEyctBWytIOQOIX0J8d0Fyeziom9C5KnWEGnS7tprRreK2mDox59G4ShpzaF7L765/jdQqrIlkAc4Ly4w=="],
+    "tuning-core": ["tuning-core@1.5.2", "", { "dependencies": { "fraction.js": "^5.3.4" }, "peerDependencies": { "typescript": "^5" } }, "sha512-+Svqf/w0fu12aDqmTNVSli7N7MLzIc/FC0Z/NXhMXcfcM+WLA/w3vMMdDccBcL6CwFkCjyUV0k6Tkfk3RZ9qGQ=="],
 
     "type-check": ["type-check@0.4.0", "", { "dependencies": { "prelude-ls": "^1.2.1" } }, "sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew=="],
 

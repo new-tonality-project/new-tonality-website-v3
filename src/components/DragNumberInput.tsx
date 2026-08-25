@@ -7,6 +7,8 @@ import debounce from 'lodash-es/debounce'
 import { clsx } from 'clsx'
 import { ChevronDownIcon, CloseIcon } from '@/components/Icons'
 
+export type DragNumberInputVariant = 'outlined' | 'mini'
+
 export type DragNumberInputProps = {
   defaultValue: number
   value?: number
@@ -22,6 +24,7 @@ export type DragNumberInputProps = {
   nonResettable?: boolean
   className?: string
   disabled?: boolean
+  variant?: DragNumberInputVariant
 }
 
 function clamp(num: number, min: number, max: number, whole: boolean) {
@@ -52,6 +55,7 @@ export function DragNumberInput({
   nonResettable = false,
   className,
   disabled = false,
+  variant = 'outlined',
 }: DragNumberInputProps) {
   const isControlled = controlledValue !== undefined
   const [internalValue, setInternalValue] = useState(defaultValue)
@@ -63,6 +67,8 @@ export function DragNumberInput({
   const fineRef = useRef(false)
   const startYRef = useRef(0)
   const startValueRef = useRef(0)
+  const lastPointerUpRef = useRef(0)
+  const isMini = variant === 'mini'
 
   const updateValue = useCallback(
     (v: number) => {
@@ -134,14 +140,57 @@ export function DragNumberInput({
     [valueRange, whole, pixelRange, min, max, setValue, setDebouncedValue]
   )
 
+  const reset = useCallback(
+    (e?: React.MouseEvent) => {
+      e?.preventDefault()
+      e?.stopPropagation()
+      if (!isControlled) setInternalValue(defaultValue)
+      onChange?.(defaultValue)
+      onDebouncedChange?.(defaultValue)
+    },
+    [defaultValue, isControlled, onChange, onDebouncedChange]
+  )
+
   const pointerDown = useCallback(
     (e: React.PointerEvent) => {
+      // Mini: double-click resets (drag overlay would otherwise swallow dblclick).
+      if (isMini && !nonResettable) {
+        const now = performance.now()
+        if (now - lastPointerUpRef.current < 400) {
+          lastPointerUpRef.current = 0
+          reset()
+          return
+        }
+      }
+
+      const originX = e.clientX
+      const originY = e.clientY
       startYRef.current = e.clientY
       startValueRef.current = value
-      setIsDragging(true)
 
-      const onPointerMove = (ev: PointerEvent) => pointerMove(ev)
+      // Mini: wait for a small move before dragging so double-click can fire.
+      // Outlined: start drag immediately (existing behavior).
+      const dragThreshold = isMini ? 3 : 0
+      let dragStarted = !isMini
+      if (!isMini) setIsDragging(true)
+
+      const onPointerMove = (ev: PointerEvent) => {
+        if (!dragStarted) {
+          const moved =
+            Math.abs(ev.clientX - originX) >= dragThreshold ||
+            Math.abs(ev.clientY - originY) >= dragThreshold
+          if (!moved) return
+          dragStarted = true
+          lastPointerUpRef.current = 0
+          setIsDragging(true)
+        }
+        pointerMove(ev)
+      }
+
       const onPointerUp = () => {
+        if (!dragStarted) {
+          lastPointerUpRef.current = performance.now()
+        }
         setIsDragging(false)
         window.removeEventListener('pointermove', onPointerMove)
         window.removeEventListener('pointerup', onPointerUp)
@@ -149,18 +198,7 @@ export function DragNumberInput({
       window.addEventListener('pointermove', onPointerMove)
       window.addEventListener('pointerup', onPointerUp)
     },
-    [value, pointerMove]
-  )
-
-  const reset = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      if (!isControlled) setInternalValue(defaultValue)
-      onChange?.(defaultValue)
-      onDebouncedChange?.(defaultValue)
-    },
-    [defaultValue, isControlled, onChange, onDebouncedChange]
+    [value, pointerMove, isMini, nonResettable, reset]
   )
 
   const handleInputChange = useCallback(
@@ -208,12 +246,27 @@ export function DragNumberInput({
     setDebouncedValue(clamped)
   }, [draftValue, min, max, whole, minStep, isControlled, onChange, setDebouncedValue])
 
+  // Mini: whole control is draggable (including the value). Outlined: click input to type.
+  const handleInputPointerDown = useCallback(
+    (e: React.PointerEvent<HTMLInputElement>) => {
+      if (!isMini) {
+        e.stopPropagation()
+        return
+      }
+      // Prevent focus/caret so the parent can start a drag.
+      e.preventDefault()
+    },
+    [isMini]
+  )
+
   const displayValue = isFocused && draftValue !== null ? draftValue : String(value)
   const padding = valueRange <= 0.1 ? 4 : valueRange < 100 ? 3 : 0
-  const inputWidth = Math.max(
-    displayValue.length,
-    Math.floor(value).toString().length + padding
-  )
+  const inputWidth = isMini
+    ? displayValue.length
+    : Math.max(
+        displayValue.length,
+        Math.floor(value).toString().length + padding
+      )
 
   const showReset = !nonResettable && value !== defaultValue
 
@@ -233,22 +286,31 @@ export function DragNumberInput({
       {dragOverlay}
       <div
       className={clsx(
-        'group relative flex max-w-fit items-center gap-1 pl-3 pr-2 py-1 text-xs rounded-lg bg-white border border-gray-200',
+        'group relative flex max-w-fit items-center text-xs',
+        isMini
+          ? 'gap-0.5 rounded px-1 -ml-1 py-0.5'
+          : 'gap-1 rounded-lg border border-gray-200 bg-white py-1 pl-3 pr-2',
         disabled
           ? 'cursor-not-allowed opacity-60'
-          : 'cursor-ns-resize hover:border-gray-300',
+          : 'cursor-ns-resize',
+        !disabled && isMini && (showReset ? 'opacity-100' : 'opacity-80 hover:opacity-100'),
+        !disabled && isMini && 'hover:bg-black/5',
+        !disabled && !isMini && 'hover:border-gray-300',
         className
       )}
+      title={isMini && !nonResettable ? 'Double-click to reset' : undefined}
       onPointerDown={disabled ? undefined : pointerDown}
     >
-            <span
-        className="flex mr-1 shrink-0 flex-col items-center gap-0 opacity-60 transition-[gap] duration-200 group-hover:gap-0.5"
-        aria-hidden
-      >
-        <ChevronDownIcon className="size-2.5 rotate-180" stroke="currentColor" />
-        <ChevronDownIcon className="size-2.5" stroke="currentColor" />
-      </span>
-      <span className="select-none">{label} =</span>
+      {!isMini && (
+        <span
+          className="mr-1 flex shrink-0 flex-col items-center gap-0 opacity-60 transition-[gap] duration-200 group-hover:gap-0.5"
+          aria-hidden
+        >
+          <ChevronDownIcon className="size-2.5 rotate-180" stroke="currentColor" />
+          <ChevronDownIcon className="size-2.5" stroke="currentColor" />
+        </span>
+      )}
+      <span className="select-none">{label}{isMini ? ':' : ' ='}</span>
       <input
         type="number"
         step={whole ? 1 : minStep}
@@ -256,13 +318,18 @@ export function DragNumberInput({
         onChange={handleInputChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        onPointerDown={(e) => e.stopPropagation()}
+        onPointerDown={handleInputPointerDown}
+        readOnly={isMini}
+        tabIndex={isMini ? -1 : undefined}
         disabled={disabled}
-        className="w-12 border-none bg-transparent outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none disabled:cursor-not-allowed"
+        className={clsx(
+          'w-12 border-none bg-transparent outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none disabled:cursor-not-allowed',
+          isMini && !disabled && 'cursor-ns-resize'
+        )}
         style={{ width: `${inputWidth}ch` }}
       />
 
-      {showReset && !disabled && (
+      {!isMini && showReset && !disabled && (
         <button
           type="button"
           onClick={reset}

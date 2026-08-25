@@ -90,6 +90,7 @@ export function DissonanceCurveControls({
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-2 flex-wrap">
             <DragNumberInput
+              variant="mini"
               defaultValue={0}
               value={value.xAxisStart}
               min={0}
@@ -101,6 +102,7 @@ export function DissonanceCurveControls({
               onChange={(xAxisStart) => onChange({ ...value, xAxisStart })}
             />
             <DragNumberInput
+              variant="mini"
               defaultValue={1200}
               value={value.xAxisEnd}
               min={Math.min(1200, value.xAxisStart + 1)}
@@ -119,6 +121,7 @@ export function DissonanceCurveControls({
             </span>
             <div className="flex items-center gap-2 flex-wrap">
               <DragNumberInput
+                variant="mini"
                 defaultValue={DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.magnitude}
                 value={
                   value.firstOrderDissonance.magnitude ??
@@ -140,6 +143,7 @@ export function DissonanceCurveControls({
                 }
               />
               <DragNumberInput
+                variant="mini"
                 defaultValue={DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.x_star}
                 value={
                   value.firstOrderDissonance.x_star ??
@@ -159,6 +163,7 @@ export function DissonanceCurveControls({
                 }
               />
               <DragNumberInput
+                variant="mini"
                 defaultValue={DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.b1}
                 value={
                   value.firstOrderDissonance.b1 ??
@@ -183,6 +188,7 @@ export function DissonanceCurveControls({
                 }
               />
               <DragNumberInput
+                variant="mini"
                 defaultValue={DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.b2}
                 value={
                   value.firstOrderDissonance.b2 ??
@@ -206,6 +212,7 @@ export function DissonanceCurveControls({
                 }
               />
               <DragNumberInput
+                variant="mini"
                 defaultValue={DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.s1}
                 value={
                   value.firstOrderDissonance.s1 ??
@@ -225,6 +232,7 @@ export function DissonanceCurveControls({
                 }
               />
               <DragNumberInput
+                variant="mini"
                 defaultValue={DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS.s2}
                 value={
                   value.firstOrderDissonance.s2 ??
@@ -271,6 +279,7 @@ export function DissonanceCurveControls({
             {secondOrderEnabled && (
               <div className="flex items-center gap-2 flex-wrap">
                 <DragNumberInput
+                  variant="mini"
                   defaultValue={
                     DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude
                   }
@@ -294,6 +303,7 @@ export function DissonanceCurveControls({
                   }
                 />
                 <DragNumberInput
+                  variant="mini"
                   defaultValue={
                     DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.x_star
                   }
@@ -315,6 +325,7 @@ export function DissonanceCurveControls({
                   }
                 />
                 <DragNumberInput
+                  variant="mini"
                   defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b1}
                   value={
                     value.secondOrderDissonance.b1 ??
@@ -339,6 +350,7 @@ export function DissonanceCurveControls({
                   }
                 />
                 <DragNumberInput
+                  variant="mini"
                   defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.b2}
                   value={
                     value.secondOrderDissonance.b2 ??
@@ -362,6 +374,7 @@ export function DissonanceCurveControls({
                   }
                 />
                 <DragNumberInput
+                  variant="mini"
                   defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s1}
                   value={
                     value.secondOrderDissonance.s1 ??
@@ -381,6 +394,7 @@ export function DissonanceCurveControls({
                   }
                 />
                 <DragNumberInput
+                  variant="mini"
                   defaultValue={DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.s2}
                   value={
                     value.secondOrderDissonance.s2 ??
@@ -401,6 +415,7 @@ export function DissonanceCurveControls({
                   }
                 />
                 <DragNumberInput
+                  variant="mini"
                   defaultValue={
                     DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitudeFrequencyDecay
                   }
@@ -453,6 +468,7 @@ export function DissonanceCurveControls({
               {thirdOrderEnabled && (
                 <>
                   <DragNumberInput
+                    variant="mini"
                     defaultValue={3}
                     value={value.phantomHarmonicsNumber}
                     min={0}
@@ -466,6 +482,7 @@ export function DissonanceCurveControls({
                   />
                   <div className="flex items-center gap-2 flex-wrap">
                     <DragNumberInput
+                      variant="mini"
                       defaultValue={
                         DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitude
                       }
@@ -489,6 +506,7 @@ export function DissonanceCurveControls({
                       }
                     />
                     <DragNumberInput
+                      variant="mini"
                       defaultValue={
                         DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.x_star
                       }
@@ -510,6 +528,7 @@ export function DissonanceCurveControls({
                       }
                     />
                     <DragNumberInput
+                      variant="mini"
                       defaultValue={DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.b1}
                       value={
                         value.thirdOrderDissonance.b1 ??
@@ -534,6 +553,7 @@ export function DissonanceCurveControls({
                       }
                     />
                     <DragNumberInput
+                      variant="mini"
                       defaultValue={DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.b2}
                       value={
                         value.thirdOrderDissonance.b2 ??
@@ -557,6 +577,7 @@ export function DissonanceCurveControls({
                       }
                     />
                     <DragNumberInput
+                      variant="mini"
                       defaultValue={DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.s1}
                       value={
                         value.thirdOrderDissonance.s1 ??
@@ -576,6 +597,7 @@ export function DissonanceCurveControls({
                       }
                     />
                     <DragNumberInput
+                      variant="mini"
                       defaultValue={DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.s2}
                       value={
                         value.thirdOrderDissonance.s2 ??
@@ -596,6 +618,7 @@ export function DissonanceCurveControls({
                       }
                     />
                     <DragNumberInput
+                      variant="mini"
                       defaultValue={
                         DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitudeFrequencyDecay
                       }
