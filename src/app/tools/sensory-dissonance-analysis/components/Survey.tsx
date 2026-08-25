@@ -28,7 +28,6 @@ export function Survey(props: {
 
   return (
     <Dialog
-      className="z-50"
       open={props.open}
       onClose={() => setAlertOpen(true)}
       size="3xl"

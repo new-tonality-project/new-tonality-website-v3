@@ -30,7 +30,6 @@ export function SurveyChartPublic(props: {
   hideYAxisTitles?: boolean
   plotBorderTop?: boolean
   plotBorderBottom?: boolean
-  zIndex?: number
 }) {
   const allGraphs = db.useQuery({
     dissonanceGraphs: {
@@ -265,7 +264,7 @@ export function SurveyChartPublic(props: {
   }
 
   return (
-    <div className="relative w-full overflow-visible" style={{ zIndex: props.zIndex }}>
+    <div className="relative w-full overflow-visible">
       <div className="relative grid w-full overflow-visible *:col-start-1 *:row-start-1">
           {/* @ts-expect-error - Highcharts Options type causes excessive stack depth when comparing with @highcharts/react props */}
           <Chart highcharts={Highcharts} options={chartOptions} containerProps={{ className: 'w-full overflow-visible!', style: { overflow: 'visible' } }} />
@@ -282,7 +281,7 @@ export function SurveyChartPublic(props: {
           />
           {playedInterval != null && plotBounds && playedIntervalMouseY != null && (
             <div
-              className="pointer-events-none absolute z-10 whitespace-nowrap text-xs font-medium text-red-600"
+              className="pointer-events-none absolute z-chart-overlay whitespace-nowrap text-xs font-medium text-red-600"
               style={{
                 left: plotBounds.left + ((playedInterval - props.settings.xAxisStart) / (props.settings.xAxisEnd - props.settings.xAxisStart)) * plotBounds.width,
                 top: playedIntervalMouseY,

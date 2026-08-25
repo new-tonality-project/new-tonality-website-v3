@@ -91,7 +91,6 @@ export function ExperimentCharts(props: {
               hideLegend
               hideXAxis
               hideYAxisTitles
-              zIndex={1}
             />
 
             <SurveyChartPublic
@@ -102,7 +101,6 @@ export function ExperimentCharts(props: {
               hideXAxis
               plotBorderTop
               plotBorderBottom
-              zIndex={2}
             />
 
             <SurveyChartPublic
@@ -111,7 +109,6 @@ export function ExperimentCharts(props: {
               settings={effectiveSettings}
               hideLegend
               hideYAxisTitles
-              zIndex={3}
             />
           </div>
         </div>
@@ -126,7 +123,6 @@ export function ExperimentCharts(props: {
               hideLegend
               hideXAxis
               hideYAxisTitles
-              zIndex={1}
             />
 
             <SurveyChart
@@ -138,7 +134,6 @@ export function ExperimentCharts(props: {
               hideXAxis
               plotBorderTop
               plotBorderBottom
-              zIndex={2}
             />
 
             <SurveyChart
@@ -148,7 +143,6 @@ export function ExperimentCharts(props: {
               onTakeSurvey={props.onTakeSurvey}
               hideLegend
               hideYAxisTitles
-              zIndex={3}
             />
           </div>
         </div>

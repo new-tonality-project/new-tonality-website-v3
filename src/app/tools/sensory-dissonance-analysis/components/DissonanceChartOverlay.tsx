@@ -216,7 +216,7 @@ export function DissonanceChartOverlay(props: {
   return (
     <div
       ref={overlayRef}
-      className="absolute z-10 select-none"
+      className="absolute z-chart-overlay select-none"
       style={{
         left: plotBounds.left,
         top: plotBounds.top,

@@ -31,7 +31,6 @@ export function SurveyChart(props: {
   hideYAxisTitles?: boolean
   plotBorderTop?: boolean
   plotBorderBottom?: boolean
-  zIndex?: number
 }) {
   const [surveyOpen, setSurveyOpen] = useState(false)
   const [selectedPoint, setSelectedPoint] = useState<Highcharts.Point | null>(
@@ -377,7 +376,7 @@ export function SurveyChart(props: {
   }
 
   return (
-    <div className="relative w-full overflow-visible" style={{ zIndex: props.zIndex }}>
+    <div className="relative w-full overflow-visible">
       <div className="relative grid w-full overflow-visible *:col-start-1 *:row-start-1">
           {/* @ts-expect-error - Highcharts Options type incompatible with @highcharts/react props (version mismatch) */}
           <Chart highcharts={Highcharts} options={chartOptions} containerProps={{ className: 'w-full overflow-visible!', style: { overflow: 'visible' } }} />
@@ -394,7 +393,7 @@ export function SurveyChart(props: {
           />
           {playedInterval != null && plotBounds && playedIntervalMouseY != null && (
             <div
-              className="pointer-events-none absolute z-10 whitespace-nowrap text-xs font-medium text-red-600"
+              className="pointer-events-none absolute z-chart-overlay whitespace-nowrap text-xs font-medium text-red-600"
               style={{
                 left: plotBounds.left + ((playedInterval - props.settings.xAxisStart) / (props.settings.xAxisEnd - props.settings.xAxisStart)) * plotBounds.width,
                 top: playedIntervalMouseY,

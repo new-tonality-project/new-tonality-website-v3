@@ -17,7 +17,7 @@ export function DissonanceSettingsSidebar({
 }) {
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 flex w-72 m-0 flex-col border-r border-zinc-200 bg-white transition-transform duration-200 dark:border-zinc-800 dark:bg-zinc-900 ${
+      className={`fixed inset-y-0 left-0 z-sidebar flex w-72 m-0 flex-col border-r border-zinc-200 bg-white transition-transform duration-200 dark:border-zinc-800 dark:bg-zinc-900 ${
         open ? 'translate-x-0' : '-translate-x-full'
       }`}
     >

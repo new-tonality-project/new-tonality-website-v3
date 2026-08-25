@@ -273,7 +273,7 @@ export function DragNumberInput({
   const dragOverlay = isDragging && typeof document !== 'undefined'
     ? createPortal(
         <div
-          className="fixed inset-0 z-[9999] cursor-ns-resize select-none touch-none"
+          className="fixed inset-0 z-drag-capture cursor-ns-resize select-none touch-none"
           style={{ userSelect: 'none', WebkitUserSelect: 'none', touchAction: 'none' }}
           aria-hidden
         />,
