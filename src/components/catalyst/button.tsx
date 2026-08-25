@@ -172,9 +172,10 @@ export const Button = forwardRef(function Button(
   ref: React.ForwardedRef<HTMLElement>
 ) {
   const classes = twMerge(
-    className,
     styles.base,
-    outline ? styles.outline : plain ? styles.plain : twMerge(styles.solid, styles.colors[color ?? 'dark/zinc'])
+    outline ? styles.outline : plain ? styles.plain : twMerge(styles.solid, styles.colors[color ?? 'dark/zinc']),
+    typeof props.href !== 'string' && 'cursor-default',
+    className,
   )
 
   return typeof props.href === 'string' ? (
@@ -182,7 +183,7 @@ export const Button = forwardRef(function Button(
       <TouchTarget>{children}</TouchTarget>
     </Link>
   ) : (
-    <Headless.Button {...props} className={twMerge(classes, 'cursor-default')} ref={ref}>
+    <Headless.Button {...props} className={classes} ref={ref}>
       <TouchTarget>{children}</TouchTarget>
     </Headless.Button>
   )
