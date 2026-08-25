@@ -293,8 +293,8 @@ export function DragNumberInput({
         disabled
           ? 'cursor-not-allowed opacity-60'
           : 'cursor-ns-resize',
-        !disabled && isMini && (showReset ? 'opacity-100' : 'opacity-80 hover:opacity-100'),
-        !disabled && isMini && 'hover:bg-black/5',
+        !disabled && isMini && 'bg-black/5',
+        !disabled && isMini && value !== defaultValue && 'border border-gray-400',
         !disabled && !isMini && 'hover:border-gray-300',
         className
       )}

@@ -4,17 +4,9 @@ import { useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { db } from '@/db'
 import { EXPERIMENTS } from '../utils'
-import { MusicalBackground } from '@/lib/types'
 import type { ChartSettings } from './types'
-import {
-  Fieldset,
-  Field,
-  Label,
-} from '@/components/catalyst/fieldset'
-import { Select } from '@/components/catalyst/select'
-import { CollapsiblePanel } from '@/components'
-import { parseMusicalBackground } from '@/lib'
-import { DissonanceCurveControls } from './DissonanceCurveControls'
+import { ChartDataControls } from './ChartDataControls'
+import { DissonanceSettingsSidebar } from './DissonanceSettingsSidebar'
 import {
   DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
   DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
@@ -42,15 +34,20 @@ export function ExperimentCharts(props: {
     showPnLResults: false,
     userBackground: undefined,
     firstOrderDissonance: DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
-    secondOrderDissonance: DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
-    thirdOrderDissonance: DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
+    secondOrderDissonance: {
+      ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
+      magnitude: 0,
+    },
+    thirdOrderDissonance: {
+      ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
+      magnitude: 0,
+    },
     phantomHarmonicsNumber: DEFAULT_PHANTOM_HARMONICS_NUMBER,
     xAxisStart: 0,
     xAxisEnd: 1200,
   })
 
-  const [secondOrderEnabled, setSecondOrderEnabled] = useState(false)
-  const [thirdOrderEnabled, setThirdOrderEnabled] = useState(false)
+  const [dissonanceSettingsOpen, setDissonanceSettingsOpen] = useState(false)
 
   const { user, isLoading: isAuthLoading } = db.useAuth()
   const isAuthenticatedUser = Boolean(user && !user.isGuest)
@@ -59,68 +56,39 @@ export function ExperimentCharts(props: {
     () => ({
       ...settings,
       showYourResult: isAuthenticatedUser ? settings.showYourResult : false,
-      secondOrderDissonance: secondOrderEnabled
-        ? settings.secondOrderDissonance
-        : { ...settings.secondOrderDissonance, magnitude: 0 },
-      thirdOrderDissonance: thirdOrderEnabled
-        ? settings.thirdOrderDissonance
-        : { ...settings.thirdOrderDissonance, magnitude: 0 },
     }),
-    [settings, secondOrderEnabled, thirdOrderEnabled, isAuthenticatedUser]
+    [settings, isAuthenticatedUser]
   )
 
   return (
     <>
-      <CollapsiblePanel title="Chart Settings" className="mb-8">
-        <Fieldset>
-          <div className="space-y-6 pb-6">
-            <Field>
-              <Label>Filter by musical background</Label>
-              <Select
-                value={settings.userBackground ?? ''}
-                onChange={(e) =>
-                  setSettings((prev) => ({
-                    ...prev,
-                    userBackground: parseMusicalBackground(e.target.value),
-                  }))
-                }
-              >
-                <option value="">
-                  All participants
-                </option>
-                <option value={MusicalBackground.NaiveListener}>
-                  No musical background
-                </option>
-                <option value={MusicalBackground.Musician}>
-                  Musicians only
-                </option>
-                <option value={MusicalBackground.Microtonalist}>
-                  Microtonalists only
-                </option>
-              </Select>
-            </Field>
-          </div>
-          <DissonanceCurveControls
-            value={settings}
-            onChange={setSettings}
-            yourResultDisabled={!isAuthenticatedUser}
-            secondOrderEnabled={secondOrderEnabled}
-            thirdOrderEnabled={thirdOrderEnabled}
-            onSecondOrderEnabledChange={(enabled) => {
-              setSecondOrderEnabled(enabled)
-              if (!enabled) setThirdOrderEnabled(false)
-            }}
-            onThirdOrderEnabledChange={setThirdOrderEnabled}
-          />
-        </Fieldset>
-      </CollapsiblePanel>
+      <DissonanceSettingsSidebar
+        open={dissonanceSettingsOpen}
+        onClose={() => setDissonanceSettingsOpen(false)}
+        value={settings}
+        onChange={setSettings}
+      />
+
+      <div className="mb-4">
+        <ChartDataControls
+          value={settings}
+          onChange={setSettings}
+          yourResultDisabled={!isAuthenticatedUser}
+          dissonanceSettingsOpen={dissonanceSettingsOpen}
+          onToggleDissonanceSettings={() =>
+            setDissonanceSettingsOpen((open) => !open)
+          }
+        />
+      </div>
+
       {isAuthLoading ? null : !isAuthenticatedUser ? (
-        <div className="w-full overflow-x-auto overflow-y-visible lg:overflow-x-visible">
-          <div className="min-w-[600px] overflow-visible lg:min-w-0">
+        <div className="w-full overflow-x-auto overflow-y-visible lg:overflow-x-visible mt-2">
+          <div className="min-w-150 overflow-visible lg:min-w-0">
             <SurveyChartPublic
               meanFrequency={EXPERIMENTS[0].frequency}
               title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
               settings={effectiveSettings}
+              hideLegend
               hideXAxis
               hideYAxisTitles
               zIndex={1}
@@ -148,13 +116,14 @@ export function ExperimentCharts(props: {
           </div>
         </div>
       ) : (
-        <div className="w-full overflow-x-auto overflow-y-visible lg:overflow-x-visible">
-          <div className="min-w-[600px] overflow-visible lg:min-w-0">
+        <div className="w-full overflow-x-auto overflow-y-visible lg:overflow-x-visible mt-2">
+          <div className="min-w-150 overflow-visible lg:min-w-0">
             <SurveyChart
               meanFrequency={EXPERIMENTS[0].frequency}
               title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
               settings={effectiveSettings}
               onTakeSurvey={props.onTakeSurvey}
+              hideLegend
               hideXAxis
               hideYAxisTitles
               zIndex={1}

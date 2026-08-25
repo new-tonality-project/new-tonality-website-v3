@@ -10,7 +10,7 @@ const STACKED_MARGIN_LEFT = 48
 const STACKED_MARGIN_RIGHT = 64
 
 export function getStackedChartLayout(
-  hideLegend = false,
+  hideLegend = true,
   hideXAxis = false,
 ) {
   const marginTop = hideLegend ? STACKED_MARGIN_TOP : STACKED_LEGEND_HEIGHT
@@ -68,7 +68,7 @@ export const baseChartConfig: Partial<Highcharts.Options> = {
     enabled: false,
   },
   legend: {
-    enabled: true,
+    enabled: false,
     align: 'left',
     verticalAlign: 'top',
     layout: 'horizontal',
