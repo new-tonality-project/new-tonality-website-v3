@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import clsx from 'clsx'
+import { twMerge } from 'tailwind-merge'
 import avatarImage from '@/images/nt-logo.png'
 
 export function Logo({
@@ -14,7 +14,7 @@ export function Logo({
 }) {
   return (
     <div
-      className={clsx(
+      className={twMerge(
         className,
         'rounded-full bg-white/90 shadow-zinc-800/5 ring-zinc-900/5 backdrop-blur-sm dark:bg-zinc-800/90 dark:ring-white/10',
       )}
@@ -29,7 +29,7 @@ export function Logo({
           src={avatarImage}
           alt=""
           sizes={large ? '4rem' : '3rem'}
-          className={clsx(
+          className={twMerge(
             'rounded-full bg-zinc-100 object-cover dark:bg-zinc-800',
             large ? 'h-16 w-16' : 'h-10 w-10',
           )}

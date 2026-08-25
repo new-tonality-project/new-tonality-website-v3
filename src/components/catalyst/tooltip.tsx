@@ -1,7 +1,7 @@
 'use client'
 
 import * as Headless from '@headlessui/react'
-import clsx from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 type TooltipProps = {
   content: React.ReactNode
@@ -12,7 +12,7 @@ export function Tooltip({ content, className }: TooltipProps) {
   return (
     <Headless.Popover className="relative">
       <Headless.PopoverButton
-        className={clsx(
+        className={twMerge(
           className,
           'mb-1 inline-flex cursor-pointer items-center justify-center rounded-full border align-baseline text-xs opacity-50 hover:opacity-100',
           'h-4 w-4 sm:h-4 sm:w-4',
@@ -28,7 +28,7 @@ export function Tooltip({ content, className }: TooltipProps) {
       <Headless.PopoverPanel
         transition
         anchor="top"
-        className={clsx(
+        className={twMerge(
           '[--anchor-gap:--spacing(2)] [--anchor-padding:--spacing(1)]',
           'isolate w-max max-w-sm rounded-lg p-3',
           'outline outline-transparent focus:outline-hidden',

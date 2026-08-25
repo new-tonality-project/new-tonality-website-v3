@@ -1,5 +1,5 @@
 import * as Headless from '@headlessui/react'
-import clsx from 'clsx'
+import { twMerge } from 'tailwind-merge'
 import React, { forwardRef } from 'react'
 import { TouchTarget } from './button'
 import { Link } from './link'
@@ -40,7 +40,7 @@ export function Badge({ color = 'zinc', className, ...props }: BadgeProps & Reac
   return (
     <span
       {...props}
-      className={clsx(
+      className={twMerge(
         className,
         'inline-flex items-center gap-x-1.5 rounded-md px-1.5 py-0.5 text-sm/5 font-medium sm:text-xs/5 forced-colors:outline',
         colors[color]
@@ -61,7 +61,7 @@ export const BadgeButton = forwardRef(function BadgeButton(
     ),
   ref: React.ForwardedRef<HTMLElement>
 ) {
-  const classes = clsx(
+  const classes = twMerge(
     className,
     'group relative inline-flex rounded-md focus:not-data-focus:outline-hidden data-focus:outline-2 data-focus:outline-offset-2 data-focus:outline-blue-500'
   )

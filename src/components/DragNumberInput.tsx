@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import throttle from 'lodash-es/throttle'
 import debounce from 'lodash-es/debounce'
-import { clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 import { ChevronDownIcon, CloseIcon } from '@/components/Icons'
 
 export type DragNumberInputVariant = 'outlined' | 'mini'
@@ -285,7 +285,7 @@ export function DragNumberInput({
     <>
       {dragOverlay}
       <div
-      className={clsx(
+      className={twMerge(
         'group relative flex max-w-fit items-center text-xs',
         isMini
           ? 'gap-0.5 rounded px-1 -ml-1 py-0.5'
@@ -322,7 +322,7 @@ export function DragNumberInput({
         readOnly={isMini}
         tabIndex={isMini ? -1 : undefined}
         disabled={disabled}
-        className={clsx(
+        className={twMerge(
           'w-12 border-none bg-transparent outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none disabled:cursor-not-allowed',
           isMini && !disabled && 'cursor-ns-resize'
         )}

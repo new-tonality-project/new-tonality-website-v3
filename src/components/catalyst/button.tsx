@@ -1,5 +1,5 @@
 import * as Headless from '@headlessui/react'
-import clsx from 'clsx'
+import { twMerge } from 'tailwind-merge'
 import React, { forwardRef } from 'react'
 import { Link } from './link'
 
@@ -171,10 +171,10 @@ export const Button = forwardRef(function Button(
   { color, outline, plain, className, children, ...props }: ButtonProps,
   ref: React.ForwardedRef<HTMLElement>
 ) {
-  const classes = clsx(
+  const classes = twMerge(
     className,
     styles.base,
-    outline ? styles.outline : plain ? styles.plain : clsx(styles.solid, styles.colors[color ?? 'dark/zinc'])
+    outline ? styles.outline : plain ? styles.plain : twMerge(styles.solid, styles.colors[color ?? 'dark/zinc'])
   )
 
   return typeof props.href === 'string' ? (
@@ -182,7 +182,7 @@ export const Button = forwardRef(function Button(
       <TouchTarget>{children}</TouchTarget>
     </Link>
   ) : (
-    <Headless.Button {...props} className={clsx(classes, 'cursor-default')} ref={ref}>
+    <Headless.Button {...props} className={twMerge(classes, 'cursor-default')} ref={ref}>
       <TouchTarget>{children}</TouchTarget>
     </Headless.Button>
   )
