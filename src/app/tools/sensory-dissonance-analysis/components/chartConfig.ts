@@ -1,13 +1,13 @@
 import type Highcharts from 'highcharts'
 import { CHART_COLORS } from '@/lib/colors'
 
-const STACKED_PLOT_HEIGHT = 220
-const STACKED_LEGEND_HEIGHT = 24
+const STACKED_PLOT_HEIGHT = 180
+const STACKED_LEGEND_HEIGHT = 36
 const STACKED_XAXIS_HEIGHT = 52
 const STACKED_MARGIN_TOP = 4
 const STACKED_MARGIN_BOTTOM = 0
-const STACKED_MARGIN_LEFT = 80
-const STACKED_MARGIN_RIGHT = 80
+const STACKED_MARGIN_LEFT = 48
+const STACKED_MARGIN_RIGHT = 64
 
 export function getStackedChartLayout(
   hideLegend = false,
@@ -35,12 +35,13 @@ export function getStackedChartLayout(
     } satisfies Highcharts.ChartOptions,
     legend: {
       enabled: !hideLegend,
-      align: 'right',
+      align: 'left',
       verticalAlign: 'top',
       layout: 'horizontal',
-      margin: 0,
+      margin: 12,
       padding: 4,
       y: 0,
+      x: 0,
     } satisfies Highcharts.LegendOptions,
     xAxis: {
       title: hideXAxis
@@ -68,7 +69,7 @@ export const baseChartConfig: Partial<Highcharts.Options> = {
   },
   legend: {
     enabled: true,
-    align: 'right',
+    align: 'left',
     verticalAlign: 'top',
     layout: 'horizontal',
   },
