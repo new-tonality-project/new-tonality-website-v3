@@ -9,7 +9,7 @@ import { Spectrum } from 'tuning-core'
 import { SignInButton } from '@clerk/nextjs'
 import { ChartHeader } from './ChartHeader'
 import { Button } from '@/components'
-import { baseChartConfig, chartCredits } from './chartConfig'
+import { baseChartConfig, chartCredits, getStackedChartLayout } from './chartConfig'
 import type { ChartSettings } from './types'
 import { useDissonanceCurve, type UseDissonanceCurveOptions } from '@/hooks'
 import {
@@ -25,6 +25,8 @@ export function SurveyChartPublic(props: {
   title: string
   settings: ChartSettings
   volume?: number
+  hideLegend?: boolean
+  hideXAxis?: boolean
 }) {
   const allGraphs = db.useQuery({
     dissonanceGraphs: {
@@ -83,6 +85,8 @@ export function SurveyChartPublic(props: {
     }
   }, [props.meanFrequency, props.settings])
   const dissonanceCurve = useDissonanceCurve(dissonanceCurveOptions)
+
+  const stackedLayout = getStackedChartLayout(props.hideLegend, props.hideXAxis)
 
   const chartOptions = useMemo(() => {
     const series: Highcharts.SeriesOptionsType[] = [];
@@ -168,9 +172,15 @@ export function SurveyChartPublic(props: {
       chart: {
         ...baseChartConfig.chart,
         ...chartEvents,
+        ...stackedLayout.chart,
+      },
+      legend: {
+        ...baseChartConfig.legend,
+        ...stackedLayout.legend,
       },
       xAxis: {
         ...baseChartConfig.xAxis,
+        ...stackedLayout.xAxis,
         min: props.settings.xAxisStart,
         max: props.settings.xAxisEnd,
         plotBands:
@@ -224,10 +234,10 @@ export function SurveyChartPublic(props: {
       },
       series,
     } as Highcharts.Options
-  }, [graphs, dissonanceCurve, props.settings, props.meanFrequency, chartEvents, playedInterval])
+  }, [graphs, dissonanceCurve, props.settings, props.meanFrequency, chartEvents, playedInterval, props.hideLegend, props.hideXAxis])
 
   if (allGraphs.isLoading) {
-    return <div className="h-[300px] w-full rounded bg-neutral-100" />
+    return <div className="w-full rounded bg-neutral-100" style={{ height: stackedLayout.height }} />
   }
 
   if (allGraphs.error) {
@@ -235,11 +245,10 @@ export function SurveyChartPublic(props: {
   }
 
   return (
-    <div className="relative flex w-full flex-col items-center">
-      <div className="w-full overflow-x-auto lg:overflow-x-visible">
-        <div className="relative grid min-w-[600px] lg:w-full lg:min-w-0 *:col-start-1 *:row-start-1">
+    <div className="relative w-full">
+      <div className="relative grid w-full *:col-start-1 *:row-start-1">
           {/* @ts-expect-error - Highcharts Options type causes excessive stack depth when comparing with @highcharts/react props */}
-          <Chart highcharts={Highcharts} options={chartOptions} containerProps={{ className: 'w-full min-h-[300px]' }} />
+          <Chart highcharts={Highcharts} options={chartOptions} containerProps={{ className: 'w-full' }} />
           <DissonanceChartOverlay
             plotBounds={plotBounds}
             meanFrequency={props.meanFrequency}
@@ -263,18 +272,18 @@ export function SurveyChartPublic(props: {
               {playedInterval} cents
             </div>
           )}
+          <ChartHeader
+            title={props.title}
+            plotBounds={plotBounds}
+            button={
+              <SignInButton>
+                <Button className="px-2 py-1! text-xs" variant="secondary">
+                  Login to participate
+                </Button>
+              </SignInButton>
+            }
+          />
         </div>
-      </div>
-      <ChartHeader
-        title={props.title}
-        button={
-          <SignInButton>
-            <Button className="px-2 py-1! text-xs" variant="secondary">
-              Login to participate
-            </Button>
-          </SignInButton>
-        }
-      />
     </div>
   )
 }

@@ -1,6 +1,55 @@
 import type Highcharts from 'highcharts'
 import { CHART_COLORS } from '@/lib/colors'
 
+const STACKED_PLOT_HEIGHT = 220
+const STACKED_LEGEND_HEIGHT = 24
+const STACKED_XAXIS_HEIGHT = 52
+const STACKED_MARGIN_TOP = 4
+const STACKED_MARGIN_BOTTOM = 0
+const STACKED_MARGIN_LEFT = 80
+const STACKED_MARGIN_RIGHT = 80
+
+export function getStackedChartLayout(
+  hideLegend = false,
+  hideXAxis = false,
+) {
+  const marginTop = hideLegend ? STACKED_MARGIN_TOP : STACKED_LEGEND_HEIGHT
+  const marginBottom = hideXAxis ? STACKED_MARGIN_BOTTOM : STACKED_XAXIS_HEIGHT
+  const height = marginTop + STACKED_PLOT_HEIGHT + marginBottom
+
+  return {
+    height,
+    chart: {
+      height,
+      marginLeft: STACKED_MARGIN_LEFT,
+      marginRight: STACKED_MARGIN_RIGHT,
+      marginBottom,
+      spacingTop: 0,
+      spacingRight: 10,
+      spacingBottom: 0,
+      spacingLeft: 10,
+      ...(hideLegend ? { marginTop: STACKED_MARGIN_TOP } : {}),
+    } satisfies Highcharts.ChartOptions,
+    legend: {
+      enabled: !hideLegend,
+      align: 'right',
+      verticalAlign: 'top',
+      layout: 'horizontal',
+      margin: 0,
+      padding: 4,
+      y: 0,
+    } satisfies Highcharts.LegendOptions,
+    xAxis: {
+      title: hideXAxis
+        ? { text: undefined, margin: 0 }
+        : { text: 'Interval (cents)', margin: 8 },
+      labels: { enabled: !hideXAxis },
+      tickLength: hideXAxis ? 0 : 8,
+      lineWidth: 1,
+    } satisfies Highcharts.XAxisOptions,
+  }
+}
+
 export const baseChartConfig: Partial<Highcharts.Options> = {
   colors: Array.from(CHART_COLORS.otherParticipants),
   chart: {
@@ -48,8 +97,8 @@ export const baseChartConfig: Partial<Highcharts.Options> = {
 }
 
 export const chartCredits: Highcharts.CreditsOptions = {
-  enabled: true,
-  text: '* press and drag on the chart to play intervals',
+  enabled: false,
+  text: '',
   style: {
     fontSize: '12px',
     fontStyle: 'italic',

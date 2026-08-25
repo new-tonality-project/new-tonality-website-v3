@@ -24,11 +24,11 @@ import {
 
 const SurveyChart = dynamic(
   () => import('./SurveyChart').then((module) => module.SurveyChart),
-  { ssr: false, loading: () => <div className="h-[300px] w-full rounded bg-neutral-100" /> },
+  { ssr: false, loading: () => <div className="h-[232px] w-full rounded bg-neutral-100" /> },
 )
 const SurveyChartPublic = dynamic(
   () => import('./SurveyChartPublic').then((module) => module.SurveyChartPublic),
-  { ssr: false, loading: () => <div className="h-[300px] w-full rounded bg-neutral-100" /> },
+  { ssr: false, loading: () => <div className="h-[232px] w-full rounded bg-neutral-100" /> },
 )
 
 export function ExperimentCharts(props: {
@@ -115,48 +115,60 @@ export function ExperimentCharts(props: {
         </Fieldset>
       </CollapsiblePanel>
       {isAuthLoading ? null : !isAuthenticatedUser ? (
-        <>
-          <SurveyChartPublic
-            meanFrequency={EXPERIMENTS[0].frequency}
-            title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
-            settings={effectiveSettings}
-          />
+        <div className="w-full overflow-x-auto lg:overflow-x-visible">
+          <div className="min-w-[600px] lg:min-w-0">
+            <SurveyChartPublic
+              meanFrequency={EXPERIMENTS[0].frequency}
+              title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
+              settings={effectiveSettings}
+              hideXAxis
+            />
 
-          <SurveyChartPublic
-            meanFrequency={EXPERIMENTS[1].frequency}
-            title={`${EXPERIMENTS[1].title} (${EXPERIMENTS[1].frequency}Hz)`}
-            settings={effectiveSettings}
-          />
+            <SurveyChartPublic
+              meanFrequency={EXPERIMENTS[1].frequency}
+              title={`${EXPERIMENTS[1].title} (${EXPERIMENTS[1].frequency}Hz)`}
+              settings={effectiveSettings}
+              hideLegend
+              hideXAxis
+            />
 
-          <SurveyChartPublic
-            meanFrequency={EXPERIMENTS[2].frequency}
-            title={`${EXPERIMENTS[2].title} (${EXPERIMENTS[2].frequency}Hz)`}
-            settings={effectiveSettings}
-          />
-        </>
+            <SurveyChartPublic
+              meanFrequency={EXPERIMENTS[2].frequency}
+              title={`${EXPERIMENTS[2].title} (${EXPERIMENTS[2].frequency}Hz)`}
+              settings={effectiveSettings}
+              hideLegend
+            />
+          </div>
+        </div>
       ) : (
-        <>
-          <SurveyChart
-            meanFrequency={EXPERIMENTS[0].frequency}
-            title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
-            settings={effectiveSettings}
-            onTakeSurvey={props.onTakeSurvey}
-          />
+        <div className="w-full overflow-x-auto lg:overflow-x-visible">
+          <div className="min-w-[600px] lg:min-w-0">
+            <SurveyChart
+              meanFrequency={EXPERIMENTS[0].frequency}
+              title={`${EXPERIMENTS[0].title} (${EXPERIMENTS[0].frequency}Hz)`}
+              settings={effectiveSettings}
+              onTakeSurvey={props.onTakeSurvey}
+              hideXAxis
+            />
 
-          <SurveyChart
-            meanFrequency={EXPERIMENTS[1].frequency}
-            title={`${EXPERIMENTS[1].title} (${EXPERIMENTS[1].frequency}Hz)`}
-            settings={effectiveSettings}
-            onTakeSurvey={props.onTakeSurvey}
-          />
+            <SurveyChart
+              meanFrequency={EXPERIMENTS[1].frequency}
+              title={`${EXPERIMENTS[1].title} (${EXPERIMENTS[1].frequency}Hz)`}
+              settings={effectiveSettings}
+              onTakeSurvey={props.onTakeSurvey}
+              hideLegend
+              hideXAxis
+            />
 
-          <SurveyChart
-            meanFrequency={EXPERIMENTS[2].frequency}
-            title={`${EXPERIMENTS[2].title} (${EXPERIMENTS[2].frequency}Hz)`}
-            settings={effectiveSettings}
-            onTakeSurvey={props.onTakeSurvey}
-          />
-        </>
+            <SurveyChart
+              meanFrequency={EXPERIMENTS[2].frequency}
+              title={`${EXPERIMENTS[2].title} (${EXPERIMENTS[2].frequency}Hz)`}
+              settings={effectiveSettings}
+              onTakeSurvey={props.onTakeSurvey}
+              hideLegend
+            />
+          </div>
+        </div>
       )}
     </>
   )

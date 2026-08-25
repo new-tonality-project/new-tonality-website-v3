@@ -8,7 +8,7 @@ import 'highcharts/highcharts-more';
 import { SurveyMachineProvider } from '@/state/machines'
 import { Survey } from './Survey'
 import { ChartHeader } from './ChartHeader'
-import { baseChartConfig, chartCredits } from './chartConfig'
+import { baseChartConfig, chartCredits, getStackedChartLayout } from './chartConfig'
 import type { ChartSettings } from './types'
 import { useDissonanceCurve, type UseDissonanceCurveOptions } from '@/hooks'
 import { Spectrum } from 'tuning-core'
@@ -26,6 +26,8 @@ export function SurveyChart(props: {
   settings: ChartSettings
   onTakeSurvey?: (open?: boolean) => void
   volume?: number
+  hideLegend?: boolean
+  hideXAxis?: boolean
 }) {
   const [surveyOpen, setSurveyOpen] = useState(false)
   const [selectedPoint, setSelectedPoint] = useState<Highcharts.Point | null>(
@@ -149,6 +151,8 @@ export function SurveyChart(props: {
     [selectedPoint],
   )
 
+  const stackedLayout = getStackedChartLayout(props.hideLegend, props.hideXAxis)
+
   const chartOptions = useMemo(() => {
     const series: Highcharts.SeriesOptionsType[] = []
     const pnlMeanFrequency =
@@ -270,9 +274,15 @@ export function SurveyChart(props: {
       chart: {
         ...baseChartConfig.chart,
         ...chartEvents,
+        ...stackedLayout.chart,
+      },
+      legend: {
+        ...baseChartConfig.legend,
+        ...stackedLayout.legend,
       },
       xAxis: {
         ...baseChartConfig.xAxis,
+        ...stackedLayout.xAxis,
         min: props.settings.xAxisStart,
         max: props.settings.xAxisEnd,
         plotBands:
@@ -337,10 +347,10 @@ export function SurveyChart(props: {
       },
       series,
     }
-  }, [graphs.other, graphs.user, props.settings.showOtherParticipants, props.settings.showYourResult, props.settings.showExponentialFit, props.settings.showPnLResults, props.settings.xAxisStart, props.settings.xAxisEnd, props.meanFrequency, chartEvents, playedInterval, selectedPoint, dissonanceCurve, handlePointClick])
+  }, [graphs.other, graphs.user, props.settings.showOtherParticipants, props.settings.showYourResult, props.settings.showExponentialFit, props.settings.showPnLResults, props.settings.xAxisStart, props.settings.xAxisEnd, props.meanFrequency, chartEvents, playedInterval, selectedPoint, dissonanceCurve, handlePointClick, props.hideLegend, props.hideXAxis])
 
   if (userGraph.isLoading || otherGraphs.isLoading || userSettings.isLoading) {
-    return <div className="h-[300px] w-full rounded bg-neutral-100" />
+    return <div className="w-full rounded bg-neutral-100" style={{ height: stackedLayout.height }} />
   }
 
   if (userGraph.error || otherGraphs.error || userSettings.error) {
@@ -348,11 +358,10 @@ export function SurveyChart(props: {
   }
 
   return (
-    <div className="relative flex w-full flex-col items-center">
-      <div className="w-full overflow-x-auto lg:overflow-x-visible">
-        <div className="relative grid min-w-[600px] lg:w-full lg:min-w-0 *:col-start-1 *:row-start-1">
+    <div className="relative w-full">
+      <div className="relative grid w-full *:col-start-1 *:row-start-1">
           {/* @ts-expect-error - Highcharts Options type incompatible with @highcharts/react props (version mismatch) */}
-          <Chart highcharts={Highcharts} options={chartOptions} containerProps={{ className: 'w-full min-h-[300px]' }} />
+          <Chart highcharts={Highcharts} options={chartOptions} containerProps={{ className: 'w-full' }} />
           <DissonanceChartOverlay
             plotBounds={plotBounds}
             meanFrequency={props.meanFrequency}
@@ -376,8 +385,19 @@ export function SurveyChart(props: {
               {playedInterval} cents
             </div>
           )}
+          <ChartHeader
+            title={props.title}
+            plotBounds={plotBounds}
+            onTakeSurvey={
+              !userGraph.data?.dissonanceGraphs?.length
+                ? () => {
+                  setSurveyOpen(true)
+                  props.onTakeSurvey?.(true)
+                }
+                : undefined
+            }
+          />
         </div>
-      </div>
 
       <SurveyMachineProvider
         meanFrequency={props.meanFrequency}
@@ -385,17 +405,6 @@ export function SurveyChart(props: {
       >
         <Survey setSurveyOpen={setSurveyOpen} open={surveyOpen} />
       </SurveyMachineProvider>
-      <ChartHeader
-        title={props.title}
-        onTakeSurvey={
-          !userGraph.data?.dissonanceGraphs?.length
-            ? () => {
-              setSurveyOpen(true)
-              props.onTakeSurvey?.(true)
-            }
-            : undefined
-        }
-      />
     </div>
   )
 }
