@@ -1,6 +1,59 @@
 import type Highcharts from 'highcharts'
 import { CHART_COLORS } from '@/lib/colors'
 
+const STACKED_PLOT_HEIGHT = 180
+const STACKED_LEGEND_HEIGHT = 36
+const STACKED_XAXIS_HEIGHT = 52
+const STACKED_MARGIN_TOP = 0
+const STACKED_MARGIN_BOTTOM = 0
+const STACKED_MARGIN_LEFT = 48
+const STACKED_MARGIN_RIGHT = 64
+
+export function getStackedChartLayout(
+  hideLegend = true,
+  hideXAxis = false,
+) {
+  const marginTop = hideLegend ? STACKED_MARGIN_TOP : STACKED_LEGEND_HEIGHT
+  const marginBottom = hideXAxis ? STACKED_MARGIN_BOTTOM : STACKED_XAXIS_HEIGHT
+  const height = marginTop + STACKED_PLOT_HEIGHT + marginBottom
+
+  return {
+    height,
+    chart: {
+      height,
+      marginLeft: STACKED_MARGIN_LEFT,
+      marginRight: STACKED_MARGIN_RIGHT,
+      marginBottom,
+      spacingTop: 0,
+      spacingRight: 10,
+      spacingBottom: 0,
+      spacingLeft: 10,
+      // Let top/bottom axis labels paint outside the SVG so stacked charts
+      // can stay flush without clipping tick values.
+      style: { overflow: 'visible' },
+      ...(hideLegend ? { marginTop: STACKED_MARGIN_TOP } : {}),
+    } satisfies Highcharts.ChartOptions,
+    legend: {
+      enabled: !hideLegend,
+      align: 'left',
+      verticalAlign: 'top',
+      layout: 'horizontal',
+      margin: 12,
+      padding: 4,
+      y: 0,
+      x: 0,
+    } satisfies Highcharts.LegendOptions,
+    xAxis: {
+      title: hideXAxis
+        ? { text: undefined, margin: 0 }
+        : { text: 'Interval (cents)', margin: 8 },
+      labels: { enabled: !hideXAxis },
+      tickLength: hideXAxis ? 0 : 8,
+      lineWidth: hideXAxis ? 0 : 1,
+    } satisfies Highcharts.XAxisOptions,
+  }
+}
+
 export const baseChartConfig: Partial<Highcharts.Options> = {
   colors: Array.from(CHART_COLORS.otherParticipants),
   chart: {
@@ -15,8 +68,8 @@ export const baseChartConfig: Partial<Highcharts.Options> = {
     enabled: false,
   },
   legend: {
-    enabled: true,
-    align: 'right',
+    enabled: false,
+    align: 'left',
     verticalAlign: 'top',
     layout: 'horizontal',
   },
@@ -48,8 +101,8 @@ export const baseChartConfig: Partial<Highcharts.Options> = {
 }
 
 export const chartCredits: Highcharts.CreditsOptions = {
-  enabled: true,
-  text: '* press and drag on the chart to play intervals',
+  enabled: false,
+  text: '',
   style: {
     fontSize: '12px',
     fontStyle: 'italic',

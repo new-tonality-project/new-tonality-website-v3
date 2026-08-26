@@ -1,4 +1,4 @@
-import clsx from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 export function Divider({
   soft = false,
@@ -9,7 +9,7 @@ export function Divider({
     <hr
       role="presentation"
       {...props}
-      className={clsx(
+      className={twMerge(
         className,
         'w-full border-t',
         soft && 'border-zinc-950/5 dark:border-white/5',

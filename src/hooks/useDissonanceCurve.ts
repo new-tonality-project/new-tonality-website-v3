@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { DissonanceCurve, type DissonanceCurveOptions } from 'sethares-dissonance'
 
 type ReadOnlyDissonanceCurve = Omit<
@@ -13,6 +13,7 @@ function createReadOnlyWrapper(curve: DissonanceCurve) {
     get maxDissonance() {
       return curve.maxDissonance
     },
+    plot: () => curve.plot(),
     plotCents: () => curve.plotCents(),
   } satisfies Partial<ReadOnlyDissonanceCurve>
 }
@@ -33,7 +34,8 @@ export function useDissonanceCurve(
 ) {
   return useMemo(() => {
     const curve = new DissonanceCurve(options)
+    const intrinsicDissonance = curve.get(1)
     if (options.normalize) curve.normalize(options.normalize.min, options.normalize.max)
-    return createReadOnlyWrapper(curve)
+    return { ...createReadOnlyWrapper(curve), intrinsicDissonance }
   }, [options])
 }

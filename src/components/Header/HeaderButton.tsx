@@ -1,4 +1,4 @@
-import clsx from 'clsx'
+import { twMerge } from 'tailwind-merge'
 import Link from 'next/link'
 
 const variantStyles = {
@@ -20,7 +20,7 @@ export function HeaderButton({
   className,
   ...props
 }: HeaderButtonProps) {
-  className = clsx(variantStyles[variant], className)
+  className = twMerge(variantStyles[variant], className)
 
   return typeof props.href === 'undefined' ? (
     <button className={className} {...props} />

@@ -9,7 +9,7 @@ import { Step } from '@/components/Step'
 import { db } from '@/db'
 import { submitSurvey } from '../actions'
 import { LoadingOverlay } from '@/components/LoadingOverlay'
-import clsx from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 const COLORS = [
   '#E2E8F0',
@@ -79,7 +79,7 @@ export function SurveyExperiment() {
     return null
 
   return (
-    <div className={clsx('relative', submitting && 'pointer-events-none')}>
+    <div className={twMerge('relative', submitting && 'pointer-events-none')}>
       {submitting && <LoadingOverlay />}
       <Step className="mb-8" title="Step" number={1} disabled={false}>
         <Text className="pb-6">

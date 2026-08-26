@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import clsx from 'clsx'
+import { twMerge } from 'tailwind-merge'
 import { type BasicLink } from '@/lib'
 
 export function NavItem({
@@ -18,7 +18,7 @@ export function NavItem({
     <li>
       <Link
         href={href}
-        className={clsx(
+        className={twMerge(
           'relative block px-3 py-2 transition',
           isActive
             ? 'text-sky-500 dark:text-sky-400'

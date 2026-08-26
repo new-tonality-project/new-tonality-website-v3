@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import clsx from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 export function CollapsibleDescription({ 
   children, 
@@ -13,7 +13,7 @@ export function CollapsibleDescription({
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
-    <div className={clsx(className)}>
+    <div className={twMerge(className)}>
       <div className={`relative overflow-hidden`}>
         <div className={isExpanded ? '' : 'line-clamp-3'}>{children}</div>
         <div

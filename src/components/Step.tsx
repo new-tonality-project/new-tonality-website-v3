@@ -1,8 +1,8 @@
 import { Strong, Text } from '@/components/catalyst/text'
-import clsx from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 export function VerticalDivider({ className }: { className?: string }) {
-  return <div className={clsx('border-l border-zinc-200 p-1', className)} />
+  return <div className={twMerge('border-l border-zinc-200 p-1', className)} />
 }
 
 export function Step({
@@ -20,7 +20,7 @@ export function Step({
 }) {
   return (
     <div
-      className={clsx(
+      className={twMerge(
         'flex w-full flex-col gap-4 lg:flex-row lg:items-stretch',
         disabled && 'cursor-not-allowed opacity-50',
         className,

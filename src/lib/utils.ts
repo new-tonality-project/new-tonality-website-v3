@@ -17,6 +17,10 @@ export function clamp(number: number, a: number, b: number) {
   return Math.min(Math.max(number, min), max)
 }
 
+export function roundToDecimals(value: number, decimals = 2) {
+  return round(value, decimals)
+}
+
 export function debounceTransaction<T extends (...args: any[]) => any>(
   callback: T,
 ) {

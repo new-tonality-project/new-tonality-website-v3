@@ -1,5 +1,5 @@
 import * as Headless from '@headlessui/react'
-import clsx from 'clsx'
+import { twMerge } from 'tailwind-merge'
 import React, { forwardRef } from 'react'
 
 export const Select = forwardRef(function Select(
@@ -9,7 +9,7 @@ export const Select = forwardRef(function Select(
   return (
     <span
       data-slot="control"
-      className={clsx([
+      className={twMerge([
         className,
         // Basic layout
         'group relative block w-full',
@@ -27,7 +27,7 @@ export const Select = forwardRef(function Select(
         ref={ref}
         multiple={multiple}
         {...props}
-        className={clsx([
+        className={twMerge([
           // Basic layout
           'relative block w-full appearance-none rounded-lg py-[calc(--spacing(2.5)-1px)] sm:py-[calc(--spacing(1.5)-1px)] cursor-pointer',
           // Horizontal padding

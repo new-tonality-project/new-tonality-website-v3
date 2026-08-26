@@ -14,6 +14,11 @@ export type IntervalDissonanceScore = InstaQLEntity<
 
 export type UserSettings = InstaQLEntity<AppSchema, 'userSettings'>
 
+export type BeatingAnalysisSettings = InstaQLEntity<
+  AppSchema,
+  'beatingAnalysisSettings'
+>
+
 export type BasicLink = { label: string; href: string }
 
 export type Article = {
