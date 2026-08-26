@@ -24,6 +24,8 @@ npm run dev
 
 Finally, open [http://localhost:3000](http://localhost:3000) in your browser to view the website.
 
+## TODO database
+
 ## Spotlight
 
 This website is base on the [Tailwind Plus](https://tailwindcss.com/plus) site template Spotlight that is built using [Tailwind CSS](https://tailwindcss.com) and [Next.js](https://nextjs.org).
