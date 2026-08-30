@@ -66,7 +66,7 @@ const _schema = i.schema({
       secondOrderBeatingContribution: i.number().optional(),
       showEnvelope: i.boolean(),
       showRms: i.boolean(),
-      spectraLinked: i.boolean().optional(),
+      stretchFactor: i.number().optional(),
       thirdOrderBeatingContribution: i.number().optional(),
     }),
   },

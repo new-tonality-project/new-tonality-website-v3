@@ -15,7 +15,7 @@ import {
   cloneHarmonics,
   createDefaultHarmonicSeries,
   DEFAULT_SPECTRUM_HARMONICS,
-  getMaxHarmonicRatio,
+  DEFAULT_STRETCH_FACTOR,
   parseHarmonicsJson,
   serializeHarmonicsJson,
   type SpectrumHarmonic,
@@ -39,6 +39,7 @@ export type BeatingAnalysisState = {
   phaseDegrees: number
   harmonics: SpectrumHarmonic[]
   realHarmonicsNumber: number
+  stretchFactor: number
   firstOrderDissonance: DissonanceCurveSettings['firstOrderDissonance']
   secondOrderDissonance: DissonanceCurveSettings['secondOrderDissonance']
   thirdOrderDissonance: DissonanceCurveSettings['thirdOrderDissonance']
@@ -57,6 +58,7 @@ export const DEFAULT_BEATING_ANALYSIS_STATE: BeatingAnalysisState = {
   phaseDegrees: DEFAULT_PHASE_DEGREES,
   harmonics: cloneHarmonics(DEFAULT_SPECTRUM_HARMONICS),
   realHarmonicsNumber: DEFAULT_REAL_HARMONICS_NUMBER,
+  stretchFactor: DEFAULT_STRETCH_FACTOR,
   firstOrderDissonance: { ...DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS },
   secondOrderDissonance: { ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS },
   thirdOrderDissonance: { ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS },
@@ -154,7 +156,8 @@ function mapRecordToState(record: BeatingAnalysisSettings): BeatingAnalysisState
     phaseDegrees:
       record.phaseDegrees ?? DEFAULT_BEATING_ANALYSIS_STATE.phaseDegrees,
     harmonics,
-    realHarmonicsNumber: getMaxHarmonicRatio(harmonics),
+    realHarmonicsNumber: harmonics.length,
+    stretchFactor: record.stretchFactor ?? DEFAULT_STRETCH_FACTOR,
     firstOrderDissonance:
       parsedDissonance?.firstOrderDissonance ??
       DEFAULT_BEATING_ANALYSIS_STATE.firstOrderDissonance,
