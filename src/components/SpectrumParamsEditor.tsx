@@ -8,41 +8,30 @@ import {
   getNextHarmonic,
   type SpectrumHarmonic,
 } from '@/lib/spectrum'
-import {
-  DEFAULT_PHASE_DEGREES,
-  DEFAULT_REFERENCE_FREQUENCY,
-} from '@/app/tools/beating-analysis/utils'
+import { DEFAULT_REFERENCE_FREQUENCY } from '@/app/tools/beating-analysis/utils'
 
 export type SpectrumParamsEditorProps = {
   fundamentalHz?: number
-  amplitude?: number
-  phaseDegrees?: number
   harmonics: SpectrumHarmonic[]
-  harmonicsDisabled?: boolean
   onFundamentalHzChange?: (value: number) => void
-  onAmplitudeChange?: (value: number) => void
-  onPhaseDegreesChange?: (value: number) => void
   onHarmonicsChange?: (harmonics: SpectrumHarmonic[]) => void
 }
 
 function HarmonicRow({
   harmonic,
   index,
-  disabled,
   onRatioChange,
   onAmplitudeChange,
   onRemove,
 }: {
   harmonic: SpectrumHarmonic
   index: number
-  disabled: boolean
   onRatioChange: (value: number) => void
   onAmplitudeChange: (value: number) => void
   onRemove: () => void
 }) {
   const isFundamental = index === 0
   const defaultHarmonic = getDefaultHarmonic(index)
-  const controlsDisabled = disabled || isFundamental
 
   return (
     <div className="flex items-center gap-1.5">
@@ -54,7 +43,7 @@ function HarmonicRow({
         minStep={0.01}
         valueRange={1}
         label="r"
-        disabled={controlsDisabled}
+        disabled={isFundamental}
         nonResettable={isFundamental}
         className="min-w-0 shrink"
         onChange={onRatioChange}
@@ -67,12 +56,12 @@ function HarmonicRow({
         minStep={0.01}
         valueRange={1}
         label="a"
-        disabled={controlsDisabled}
+        disabled={isFundamental}
         nonResettable={isFundamental}
         className="min-w-0 shrink"
         onChange={onAmplitudeChange}
       />
-      {!isFundamental && !disabled && (
+      {!isFundamental && (
         <button
           type="button"
           onClick={onRemove}
@@ -88,25 +77,15 @@ function HarmonicRow({
 
 export function SpectrumParamsEditor({
   fundamentalHz,
-  amplitude,
-  phaseDegrees,
   harmonics,
-  harmonicsDisabled = false,
   onFundamentalHzChange,
-  onAmplitudeChange,
-  onPhaseDegreesChange,
   onHarmonicsChange,
 }: SpectrumParamsEditorProps) {
-  const showToneControls =
-    fundamentalHz !== undefined ||
-    amplitude !== undefined ||
-    phaseDegrees !== undefined
-
   const updateHarmonic = (
     index: number,
     patch: Partial<SpectrumHarmonic>,
   ) => {
-    if (harmonicsDisabled || !onHarmonicsChange) {
+    if (!onHarmonicsChange) {
       return
     }
 
@@ -118,7 +97,7 @@ export function SpectrumParamsEditor({
   }
 
   const removeHarmonic = (index: number) => {
-    if (harmonicsDisabled || !onHarmonicsChange || index === 0) {
+    if (!onHarmonicsChange || index === 0) {
       return
     }
 
@@ -126,7 +105,7 @@ export function SpectrumParamsEditor({
   }
 
   const addHarmonic = () => {
-    if (harmonicsDisabled || !onHarmonicsChange) {
+    if (!onHarmonicsChange) {
       return
     }
 
@@ -135,47 +114,18 @@ export function SpectrumParamsEditor({
 
   return (
     <div className="flex flex-col gap-6">
-      {showToneControls && (
-        <div className="flex flex-col gap-3">
-          {fundamentalHz !== undefined && onFundamentalHzChange && (
-            <DragNumberInput
-              defaultValue={DEFAULT_REFERENCE_FREQUENCY}
-              value={fundamentalHz}
-              min={20}
-              max={2000}
-              minStep={1}
-              valueRange={200}
-              whole
-              label="Fundamental (Hz)"
-              onChange={onFundamentalHzChange}
-            />
-          )}
-          {amplitude !== undefined && onAmplitudeChange && (
-            <DragNumberInput
-              defaultValue={1}
-              value={amplitude}
-              min={0}
-              max={2}
-              minStep={0.01}
-              valueRange={1}
-              label="Amplitude"
-              onChange={onAmplitudeChange}
-            />
-          )}
-          {phaseDegrees !== undefined && onPhaseDegreesChange && (
-            <DragNumberInput
-              defaultValue={DEFAULT_PHASE_DEGREES}
-              value={phaseDegrees}
-              min={-360}
-              max={360}
-              minStep={1}
-              valueRange={360}
-              whole
-              label="Phase (°)"
-              onChange={onPhaseDegreesChange}
-            />
-          )}
-        </div>
+      {fundamentalHz !== undefined && onFundamentalHzChange && (
+        <DragNumberInput
+          defaultValue={DEFAULT_REFERENCE_FREQUENCY}
+          value={fundamentalHz}
+          min={20}
+          max={2000}
+          minStep={1}
+          valueRange={200}
+          whole
+          label="Fundamental (Hz)"
+          onChange={onFundamentalHzChange}
+        />
       )}
 
       <SidebarSection title="Harmonics">
@@ -184,7 +134,6 @@ export function SpectrumParamsEditor({
             key={index}
             harmonic={harmonic}
             index={index}
-            disabled={harmonicsDisabled}
             onRatioChange={(ratio) => updateHarmonic(index, { ratio })}
             onAmplitudeChange={(nextAmplitude) =>
               updateHarmonic(index, { amplitude: nextAmplitude })
@@ -192,17 +141,15 @@ export function SpectrumParamsEditor({
             onRemove={() => removeHarmonic(index)}
           />
         ))}
-        {!harmonicsDisabled && (
-          <button
-            type="button"
-            onClick={addHarmonic}
-            aria-label="Add harmonic"
-            className="flex w-fit cursor-pointer items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-600 transition hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
-          >
-            <PlusIcon className="size-3.5" stroke="currentColor" />
-            Add harmonic
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={addHarmonic}
+          aria-label="Add harmonic"
+          className="flex w-fit cursor-pointer items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-xs text-zinc-600 transition hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+        >
+          <PlusIcon className="size-3.5" stroke="currentColor" />
+          Add harmonic
+        </button>
       </SidebarSection>
     </div>
   )

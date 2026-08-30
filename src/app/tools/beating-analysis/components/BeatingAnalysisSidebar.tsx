@@ -5,19 +5,13 @@ import { CloseIcon } from '@/components'
 import { Select } from '@/components/Select'
 import { DissonanceParams } from './DissonanceParams'
 import { GeneralParams } from './GeneralParams'
-import { IntervalSpectrumParams } from './IntervalSpectrumParams'
-import { ReferenceSpectrumParams } from './ReferenceSpectrumParams'
+import { SpectrumParams } from './SpectrumParams'
 
-type ParamsPanel =
-  | 'general'
-  | 'reference-spectrum'
-  | 'interval-spectrum'
-  | 'dissonance'
+type ParamsPanel = 'general' | 'spectrum' | 'dissonance'
 
 const paramsPanelItems: { value: ParamsPanel; label: string }[] = [
   { value: 'general', label: 'General' },
-  { value: 'reference-spectrum', label: 'Reference spectrum' },
-  { value: 'interval-spectrum', label: 'Interval spectrum' },
+  { value: 'spectrum', label: 'Spectrum' },
   { value: 'dissonance', label: 'Dissonance' },
 ]
 
@@ -25,10 +19,8 @@ function ParamsPanelContent({ panel }: { panel: ParamsPanel }) {
   switch (panel) {
     case 'general':
       return <GeneralParams />
-    case 'reference-spectrum':
-      return <ReferenceSpectrumParams />
-    case 'interval-spectrum':
-      return <IntervalSpectrumParams />
+    case 'spectrum':
+      return <SpectrumParams />
     case 'dissonance':
       return <DissonanceParams />
   }

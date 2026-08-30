@@ -142,8 +142,7 @@ export function DissonanceCurveChart({
   referenceFrequency,
   intervalCents,
   amplitude,
-  referenceHarmonics,
-  intervalHarmonics,
+  harmonics,
   phantomHarmonicsNumber,
   secondOrderBeatingContribution,
   thirdOrderBeatingContribution,
@@ -153,8 +152,7 @@ export function DissonanceCurveChart({
   referenceFrequency: number
   intervalCents: number
   amplitude: number
-  referenceHarmonics: SpectrumHarmonic[]
-  intervalHarmonics: SpectrumHarmonic[]
+  harmonics: SpectrumHarmonic[]
   phantomHarmonicsNumber: number
   secondOrderBeatingContribution: number
   thirdOrderBeatingContribution: number
@@ -165,17 +163,17 @@ export function DissonanceCurveChart({
   const maxCents = Math.max(dissonanceCurveMinCents, dissonanceCurveMaxCents)
 
   const referenceSpectrum = useMemo(
-    () => createSpectrumFromHarmonics(referenceFrequency, referenceHarmonics, 1),
-    [referenceFrequency, referenceHarmonics],
+    () => createSpectrumFromHarmonics(referenceFrequency, harmonics, 1),
+    [referenceFrequency, harmonics],
   )
   const intervalSpectrum = useMemo(
     () =>
       createSpectrumFromHarmonics(
         referenceFrequency,
-        intervalHarmonics,
+        harmonics,
         amplitude,
       ),
-    [amplitude, intervalHarmonics, referenceFrequency],
+    [amplitude, harmonics, referenceFrequency],
   )
 
   const dissonanceCurveOptions = useMemo((): UseDissonanceCurveOptions => {
@@ -218,7 +216,7 @@ export function DissonanceCurveChart({
         referenceFrequency,
         0,
         1,
-        referenceHarmonics,
+        harmonics,
         phantomHarmonicsNumber,
       ),
       minCents,
@@ -229,7 +227,7 @@ export function DissonanceCurveChart({
         referenceFrequency,
         intervalCents,
         amplitude,
-        intervalHarmonics,
+        harmonics,
         phantomHarmonicsNumber,
       ),
       minCents,
@@ -367,12 +365,11 @@ export function DissonanceCurveChart({
     amplitude,
     dissonanceCurve,
     intervalCents,
-    intervalHarmonics,
+    harmonics,
     maxCents,
     minCents,
     phantomHarmonicsNumber,
     referenceFrequency,
-    referenceHarmonics,
   ])
 
   return (

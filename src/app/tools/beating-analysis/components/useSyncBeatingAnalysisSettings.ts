@@ -13,7 +13,7 @@ import {
   cloneHarmonics,
   createDefaultHarmonicSeries,
   DEFAULT_SPECTRUM_HARMONICS,
-  getMaxHarmonicRatioAcross,
+  getMaxHarmonicRatio,
   parseHarmonicsJson,
   serializeHarmonicsJson,
   type SpectrumHarmonic,
@@ -35,9 +35,7 @@ export type BeatingAnalysisState = {
   intervalCents: number
   amplitude: number
   phaseDegrees: number
-  referenceHarmonics: SpectrumHarmonic[]
-  intervalHarmonics: SpectrumHarmonic[]
-  spectraLinked: boolean
+  harmonics: SpectrumHarmonic[]
   realHarmonicsNumber: number
   phantomHarmonicsNumber: number
   secondOrderBeatingContribution: number
@@ -54,9 +52,7 @@ export const DEFAULT_BEATING_ANALYSIS_STATE: BeatingAnalysisState = {
   intervalCents: 702,
   amplitude: 1,
   phaseDegrees: DEFAULT_PHASE_DEGREES,
-  referenceHarmonics: cloneHarmonics(DEFAULT_SPECTRUM_HARMONICS),
-  intervalHarmonics: cloneHarmonics(DEFAULT_SPECTRUM_HARMONICS),
-  spectraLinked: true,
+  harmonics: cloneHarmonics(DEFAULT_SPECTRUM_HARMONICS),
   realHarmonicsNumber: DEFAULT_REAL_HARMONICS_NUMBER,
   phantomHarmonicsNumber: DEFAULT_PHANTOM_HARMONICS_NUMBER,
   secondOrderBeatingContribution:
@@ -73,13 +69,9 @@ function mapRecordToState(record: BeatingAnalysisSettings): BeatingAnalysisState
   const realHarmonicsNumber =
     record.realHarmonicsNumber ??
     DEFAULT_BEATING_ANALYSIS_STATE.realHarmonicsNumber
-  const referenceHarmonics =
+  const harmonics =
     parseHarmonicsJson(record.harmonicsJson) ??
     createDefaultHarmonicSeries(realHarmonicsNumber)
-  const intervalHarmonics =
-    parseHarmonicsJson(record.intervalHarmonicsJson) ??
-    cloneHarmonics(referenceHarmonics)
-  const spectraLinked = record.spectraLinked ?? true
 
   return {
     referenceFrequency:
@@ -87,18 +79,17 @@ function mapRecordToState(record: BeatingAnalysisSettings): BeatingAnalysisState
     periods: record.periods ?? DEFAULT_BEATING_ANALYSIS_STATE.periods,
     intervalCents:
       record.intervalCents ?? DEFAULT_BEATING_ANALYSIS_STATE.intervalCents,
-    amplitude: record.amplitude ?? DEFAULT_BEATING_ANALYSIS_STATE.amplitude,
+    amplitude: Math.min(
+      1,
+      Math.max(
+        0,
+        record.amplitude ?? DEFAULT_BEATING_ANALYSIS_STATE.amplitude,
+      ),
+    ),
     phaseDegrees:
       record.phaseDegrees ?? DEFAULT_BEATING_ANALYSIS_STATE.phaseDegrees,
-    referenceHarmonics,
-    intervalHarmonics: spectraLinked
-      ? cloneHarmonics(referenceHarmonics)
-      : intervalHarmonics,
-    spectraLinked,
-    realHarmonicsNumber: getMaxHarmonicRatioAcross(
-      referenceHarmonics,
-      spectraLinked ? referenceHarmonics : intervalHarmonics,
-    ),
+    harmonics,
+    realHarmonicsNumber: getMaxHarmonicRatio(harmonics),
     phantomHarmonicsNumber:
       record.phantomHarmonicsNumber ??
       DEFAULT_BEATING_ANALYSIS_STATE.phantomHarmonicsNumber,
@@ -156,18 +147,13 @@ export function useSyncBeatingAnalysisSettings({
     settingsIdRef.current = newId
     const now = Date.now()
 
-    const {
-      referenceHarmonics,
-      intervalHarmonics,
-      ...defaults
-    } = DEFAULT_BEATING_ANALYSIS_STATE
+    const { harmonics, ...defaults } = DEFAULT_BEATING_ANALYSIS_STATE
 
     db.transact(
       db.tx.beatingAnalysisSettings[newId]
         .update({
           ...defaults,
-          harmonicsJson: serializeHarmonicsJson(referenceHarmonics),
-          intervalHarmonicsJson: serializeHarmonicsJson(intervalHarmonics),
+          harmonicsJson: serializeHarmonicsJson(harmonics),
           createdAt: now,
           updatedAt: now,
         })
