@@ -1,13 +1,28 @@
-import type { BeatingAnalysisSettings, DissonanceParamsRecord } from './types'
+import type { DissonanceParamsRecord } from './types'
 import {
   DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
   DEFAULT_PHANTOM_HARMONICS_NUMBER,
   DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
   DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
-  type DissonanceParams,
 } from 'sethares-dissonance'
 
-export type DissonanceParamsState = Required<DissonanceParams>
+export type DissonanceOrderParams = {
+  magnitude: number
+  magnitudeFrequencyDecay: number
+  phantomNotchDepth: number
+  x_star: number
+  b1: number
+  b2: number
+  s1: number
+  s2: number
+}
+
+export type DissonanceParamsState = {
+  firstOrderDissonance: DissonanceOrderParams
+  secondOrderDissonance: DissonanceOrderParams
+  thirdOrderDissonance: DissonanceOrderParams
+  phantomHarmonicsNumber: number
+}
 
 export const DEFAULT_DISSONANCE_PARAMS_STATE: DissonanceParamsState = {
   firstOrderDissonance: { ...DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS },
@@ -16,109 +31,85 @@ export const DEFAULT_DISSONANCE_PARAMS_STATE: DissonanceParamsState = {
   phantomHarmonicsNumber: DEFAULT_PHANTOM_HARMONICS_NUMBER,
 }
 
-export function parseDissonanceParamsJson(value: string | undefined | null) {
-  if (!value) {
-    return null
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value)
+}
+
+function mergeOrder(
+  defaults: DissonanceOrderParams,
+  layer: Partial<DissonanceOrderParams>,
+): DissonanceOrderParams {
+  const result = { ...defaults }
+
+  for (const key of Object.keys(result) as (keyof DissonanceOrderParams)[]) {
+    const value = layer[key]
+    if (isFiniteNumber(value)) {
+      result[key] = value
+    }
   }
 
-  try {
-    const parsed = JSON.parse(value) as Partial<
-      Pick<
-        DissonanceParamsState,
-        | 'firstOrderDissonance'
-        | 'secondOrderDissonance'
-        | 'thirdOrderDissonance'
-      >
-    >
+  return result
+}
 
-    if (!parsed || typeof parsed !== 'object') {
-      return null
-    }
+function persistOrder(
+  prefix: 'firstOrder' | 'secondOrder' | 'thirdOrder',
+  params: DissonanceOrderParams,
+) {
+  return {
+    [`${prefix}Magnitude`]: params.magnitude,
+    [`${prefix}XStar`]: params.x_star,
+    [`${prefix}B1`]: params.b1,
+    [`${prefix}B2`]: params.b2,
+    [`${prefix}S1`]: params.s1,
+    [`${prefix}S2`]: params.s2,
+    [`${prefix}MagnitudeFrequencyDecay`]: params.magnitudeFrequencyDecay,
+    [`${prefix}PhantomNotchDepth`]: params.phantomNotchDepth,
+  }
+}
 
-    return {
-      firstOrderDissonance: {
-        ...DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
-        ...parsed.firstOrderDissonance,
-      },
-      secondOrderDissonance: {
-        ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
-        ...parsed.secondOrderDissonance,
-      },
-      thirdOrderDissonance: {
-        ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
-        ...parsed.thirdOrderDissonance,
-      },
-    }
-  } catch {
-    return null
+function orderFromRecord(
+  record: DissonanceParamsRecord,
+  prefix: 'firstOrder' | 'secondOrder' | 'thirdOrder',
+): Partial<DissonanceOrderParams> {
+  return {
+    magnitude: record[`${prefix}Magnitude`],
+    x_star: record[`${prefix}XStar`],
+    b1: record[`${prefix}B1`],
+    b2: record[`${prefix}B2`],
+    s1: record[`${prefix}S1`],
+    s2: record[`${prefix}S2`],
+    magnitudeFrequencyDecay: record[`${prefix}MagnitudeFrequencyDecay`],
+    phantomNotchDepth: record[`${prefix}PhantomNotchDepth`],
   }
 }
 
 export function toPersistedDissonanceParams(settings: DissonanceParamsState) {
-  const {
-    firstOrderDissonance,
-    secondOrderDissonance,
-    thirdOrderDissonance,
-    phantomHarmonicsNumber,
-  } = settings
-
   return {
-    phantomHarmonicsNumber,
-    paramsJson: JSON.stringify({
-      firstOrderDissonance,
-      secondOrderDissonance,
-      thirdOrderDissonance,
-    }),
+    phantomHarmonicsNumber: settings.phantomHarmonicsNumber,
+    ...persistOrder('firstOrder', settings.firstOrderDissonance),
+    ...persistOrder('secondOrder', settings.secondOrderDissonance),
+    ...persistOrder('thirdOrder', settings.thirdOrderDissonance),
   }
 }
 
 export function mapDissonanceParamsRecordToState(
   record: DissonanceParamsRecord,
 ): DissonanceParamsState {
-  const parsed = parseDissonanceParamsJson(record.paramsJson)
-
   return {
-    firstOrderDissonance: {
-      ...DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
-      ...parsed?.firstOrderDissonance,
-    },
-    secondOrderDissonance: {
-      ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
-      ...parsed?.secondOrderDissonance,
-    },
-    thirdOrderDissonance: {
-      ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
-      ...parsed?.thirdOrderDissonance,
-    },
-    phantomHarmonicsNumber:
-      record.phantomHarmonicsNumber ??
-      DEFAULT_DISSONANCE_PARAMS_STATE.phantomHarmonicsNumber,
-  }
-}
-
-export function dissonanceStateFromLegacyBeatingRecord(
-  record: BeatingAnalysisSettings,
-): DissonanceParamsState {
-  const parsed = parseDissonanceParamsJson(record.dissonanceParamsJson)
-
-  return {
-    firstOrderDissonance:
-      parsed?.firstOrderDissonance ??
-      DEFAULT_DISSONANCE_PARAMS_STATE.firstOrderDissonance,
-    secondOrderDissonance: parsed?.secondOrderDissonance ?? {
-      ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
-      magnitude:
-        record.secondOrderBeatingContribution ??
-        DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude,
-    },
-    thirdOrderDissonance: parsed?.thirdOrderDissonance ?? {
-      ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
-      magnitude:
-        record.thirdOrderBeatingContribution ??
-        DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitude,
-    },
-    phantomHarmonicsNumber:
-      record.phantomHarmonicsNumber ??
-      DEFAULT_DISSONANCE_PARAMS_STATE.phantomHarmonicsNumber,
+    firstOrderDissonance: mergeOrder(
+      DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
+      orderFromRecord(record, 'firstOrder'),
+    ),
+    secondOrderDissonance: mergeOrder(
+      DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
+      orderFromRecord(record, 'secondOrder'),
+    ),
+    thirdOrderDissonance: mergeOrder(
+      DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
+      orderFromRecord(record, 'thirdOrder'),
+    ),
+    phantomHarmonicsNumber: isFiniteNumber(record.phantomHarmonicsNumber)
+      ? record.phantomHarmonicsNumber
+      : DEFAULT_DISSONANCE_PARAMS_STATE.phantomHarmonicsNumber,
   }
 }

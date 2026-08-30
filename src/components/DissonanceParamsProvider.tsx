@@ -11,7 +11,6 @@ import { db } from '@/db'
 import { debounceTransaction } from '@/lib'
 import {
   DEFAULT_DISSONANCE_PARAMS_STATE,
-  dissonanceStateFromLegacyBeatingRecord,
   mapDissonanceParamsRecordToState,
   toPersistedDissonanceParams,
   type DissonanceParamsState,
@@ -53,25 +52,11 @@ export function DissonanceParamsProvider({ children }: { children: ReactNode }) 
         },
       },
     },
-    beatingAnalysisSettings: {
-      $: {
-        where: {
-          $users: user.id,
-        },
-      },
-    },
   })
 
   const paramsRecord = data?.dissonanceParams[0]
-  const beatingSettingsRecord = data?.beatingAnalysisSettings[0]
 
-  const getCreateState = useCallback(() => {
-    if (beatingSettingsRecord) {
-      return dissonanceStateFromLegacyBeatingRecord(beatingSettingsRecord)
-    }
-
-    return DEFAULT_DISSONANCE_PARAMS_STATE
-  }, [beatingSettingsRecord])
+  const getCreateState = useCallback(() => DEFAULT_DISSONANCE_PARAMS_STATE, [])
 
   const createRecord = useCallback(
     (newId: string, userId: string, state: DissonanceParamsState) => {
