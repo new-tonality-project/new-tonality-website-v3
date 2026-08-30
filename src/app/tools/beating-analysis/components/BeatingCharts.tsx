@@ -189,8 +189,9 @@ export function BeatingCharts({
     harmonics,
     realHarmonicsNumber,
     phantomHarmonicsNumber,
-    secondOrderBeatingContribution,
-    thirdOrderBeatingContribution,
+    firstOrderDissonance,
+    secondOrderDissonance,
+    thirdOrderDissonance,
     dissonanceCurveMinCents,
     dissonanceCurveMaxCents,
     showEnvelope,
@@ -286,8 +287,9 @@ export function BeatingCharts({
           amplitude={amplitude}
           harmonics={harmonics}
           phantomHarmonicsNumber={phantomHarmonicsNumber}
-          secondOrderBeatingContribution={secondOrderBeatingContribution}
-          thirdOrderBeatingContribution={thirdOrderBeatingContribution}
+          firstOrderDissonance={firstOrderDissonance}
+          secondOrderDissonance={secondOrderDissonance}
+          thirdOrderDissonance={thirdOrderDissonance}
           dissonanceCurveMinCents={dissonanceCurveMinCents}
           dissonanceCurveMaxCents={dissonanceCurveMaxCents}
         />

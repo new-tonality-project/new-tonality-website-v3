@@ -7,11 +7,6 @@ import { useDissonanceCurve, type UseDissonanceCurveOptions } from '@/hooks'
 import { COLORS } from '@/lib/colors'
 import { roundToDecimals } from '@/lib/utils'
 import {
-  DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
-  DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
-  DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
-} from 'sethares-dissonance'
-import {
   centsToRatio,
   createSpectrumFromHarmonics,
   getHarmonicsAmplitudeAxisBounds,
@@ -144,8 +139,9 @@ export function DissonanceCurveChart({
   amplitude,
   harmonics,
   phantomHarmonicsNumber,
-  secondOrderBeatingContribution,
-  thirdOrderBeatingContribution,
+  firstOrderDissonance,
+  secondOrderDissonance,
+  thirdOrderDissonance,
   dissonanceCurveMinCents,
   dissonanceCurveMaxCents,
 }: {
@@ -154,8 +150,9 @@ export function DissonanceCurveChart({
   amplitude: number
   harmonics: SpectrumHarmonic[]
   phantomHarmonicsNumber: number
-  secondOrderBeatingContribution: number
-  thirdOrderBeatingContribution: number
+  firstOrderDissonance: UseDissonanceCurveOptions['firstOrderDissonance']
+  secondOrderDissonance: UseDissonanceCurveOptions['secondOrderDissonance']
+  thirdOrderDissonance: UseDissonanceCurveOptions['thirdOrderDissonance']
   dissonanceCurveMinCents: number
   dissonanceCurveMaxCents: number
 }) {
@@ -182,26 +179,21 @@ export function DissonanceCurveChart({
       complement: intervalSpectrum,
       start: centsToRatio(minCents),
       end: centsToRatio(maxCents),
-      firstOrderDissonance: DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
-      secondOrderDissonance: {
-        ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
-        magnitude: secondOrderBeatingContribution,
-      },
-      thirdOrderDissonance: {
-        ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
-        magnitude: thirdOrderBeatingContribution,
-      },
+      firstOrderDissonance,
+      secondOrderDissonance,
+      thirdOrderDissonance,
       phantomHarmonicsNumber,
       normalize: { min: 0, max: 1 },
     }
   }, [
+    firstOrderDissonance,
     intervalSpectrum,
     maxCents,
     minCents,
     phantomHarmonicsNumber,
     referenceSpectrum,
-    secondOrderBeatingContribution,
-    thirdOrderBeatingContribution,
+    secondOrderDissonance,
+    thirdOrderDissonance,
   ])
 
   const dissonanceCurve = useDissonanceCurve(dissonanceCurveOptions)

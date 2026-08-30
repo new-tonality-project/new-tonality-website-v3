@@ -5,10 +5,12 @@ import { id } from '@instantdb/react'
 import { db } from '@/db'
 import type { BeatingAnalysisSettings } from '@/lib'
 import {
+  DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
   DEFAULT_PHANTOM_HARMONICS_NUMBER,
   DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
   DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
 } from 'sethares-dissonance'
+import type { DissonanceCurveSettings } from '@/components/DissonanceCurveControls'
 import {
   cloneHarmonics,
   createDefaultHarmonicSeries,
@@ -37,9 +39,10 @@ export type BeatingAnalysisState = {
   phaseDegrees: number
   harmonics: SpectrumHarmonic[]
   realHarmonicsNumber: number
+  firstOrderDissonance: DissonanceCurveSettings['firstOrderDissonance']
+  secondOrderDissonance: DissonanceCurveSettings['secondOrderDissonance']
+  thirdOrderDissonance: DissonanceCurveSettings['thirdOrderDissonance']
   phantomHarmonicsNumber: number
-  secondOrderBeatingContribution: number
-  thirdOrderBeatingContribution: number
   dissonanceCurveMinCents: number
   dissonanceCurveMaxCents: number
   showEnvelope: boolean
@@ -54,15 +57,76 @@ export const DEFAULT_BEATING_ANALYSIS_STATE: BeatingAnalysisState = {
   phaseDegrees: DEFAULT_PHASE_DEGREES,
   harmonics: cloneHarmonics(DEFAULT_SPECTRUM_HARMONICS),
   realHarmonicsNumber: DEFAULT_REAL_HARMONICS_NUMBER,
+  firstOrderDissonance: { ...DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS },
+  secondOrderDissonance: { ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS },
+  thirdOrderDissonance: { ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS },
   phantomHarmonicsNumber: DEFAULT_PHANTOM_HARMONICS_NUMBER,
-  secondOrderBeatingContribution:
-    DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude,
-  thirdOrderBeatingContribution:
-    DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitude,
   dissonanceCurveMinCents: DEFAULT_DISSONANCE_CURVE_MIN_CENTS,
   dissonanceCurveMaxCents: DEFAULT_DISSONANCE_CURVE_MAX_CENTS,
   showEnvelope: true,
   showRms: false,
+}
+
+function parseDissonanceParamsJson(value: string | undefined | null) {
+  if (!value) {
+    return null
+  }
+
+  try {
+    const parsed = JSON.parse(value) as Partial<
+      Pick<
+        BeatingAnalysisState,
+        | 'firstOrderDissonance'
+        | 'secondOrderDissonance'
+        | 'thirdOrderDissonance'
+      >
+    >
+
+    if (!parsed || typeof parsed !== 'object') {
+      return null
+    }
+
+    return {
+      firstOrderDissonance: {
+        ...DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
+        ...parsed.firstOrderDissonance,
+      },
+      secondOrderDissonance: {
+        ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
+        ...parsed.secondOrderDissonance,
+      },
+      thirdOrderDissonance: {
+        ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
+        ...parsed.thirdOrderDissonance,
+      },
+    }
+  } catch {
+    return null
+  }
+}
+
+export function toPersistedBeatingAnalysisSettings(
+  settings: BeatingAnalysisState,
+) {
+  const {
+    harmonics,
+    firstOrderDissonance,
+    secondOrderDissonance,
+    thirdOrderDissonance,
+    ...rest
+  } = settings
+
+  return {
+    ...rest,
+    harmonicsJson: serializeHarmonicsJson(harmonics),
+    dissonanceParamsJson: JSON.stringify({
+      firstOrderDissonance,
+      secondOrderDissonance,
+      thirdOrderDissonance,
+    }),
+    secondOrderBeatingContribution: secondOrderDissonance.magnitude ?? 0,
+    thirdOrderBeatingContribution: thirdOrderDissonance.magnitude ?? 0,
+  }
 }
 
 function mapRecordToState(record: BeatingAnalysisSettings): BeatingAnalysisState {
@@ -72,6 +136,7 @@ function mapRecordToState(record: BeatingAnalysisSettings): BeatingAnalysisState
   const harmonics =
     parseHarmonicsJson(record.harmonicsJson) ??
     createDefaultHarmonicSeries(realHarmonicsNumber)
+  const parsedDissonance = parseDissonanceParamsJson(record.dissonanceParamsJson)
 
   return {
     referenceFrequency:
@@ -90,15 +155,24 @@ function mapRecordToState(record: BeatingAnalysisSettings): BeatingAnalysisState
       record.phaseDegrees ?? DEFAULT_BEATING_ANALYSIS_STATE.phaseDegrees,
     harmonics,
     realHarmonicsNumber: getMaxHarmonicRatio(harmonics),
+    firstOrderDissonance:
+      parsedDissonance?.firstOrderDissonance ??
+      DEFAULT_BEATING_ANALYSIS_STATE.firstOrderDissonance,
+    secondOrderDissonance: parsedDissonance?.secondOrderDissonance ?? {
+      ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
+      magnitude:
+        record.secondOrderBeatingContribution ??
+        DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude,
+    },
+    thirdOrderDissonance: parsedDissonance?.thirdOrderDissonance ?? {
+      ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
+      magnitude:
+        record.thirdOrderBeatingContribution ??
+        DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitude,
+    },
     phantomHarmonicsNumber:
       record.phantomHarmonicsNumber ??
       DEFAULT_BEATING_ANALYSIS_STATE.phantomHarmonicsNumber,
-    secondOrderBeatingContribution:
-      record.secondOrderBeatingContribution ??
-      DEFAULT_BEATING_ANALYSIS_STATE.secondOrderBeatingContribution,
-    thirdOrderBeatingContribution:
-      record.thirdOrderBeatingContribution ??
-      DEFAULT_BEATING_ANALYSIS_STATE.thirdOrderBeatingContribution,
     dissonanceCurveMinCents:
       record.dissonanceCurveMinCents ??
       DEFAULT_BEATING_ANALYSIS_STATE.dissonanceCurveMinCents,
@@ -147,13 +221,14 @@ export function useSyncBeatingAnalysisSettings({
     settingsIdRef.current = newId
     const now = Date.now()
 
-    const { harmonics, ...defaults } = DEFAULT_BEATING_ANALYSIS_STATE
+    const persisted = toPersistedBeatingAnalysisSettings(
+      DEFAULT_BEATING_ANALYSIS_STATE,
+    )
 
     db.transact(
       db.tx.beatingAnalysisSettings[newId]
         .update({
-          ...defaults,
-          harmonicsJson: serializeHarmonicsJson(harmonics),
+          ...persisted,
           createdAt: now,
           updatedAt: now,
         })

@@ -11,21 +11,18 @@ import { db } from '@/db'
 import { debounceTransaction } from '@/lib'
 import {
   DEFAULT_BEATING_ANALYSIS_STATE,
+  toPersistedBeatingAnalysisSettings,
   useSyncBeatingAnalysisSettings,
   type BeatingAnalysisState,
 } from './useSyncBeatingAnalysisSettings'
-import { serializeHarmonicsJson } from '@/lib/spectrum'
 
 export type { BeatingAnalysisState }
 
 const persistSettings = debounceTransaction(
   (settingsId: string, settings: BeatingAnalysisState) => {
-    const { harmonics, ...rest } = settings
-
     db.transact(
       db.tx.beatingAnalysisSettings[settingsId].update({
-        ...rest,
-        harmonicsJson: serializeHarmonicsJson(harmonics),
+        ...toPersistedBeatingAnalysisSettings(settings),
         updatedAt: Date.now(),
       }),
     )

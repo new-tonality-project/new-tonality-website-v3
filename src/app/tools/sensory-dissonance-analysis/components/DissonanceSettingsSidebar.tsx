@@ -1,7 +1,7 @@
 'use client'
 
 import { CloseIcon } from '@/components'
-import { DissonanceCurveControls } from './DissonanceCurveControls'
+import { DissonanceCurveControls } from '@/components/DissonanceCurveControls'
 import type { ChartSettings } from './types'
 
 export function DissonanceSettingsSidebar({
