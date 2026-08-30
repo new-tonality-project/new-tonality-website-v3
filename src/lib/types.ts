@@ -19,6 +19,13 @@ export type BeatingAnalysisSettings = InstaQLEntity<
   'beatingAnalysisSettings'
 >
 
+export type DissonanceParamsRecord = InstaQLEntity<AppSchema, 'dissonanceParams'>
+
+export type SensoryDissonanceAnalysisSettings = InstaQLEntity<
+  AppSchema,
+  'sensoryDissonanceAnalysisSettings'
+>
+
 export type BasicLink = { label: string; href: string }
 
 export type Article = {

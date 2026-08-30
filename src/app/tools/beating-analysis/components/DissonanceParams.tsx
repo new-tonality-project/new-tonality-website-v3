@@ -1,10 +1,10 @@
 'use client'
 
 import { DissonanceCurveControls } from '@/components/DissonanceCurveControls'
-import { useBeatingAnalysisSettings } from './BeatingAnalysisProvider'
+import { useDissonanceParams } from '@/components/DissonanceParamsProvider'
 
 export function DissonanceParams() {
-  const { settings, update } = useBeatingAnalysisSettings()
+  const { settings, update } = useDissonanceParams()
 
   return (
     <DissonanceCurveControls

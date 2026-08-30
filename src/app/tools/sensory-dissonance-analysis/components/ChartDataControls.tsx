@@ -13,11 +13,11 @@ import otherParticipantsIcon from '@/images/tools/other-participants.png'
 import myResultIcon from '@/images/tools/my-result.png'
 import theoryFitIcon from '@/images/tools/theory-fit.png'
 import pnlIcon from '@/images/tools/pnl.png'
-import type { ChartSettings } from './types'
+import type { SensoryDissonanceAnalysisState } from './types'
 
 type ChartDataControlsProps = {
-  value: ChartSettings
-  onChange: (params: ChartSettings) => void
+  value: SensoryDissonanceAnalysisState
+  onChange: (partial: Partial<SensoryDissonanceAnalysisState>) => void
   yourResultDisabled?: boolean
   dissonanceSettingsOpen: boolean
   onToggleDissonanceSettings: () => void
@@ -60,7 +60,6 @@ export function ChartDataControls({
             value={value.userBackground ?? ''}
             onChange={(e) =>
               onChange({
-                ...value,
                 userBackground: parseMusicalBackground(e.target.value),
               })
             }
@@ -87,7 +86,7 @@ export function ChartDataControls({
           valueRange={1000}
           whole
           label="Start (cents)"
-          onChange={(xAxisStart) => onChange({ ...value, xAxisStart })}
+          onChange={(xAxisStart) => onChange({ xAxisStart })}
         />
         <DragNumberInput
           variant="outlined"
@@ -99,7 +98,7 @@ export function ChartDataControls({
           valueRange={1000}
           whole
           label="End (cents)"
-          onChange={(xAxisEnd) => onChange({ ...value, xAxisEnd })}
+          onChange={(xAxisEnd) => onChange({ xAxisEnd })}
         />
 
         <Button
@@ -120,7 +119,6 @@ export function ChartDataControls({
             checked={value.showOtherParticipants}
             onChange={(checked) =>
               onChange({
-                ...value,
                 showOtherParticipants: checked,
               })
             }
@@ -136,7 +134,6 @@ export function ChartDataControls({
             disabled={yourResultDisabled}
             onChange={(checked) =>
               onChange({
-                ...value,
                 showYourResult: checked,
               })
             }
@@ -149,7 +146,6 @@ export function ChartDataControls({
             checked={value.showExponentialFit}
             onChange={(checked) =>
               onChange({
-                ...value,
                 showExponentialFit: checked,
               })
             }
@@ -162,7 +158,6 @@ export function ChartDataControls({
             checked={value.showPnLResults}
             onChange={(checked) =>
               onChange({
-                ...value,
                 showPnLResults: checked,
               })
             }

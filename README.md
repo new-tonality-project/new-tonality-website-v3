@@ -24,7 +24,16 @@ npm run dev
 
 Finally, open [http://localhost:3000](http://localhost:3000) in your browser to view the website.
 
-## TODO database
+## InstantDB schema
+
+Schema lives in `src/instant.schema.ts`. To push changes, log in once, then push to the app whose ID is `NEXT_PUBLIC_INSTANT_APP_ID` in `.env.development` or `.env.production`:
+
+```bash
+bun instant-cli login
+bun instant-cli push schema --app <APP_ID>
+```
+
+Push schema to production before deploying frontend changes that depend on new entities or attributes. An additive schema push is safe while the old frontend is still live; deploying new code before the schema exists is not.
 
 ## Spotlight
 

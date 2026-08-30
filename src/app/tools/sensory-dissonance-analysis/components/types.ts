@@ -1,7 +1,7 @@
 import { MusicalBackground } from '@/lib/types'
-import type { DissonanceParams } from 'sethares-dissonance'
+import type { DissonanceParamsState } from '@/lib/dissonanceParams'
 
-export type ChartSettings = Required<DissonanceParams> & {
+export type SensoryDissonanceAnalysisState = {
   showAverage: boolean
   showOtherParticipants: boolean
   showYourResult: boolean
@@ -14,3 +14,4 @@ export type ChartSettings = Required<DissonanceParams> & {
   xAxisEnd: number
 }
 
+export type ChartSettings = SensoryDissonanceAnalysisState & DissonanceParamsState

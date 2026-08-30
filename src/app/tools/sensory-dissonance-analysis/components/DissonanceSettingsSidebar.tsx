@@ -2,7 +2,7 @@
 
 import { CloseIcon } from '@/components'
 import { DissonanceCurveControls } from '@/components/DissonanceCurveControls'
-import type { ChartSettings } from './types'
+import type { DissonanceParamsState } from '@/lib/dissonanceParams'
 
 export function DissonanceSettingsSidebar({
   open,
@@ -12,8 +12,8 @@ export function DissonanceSettingsSidebar({
 }: {
   open: boolean
   onClose: () => void
-  value: ChartSettings
-  onChange: (params: ChartSettings) => void
+  value: DissonanceParamsState
+  onChange: (params: DissonanceParamsState) => void
 }) {
   return (
     <aside

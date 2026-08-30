@@ -13,6 +13,7 @@ import {
   getReferencePeriodGridTicks,
   REAL_HARMONICS_ARTIFACT_WARNING_THRESHOLD,
 } from '../utils'
+import { useDissonanceParams } from '@/components/DissonanceParamsProvider'
 import { useBeatingAnalysisSettings } from './BeatingAnalysisProvider'
 import { AudioControls } from './AudioControls'
 import { DissonanceCurveChart } from './DissonanceCurveChart'
@@ -180,6 +181,7 @@ export function BeatingCharts({
   onToggleSpectrum: () => void
 }) {
   const { settings } = useBeatingAnalysisSettings()
+  const { settings: dissonanceParams } = useDissonanceParams()
   const {
     referenceFrequency,
     periods,
@@ -188,15 +190,17 @@ export function BeatingCharts({
     phaseDegrees,
     harmonics,
     realHarmonicsNumber,
-    phantomHarmonicsNumber,
-    firstOrderDissonance,
-    secondOrderDissonance,
-    thirdOrderDissonance,
     dissonanceCurveMinCents,
     dissonanceCurveMaxCents,
     showEnvelope,
     showRms,
   } = settings
+  const {
+    phantomHarmonicsNumber,
+    firstOrderDissonance,
+    secondOrderDissonance,
+    thirdOrderDissonance,
+  } = dissonanceParams
   const waveforms = useMemo(
     () =>
       generateWaveforms({

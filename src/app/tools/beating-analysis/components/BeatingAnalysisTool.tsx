@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Container, Prose, CollapsibleDescription } from '@/components'
+import { DissonanceParamsProvider } from '@/components/DissonanceParamsProvider'
 import { BeatingAnalysisProvider } from './BeatingAnalysisProvider'
 import {
   DissonanceParamsSidebar,
@@ -67,8 +68,10 @@ function BeatingAnalysisToolContent() {
 
 export function BeatingAnalysisTool() {
   return (
-    <BeatingAnalysisProvider>
-      <BeatingAnalysisToolContent />
-    </BeatingAnalysisProvider>
+    <DissonanceParamsProvider>
+      <BeatingAnalysisProvider>
+        <BeatingAnalysisToolContent />
+      </BeatingAnalysisProvider>
+    </DissonanceParamsProvider>
   )
 }

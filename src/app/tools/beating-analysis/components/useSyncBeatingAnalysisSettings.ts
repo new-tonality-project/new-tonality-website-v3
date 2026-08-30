@@ -1,16 +1,8 @@
 'use client'
 
-import { useEffect, useRef, type Dispatch, type SetStateAction } from 'react'
-import { id } from '@instantdb/react'
+import { type Dispatch, type SetStateAction } from 'react'
 import { db } from '@/db'
 import type { BeatingAnalysisSettings } from '@/lib'
-import {
-  DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
-  DEFAULT_PHANTOM_HARMONICS_NUMBER,
-  DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
-  DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
-} from 'sethares-dissonance'
-import type { DissonanceCurveSettings } from '@/components/DissonanceCurveControls'
 import {
   cloneHarmonics,
   createDefaultHarmonicSeries,
@@ -20,6 +12,7 @@ import {
   serializeHarmonicsJson,
   type SpectrumHarmonic,
 } from '@/lib/spectrum'
+import { useSyncLinkedSettings } from '@/hooks/useSyncLinkedSettings'
 import {
   DEFAULT_DISSONANCE_CURVE_MAX_CENTS,
   DEFAULT_DISSONANCE_CURVE_MIN_CENTS,
@@ -40,10 +33,6 @@ export type BeatingAnalysisState = {
   harmonics: SpectrumHarmonic[]
   realHarmonicsNumber: number
   stretchFactor: number
-  firstOrderDissonance: DissonanceCurveSettings['firstOrderDissonance']
-  secondOrderDissonance: DissonanceCurveSettings['secondOrderDissonance']
-  thirdOrderDissonance: DissonanceCurveSettings['thirdOrderDissonance']
-  phantomHarmonicsNumber: number
   dissonanceCurveMinCents: number
   dissonanceCurveMaxCents: number
   showEnvelope: boolean
@@ -59,75 +48,20 @@ export const DEFAULT_BEATING_ANALYSIS_STATE: BeatingAnalysisState = {
   harmonics: cloneHarmonics(DEFAULT_SPECTRUM_HARMONICS),
   realHarmonicsNumber: DEFAULT_REAL_HARMONICS_NUMBER,
   stretchFactor: DEFAULT_STRETCH_FACTOR,
-  firstOrderDissonance: { ...DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS },
-  secondOrderDissonance: { ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS },
-  thirdOrderDissonance: { ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS },
-  phantomHarmonicsNumber: DEFAULT_PHANTOM_HARMONICS_NUMBER,
   dissonanceCurveMinCents: DEFAULT_DISSONANCE_CURVE_MIN_CENTS,
   dissonanceCurveMaxCents: DEFAULT_DISSONANCE_CURVE_MAX_CENTS,
   showEnvelope: true,
   showRms: false,
 }
 
-function parseDissonanceParamsJson(value: string | undefined | null) {
-  if (!value) {
-    return null
-  }
-
-  try {
-    const parsed = JSON.parse(value) as Partial<
-      Pick<
-        BeatingAnalysisState,
-        | 'firstOrderDissonance'
-        | 'secondOrderDissonance'
-        | 'thirdOrderDissonance'
-      >
-    >
-
-    if (!parsed || typeof parsed !== 'object') {
-      return null
-    }
-
-    return {
-      firstOrderDissonance: {
-        ...DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
-        ...parsed.firstOrderDissonance,
-      },
-      secondOrderDissonance: {
-        ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
-        ...parsed.secondOrderDissonance,
-      },
-      thirdOrderDissonance: {
-        ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
-        ...parsed.thirdOrderDissonance,
-      },
-    }
-  } catch {
-    return null
-  }
-}
-
 export function toPersistedBeatingAnalysisSettings(
   settings: BeatingAnalysisState,
 ) {
-  const {
-    harmonics,
-    firstOrderDissonance,
-    secondOrderDissonance,
-    thirdOrderDissonance,
-    ...rest
-  } = settings
+  const { harmonics, ...rest } = settings
 
   return {
     ...rest,
     harmonicsJson: serializeHarmonicsJson(harmonics),
-    dissonanceParamsJson: JSON.stringify({
-      firstOrderDissonance,
-      secondOrderDissonance,
-      thirdOrderDissonance,
-    }),
-    secondOrderBeatingContribution: secondOrderDissonance.magnitude ?? 0,
-    thirdOrderBeatingContribution: thirdOrderDissonance.magnitude ?? 0,
   }
 }
 
@@ -138,7 +72,6 @@ function mapRecordToState(record: BeatingAnalysisSettings): BeatingAnalysisState
   const harmonics =
     parseHarmonicsJson(record.harmonicsJson) ??
     createDefaultHarmonicSeries(realHarmonicsNumber)
-  const parsedDissonance = parseDissonanceParamsJson(record.dissonanceParamsJson)
 
   return {
     referenceFrequency:
@@ -158,24 +91,6 @@ function mapRecordToState(record: BeatingAnalysisSettings): BeatingAnalysisState
     harmonics,
     realHarmonicsNumber: harmonics.length,
     stretchFactor: record.stretchFactor ?? DEFAULT_STRETCH_FACTOR,
-    firstOrderDissonance:
-      parsedDissonance?.firstOrderDissonance ??
-      DEFAULT_BEATING_ANALYSIS_STATE.firstOrderDissonance,
-    secondOrderDissonance: parsedDissonance?.secondOrderDissonance ?? {
-      ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
-      magnitude:
-        record.secondOrderBeatingContribution ??
-        DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS.magnitude,
-    },
-    thirdOrderDissonance: parsedDissonance?.thirdOrderDissonance ?? {
-      ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
-      magnitude:
-        record.thirdOrderBeatingContribution ??
-        DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS.magnitude,
-    },
-    phantomHarmonicsNumber:
-      record.phantomHarmonicsNumber ??
-      DEFAULT_BEATING_ANALYSIS_STATE.phantomHarmonicsNumber,
     dissonanceCurveMinCents:
       record.dissonanceCurveMinCents ??
       DEFAULT_BEATING_ANALYSIS_STATE.dissonanceCurveMinCents,
@@ -186,6 +101,28 @@ function mapRecordToState(record: BeatingAnalysisSettings): BeatingAnalysisState
       record.showEnvelope ?? DEFAULT_BEATING_ANALYSIS_STATE.showEnvelope,
     showRms: record.showRms ?? DEFAULT_BEATING_ANALYSIS_STATE.showRms,
   }
+}
+
+const getCreateState = () => DEFAULT_BEATING_ANALYSIS_STATE
+
+function createRecord(
+  newId: string,
+  userId: string,
+  state: BeatingAnalysisState,
+) {
+  const now = Date.now()
+
+  return db.transact(
+    db.tx.beatingAnalysisSettings[newId]
+      .update({
+        ...toPersistedBeatingAnalysisSettings(state),
+        createdAt: now,
+        updatedAt: now,
+      })
+      .link({
+        $users: userId,
+      }),
+  )
 }
 
 export function useSyncBeatingAnalysisSettings({
@@ -199,49 +136,13 @@ export function useSyncBeatingAnalysisSettings({
   isLoading: boolean
   setSettings: Dispatch<SetStateAction<BeatingAnalysisState>>
 }) {
-  const settingsIdRef = useRef<string | null>(null)
-  const hasSyncedFromServer = useRef(false)
-  const isCreating = useRef(false)
-
-  useEffect(() => {
-    if (isLoading) return
-
-    if (settingsRecord) {
-      settingsIdRef.current = settingsRecord.id
-
-      if (!hasSyncedFromServer.current) {
-        setSettings(mapRecordToState(settingsRecord))
-        hasSyncedFromServer.current = true
-      }
-
-      return
-    }
-
-    if (isCreating.current) return
-
-    isCreating.current = true
-    const newId = id()
-    settingsIdRef.current = newId
-    const now = Date.now()
-
-    const persisted = toPersistedBeatingAnalysisSettings(
-      DEFAULT_BEATING_ANALYSIS_STATE,
-    )
-
-    db.transact(
-      db.tx.beatingAnalysisSettings[newId]
-        .update({
-          ...persisted,
-          createdAt: now,
-          updatedAt: now,
-        })
-        .link({
-          $users: userId,
-        }),
-    ).finally(() => {
-      isCreating.current = false
-    })
-  }, [isLoading, settingsRecord, userId, setSettings])
-
-  return settingsIdRef
+  return useSyncLinkedSettings({
+    userId,
+    isLoading,
+    record: settingsRecord,
+    setState: setSettings,
+    mapRecordToState,
+    getCreateState,
+    createRecord,
+  })
 }
