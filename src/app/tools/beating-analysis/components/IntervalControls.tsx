@@ -6,11 +6,15 @@ import { DEFAULT_BEATING_ANALYSIS_STATE } from './useSyncBeatingAnalysisSettings
 import { useBeatingAnalysisSettings } from './BeatingAnalysisProvider'
 
 export function IntervalControls({
-  sidebarOpen,
-  onToggleSidebar,
+  dissonanceOpen,
+  onToggleDissonance,
+  spectrumOpen,
+  onToggleSpectrum,
 }: {
-  sidebarOpen: boolean
-  onToggleSidebar: () => void
+  dissonanceOpen: boolean
+  onToggleDissonance: () => void
+  spectrumOpen: boolean
+  onToggleSpectrum: () => void
 }) {
   const { settings, update } = useBeatingAnalysisSettings()
 
@@ -82,10 +86,20 @@ export function IntervalControls({
         type="button"
         className="flex cursor-pointer items-center gap-x-2"
         plain
-        onClick={onToggleSidebar}
-        aria-pressed={sidebarOpen}
+        onClick={onToggleDissonance}
+        aria-pressed={dissonanceOpen}
       >
-        Parameters
+        Dissonance settings
+        <SettingsIcon className="size-4" />
+      </Button>
+      <Button
+        type="button"
+        className="flex cursor-pointer items-center gap-x-2"
+        plain
+        onClick={onToggleSpectrum}
+        aria-pressed={spectrumOpen}
+      >
+        Spectrum settings
         <SettingsIcon className="size-4" />
       </Button>
     </div>

@@ -169,11 +169,15 @@ function WaveformChart({
 }
 
 export function BeatingCharts({
-  sidebarOpen,
-  onToggleSidebar,
+  dissonanceOpen,
+  onToggleDissonance,
+  spectrumOpen,
+  onToggleSpectrum,
 }: {
-  sidebarOpen: boolean
-  onToggleSidebar: () => void
+  dissonanceOpen: boolean
+  onToggleDissonance: () => void
+  spectrumOpen: boolean
+  onToggleSpectrum: () => void
 }) {
   const { settings } = useBeatingAnalysisSettings()
   const {
@@ -268,8 +272,10 @@ export function BeatingCharts({
     <>
       <div className="mb-4">
         <IntervalControls
-          sidebarOpen={sidebarOpen}
-          onToggleSidebar={onToggleSidebar}
+          dissonanceOpen={dissonanceOpen}
+          onToggleDissonance={onToggleDissonance}
+          spectrumOpen={spectrumOpen}
+          onToggleSpectrum={onToggleSpectrum}
         />
       </div>
 

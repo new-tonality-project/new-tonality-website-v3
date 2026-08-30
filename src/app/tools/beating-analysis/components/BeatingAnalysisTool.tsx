@@ -3,24 +3,29 @@
 import { useState } from 'react'
 import { Container, Prose, CollapsibleDescription } from '@/components'
 import { BeatingAnalysisProvider } from './BeatingAnalysisProvider'
-import { BeatingAnalysisSidebar } from './BeatingAnalysisSidebar'
+import {
+  DissonanceParamsSidebar,
+  SpectrumParamsSidebar,
+} from './BeatingAnalysisSidebar'
 import { BeatingCharts } from './BeatingCharts'
 import { useBeatingAnalysisAudio } from './useBeatingAnalysisAudio'
 
-function BeatingAnalysisToolContent({
-  sidebarOpen,
-  onToggleSidebar,
-  onCloseSidebar,
-}: {
-  sidebarOpen: boolean
-  onToggleSidebar: () => void
-  onCloseSidebar: () => void
-}) {
+function BeatingAnalysisToolContent() {
+  const [dissonanceOpen, setDissonanceOpen] = useState(false)
+  const [spectrumOpen, setSpectrumOpen] = useState(false)
+
   useBeatingAnalysisAudio()
 
   return (
     <>
-      <BeatingAnalysisSidebar open={sidebarOpen} onClose={onCloseSidebar} />
+      <DissonanceParamsSidebar
+        open={dissonanceOpen}
+        onClose={() => setDissonanceOpen(false)}
+      />
+      <SpectrumParamsSidebar
+        open={spectrumOpen}
+        onClose={() => setSpectrumOpen(false)}
+      />
 
       <Container className="mt-16 lg:mt-32">
         <Container>
@@ -49,8 +54,10 @@ function BeatingAnalysisToolContent({
           </Prose>
 
           <BeatingCharts
-            sidebarOpen={sidebarOpen}
-            onToggleSidebar={onToggleSidebar}
+            dissonanceOpen={dissonanceOpen}
+            onToggleDissonance={() => setDissonanceOpen((open) => !open)}
+            spectrumOpen={spectrumOpen}
+            onToggleSpectrum={() => setSpectrumOpen((open) => !open)}
           />
         </Container>
       </Container>
@@ -59,15 +66,9 @@ function BeatingAnalysisToolContent({
 }
 
 export function BeatingAnalysisTool() {
-  const [sidebarOpen, setSidebarOpen] = useState(true)
-
   return (
     <BeatingAnalysisProvider>
-      <BeatingAnalysisToolContent
-        sidebarOpen={sidebarOpen}
-        onCloseSidebar={() => setSidebarOpen(false)}
-        onToggleSidebar={() => setSidebarOpen((open) => !open)}
-      />
+      <BeatingAnalysisToolContent />
     </BeatingAnalysisProvider>
   )
 }
