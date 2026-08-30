@@ -4,21 +4,17 @@ import { useState } from 'react'
 import { CloseIcon } from '@/components'
 import { Select } from '@/components/Select'
 import { DissonanceParams } from './DissonanceParams'
-import { GeneralParams } from './GeneralParams'
 import { SpectrumParams } from './SpectrumParams'
 
-type ParamsPanel = 'general' | 'spectrum' | 'dissonance'
+type ParamsPanel = 'spectrum' | 'dissonance'
 
 const paramsPanelItems: { value: ParamsPanel; label: string }[] = [
-  { value: 'general', label: 'General' },
   { value: 'spectrum', label: 'Spectrum' },
   { value: 'dissonance', label: 'Dissonance' },
 ]
 
 function ParamsPanelContent({ panel }: { panel: ParamsPanel }) {
   switch (panel) {
-    case 'general':
-      return <GeneralParams />
     case 'spectrum':
       return <SpectrumParams />
     case 'dissonance':
@@ -33,7 +29,7 @@ export function BeatingAnalysisSidebar({
   open: boolean
   onClose: () => void
 }) {
-  const [paramsPanel, setParamsPanel] = useState<ParamsPanel>('general')
+  const [paramsPanel, setParamsPanel] = useState<ParamsPanel>('spectrum')
 
   return (
     <aside

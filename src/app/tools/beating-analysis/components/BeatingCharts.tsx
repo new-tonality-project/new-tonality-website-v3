@@ -14,8 +14,10 @@ import {
   REAL_HARMONICS_ARTIFACT_WARNING_THRESHOLD,
 } from '../utils'
 import { useBeatingAnalysisSettings } from './BeatingAnalysisProvider'
+import { AudioControls } from './AudioControls'
 import { DissonanceCurveChart } from './DissonanceCurveChart'
 import { IntervalControls } from './IntervalControls'
+import { WaveshapeControls } from './WaveshapeControls'
 
 const baseChartOptions: Highcharts.Options = {
   chart: {
@@ -271,7 +273,7 @@ export function BeatingCharts({
         />
       </div>
 
-      <div className="relative flex flex-col md:-ml-7">
+      <div className="relative md:-ml-7">
         <DissonanceCurveChart
           referenceFrequency={referenceFrequency}
           intervalCents={intervalCents}
@@ -283,7 +285,13 @@ export function BeatingCharts({
           dissonanceCurveMinCents={dissonanceCurveMinCents}
           dissonanceCurveMaxCents={dissonanceCurveMaxCents}
         />
+      </div>
 
+      <div className="mb-4">
+        <WaveshapeControls />
+      </div>
+
+      <div className="relative flex flex-col md:-ml-7">
         <WaveformChart
           data={waveforms.reference}
           color={COLORS.blue}
@@ -317,6 +325,8 @@ export function BeatingCharts({
           </p>
         )}
       </div>
+
+      <AudioControls />
     </>
   )
 }
