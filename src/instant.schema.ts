@@ -61,6 +61,7 @@ const _schema = i.schema({
       phaseDegrees: i.number(),
       realHarmonicsNumber: i.number().optional(),
       referenceFrequency: i.number(),
+      volume: i.number().optional(),
       showEnvelope: i.boolean(),
       showRms: i.boolean(),
       stretchFactor: i.number().optional(),

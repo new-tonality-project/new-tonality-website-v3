@@ -2,7 +2,7 @@
 
 import { type Dispatch, type SetStateAction } from 'react'
 import { db } from '@/db'
-import type { BeatingAnalysisSettings } from '@/lib'
+import { clamp, type BeatingAnalysisSettings } from '@/lib'
 import {
   cloneHarmonics,
   createDefaultHarmonicSeries,
@@ -35,6 +35,7 @@ export type BeatingAnalysisState = {
   stretchFactor: number
   dissonanceCurveMinCents: number
   dissonanceCurveMaxCents: number
+  volume: number
   showEnvelope: boolean
   showRms: boolean
 }
@@ -50,6 +51,7 @@ export const DEFAULT_BEATING_ANALYSIS_STATE: BeatingAnalysisState = {
   stretchFactor: DEFAULT_STRETCH_FACTOR,
   dissonanceCurveMinCents: DEFAULT_DISSONANCE_CURVE_MIN_CENTS,
   dissonanceCurveMaxCents: DEFAULT_DISSONANCE_CURVE_MAX_CENTS,
+  volume: 80,
   showEnvelope: true,
   showRms: false,
 }
@@ -79,12 +81,10 @@ function mapRecordToState(record: BeatingAnalysisSettings): BeatingAnalysisState
     periods: record.periods ?? DEFAULT_BEATING_ANALYSIS_STATE.periods,
     intervalCents:
       record.intervalCents ?? DEFAULT_BEATING_ANALYSIS_STATE.intervalCents,
-    amplitude: Math.min(
+    amplitude: clamp(
+      record.amplitude ?? DEFAULT_BEATING_ANALYSIS_STATE.amplitude,
+      0,
       1,
-      Math.max(
-        0,
-        record.amplitude ?? DEFAULT_BEATING_ANALYSIS_STATE.amplitude,
-      ),
     ),
     phaseDegrees:
       record.phaseDegrees ?? DEFAULT_BEATING_ANALYSIS_STATE.phaseDegrees,
@@ -97,10 +97,20 @@ function mapRecordToState(record: BeatingAnalysisSettings): BeatingAnalysisState
     dissonanceCurveMaxCents:
       record.dissonanceCurveMaxCents ??
       DEFAULT_BEATING_ANALYSIS_STATE.dissonanceCurveMaxCents,
+    volume: mapStoredVolume(record.volume),
     showEnvelope:
       record.showEnvelope ?? DEFAULT_BEATING_ANALYSIS_STATE.showEnvelope,
     showRms: record.showRms ?? DEFAULT_BEATING_ANALYSIS_STATE.showRms,
   }
+}
+
+function mapStoredVolume(value: number | undefined) {
+  if (value == null) {
+    return DEFAULT_BEATING_ANALYSIS_STATE.volume
+  }
+
+  const percent = value <= 1 ? value * 100 : value
+  return clamp(percent, 0, 100)
 }
 
 const getCreateState = () => DEFAULT_BEATING_ANALYSIS_STATE

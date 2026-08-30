@@ -9,6 +9,11 @@ export const MAX_SAMPLE_DURATION_SECONDS = 30
 
 export const SYNTH_ADSR = { attack: 0.05, decay: 0, sustain: 1, release: 0.1 }
 export const SYNTH_VELOCITY = 0.35
+export const SYNTH_MASTER_GAIN = 0.5
+
+export function masterGainFromVolume(volume: number) {
+  return SYNTH_MASTER_GAIN * (volume / 100)
+}
 
 const AUDIBLE_MIN_HZ = 20
 const AUDIBLE_MAX_HZ = 20000
