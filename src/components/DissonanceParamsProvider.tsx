@@ -8,13 +8,18 @@ import {
   type ReactNode,
 } from 'react'
 import { db } from '@/db'
-import { debounceTransaction } from '@/lib'
+import {
+  DISSONANCE_PARAMS_DEFAULT_PRESET_ID,
+  debounceTransaction,
+  defaultPresetMeta,
+} from '@/lib'
 import {
   DEFAULT_DISSONANCE_PARAMS_STATE,
   mapDissonanceParamsRecordToState,
   toPersistedDissonanceParams,
   type DissonanceParamsState,
 } from '@/lib/dissonanceParams'
+import { useEnsureDefaultPreset } from '@/hooks/useEnsureDefaultPreset'
 import { useSyncLinkedSettings } from '@/hooks/useSyncLinkedSettings'
 
 export type { DissonanceParamsState }
@@ -30,6 +35,14 @@ const persistParams = debounceTransaction(
   },
 )
 
+const createDefaultPreset = () =>
+  db.transact(
+    db.tx.dissonanceParamsPresets[DISSONANCE_PARAMS_DEFAULT_PRESET_ID].update({
+      ...defaultPresetMeta(),
+      ...toPersistedDissonanceParams(DEFAULT_DISSONANCE_PARAMS_STATE),
+    }),
+  )
+
 type DissonanceParamsContextValue = {
   settings: DissonanceParamsState
   update: (partial: Partial<DissonanceParamsState>) => void
@@ -44,7 +57,7 @@ export function DissonanceParamsProvider({ children }: { children: ReactNode }) 
   const user = db.useUser()
   const [settings, setSettings] = useState(DEFAULT_DISSONANCE_PARAMS_STATE)
 
-  const { isLoading, data } = db.useQuery({
+  const { isLoading: queryLoading, data } = db.useQuery({
     dissonanceParams: {
       $: {
         where: {
@@ -52,11 +65,30 @@ export function DissonanceParamsProvider({ children }: { children: ReactNode }) 
         },
       },
     },
+    dissonanceParamsPresets: {
+      $: {
+        where: {
+          id: DISSONANCE_PARAMS_DEFAULT_PRESET_ID,
+        },
+      },
+    },
   })
 
   const paramsRecord = data?.dissonanceParams[0]
+  const defaultPreset = data?.dissonanceParamsPresets[0]
+  const { isReady } = useEnsureDefaultPreset({
+    queryLoading,
+    record: defaultPreset,
+    create: createDefaultPreset,
+  })
 
-  const getCreateState = useCallback(() => DEFAULT_DISSONANCE_PARAMS_STATE, [])
+  const getCreateState = useCallback(
+    () =>
+      defaultPreset
+        ? mapDissonanceParamsRecordToState(defaultPreset)
+        : DEFAULT_DISSONANCE_PARAMS_STATE,
+    [defaultPreset],
+  )
 
   const createRecord = useCallback(
     (newId: string, userId: string, state: DissonanceParamsState) => {
@@ -80,7 +112,7 @@ export function DissonanceParamsProvider({ children }: { children: ReactNode }) 
   const paramsIdRef = useSyncLinkedSettings({
     userId: user.id,
     record: paramsRecord,
-    isLoading,
+    isLoading: !isReady,
     setState: setSettings,
     mapRecordToState: mapDissonanceParamsRecordToState,
     getCreateState,
@@ -102,7 +134,7 @@ export function DissonanceParamsProvider({ children }: { children: ReactNode }) 
 
   return (
     <DissonanceParamsContext.Provider
-      value={{ settings, update, isLoading }}
+      value={{ settings, update, isLoading: queryLoading || !isReady }}
     >
       {children}
     </DissonanceParamsContext.Provider>

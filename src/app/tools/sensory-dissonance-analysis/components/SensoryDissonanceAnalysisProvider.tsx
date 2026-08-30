@@ -8,10 +8,16 @@ import {
   type ReactNode,
 } from 'react'
 import { db } from '@/db'
-import { debounceTransaction } from '@/lib'
+import {
+  SENSORY_DISSONANCE_DEFAULT_PRESET_ID,
+  debounceTransaction,
+  defaultPresetMeta,
+} from '@/lib'
+import { useEnsureDefaultPreset } from '@/hooks/useEnsureDefaultPreset'
 import type { SensoryDissonanceAnalysisState } from './types'
 import {
   DEFAULT_SENSORY_DISSONANCE_ANALYSIS_STATE,
+  mapSensoryDissonanceAnalysisRecordToState,
   toPersistedSensoryDissonanceAnalysisSettings,
   useSyncSensoryDissonanceAnalysisSettings,
 } from './useSyncSensoryDissonanceAnalysisSettings'
@@ -28,6 +34,18 @@ const persistSettings = debounceTransaction(
     )
   },
 )
+
+const createDefaultPreset = () =>
+  db.transact(
+    db.tx.sensoryDissonanceAnalysisPresets[
+      SENSORY_DISSONANCE_DEFAULT_PRESET_ID
+    ].update({
+      ...defaultPresetMeta(),
+      ...toPersistedSensoryDissonanceAnalysisSettings(
+        DEFAULT_SENSORY_DISSONANCE_ANALYSIS_STATE,
+      ),
+    }),
+  )
 
 type SensoryDissonanceAnalysisContextValue = {
   settings: SensoryDissonanceAnalysisState
@@ -48,7 +66,7 @@ export function SensoryDissonanceAnalysisProvider({
     DEFAULT_SENSORY_DISSONANCE_ANALYSIS_STATE,
   )
 
-  const { isLoading, data } = db.useQuery({
+  const { isLoading: queryLoading, data } = db.useQuery({
     sensoryDissonanceAnalysisSettings: {
       $: {
         where: {
@@ -56,14 +74,37 @@ export function SensoryDissonanceAnalysisProvider({
         },
       },
     },
+    sensoryDissonanceAnalysisPresets: {
+      $: {
+        where: {
+          id: SENSORY_DISSONANCE_DEFAULT_PRESET_ID,
+        },
+      },
+    },
   })
 
   const settingsRecord = data?.sensoryDissonanceAnalysisSettings[0]
+  const defaultPreset = data?.sensoryDissonanceAnalysisPresets[0]
+  const { isReady } = useEnsureDefaultPreset({
+    queryLoading,
+    record: defaultPreset,
+    create: createDefaultPreset,
+  })
+
+  const getCreateState = useCallback(
+    () =>
+      defaultPreset
+        ? mapSensoryDissonanceAnalysisRecordToState(defaultPreset)
+        : DEFAULT_SENSORY_DISSONANCE_ANALYSIS_STATE,
+    [defaultPreset],
+  )
+
   const settingsIdRef = useSyncSensoryDissonanceAnalysisSettings({
     userId: user.id,
     settingsRecord,
-    isLoading,
+    isLoading: !isReady,
     setSettings,
+    getCreateState,
   })
 
   const update = useCallback(
@@ -84,7 +125,7 @@ export function SensoryDissonanceAnalysisProvider({
 
   return (
     <SensoryDissonanceAnalysisContext.Provider
-      value={{ settings, update, isLoading }}
+      value={{ settings, update, isLoading: queryLoading || !isReady }}
     >
       {children}
     </SensoryDissonanceAnalysisContext.Provider>

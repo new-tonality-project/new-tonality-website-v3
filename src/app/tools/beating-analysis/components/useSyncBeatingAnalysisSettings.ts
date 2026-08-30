@@ -67,7 +67,9 @@ export function toPersistedBeatingAnalysisSettings(
   }
 }
 
-function mapRecordToState(record: BeatingAnalysisSettings): BeatingAnalysisState {
+export function mapBeatingAnalysisRecordToState(
+  record: ReturnType<typeof toPersistedBeatingAnalysisSettings>,
+): BeatingAnalysisState {
   const realHarmonicsNumber =
     record.realHarmonicsNumber ??
     DEFAULT_BEATING_ANALYSIS_STATE.realHarmonicsNumber
@@ -113,8 +115,6 @@ function mapStoredVolume(value: number | undefined) {
   return clamp(percent, 0, 100)
 }
 
-const getCreateState = () => DEFAULT_BEATING_ANALYSIS_STATE
-
 function createRecord(
   newId: string,
   userId: string,
@@ -140,19 +140,22 @@ export function useSyncBeatingAnalysisSettings({
   settingsRecord,
   isLoading,
   setSettings,
+  getCreateState,
 }: {
   userId: string
   settingsRecord: BeatingAnalysisSettings | undefined
   isLoading: boolean
   setSettings: Dispatch<SetStateAction<BeatingAnalysisState>>
+  getCreateState: () => BeatingAnalysisState
 }) {
   return useSyncLinkedSettings({
     userId,
     isLoading,
     record: settingsRecord,
     setState: setSettings,
-    mapRecordToState,
+    mapRecordToState: mapBeatingAnalysisRecordToState,
     getCreateState,
     createRecord,
   })
 }
+

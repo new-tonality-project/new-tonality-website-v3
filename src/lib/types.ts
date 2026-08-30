@@ -2,11 +2,6 @@ import { type StaticImageData } from 'next/image'
 import { type InstaQLEntity } from '@instantdb/react'
 import { type AppSchema } from '../instant.schema'
 
-export type SetharesDissonancePreset = InstaQLEntity<
-  AppSchema,
-  'setharesDissonancePresets'
->
-
 export type IntervalDissonanceScore = InstaQLEntity<
   AppSchema,
   'intervalDissonanceScores'
@@ -21,9 +16,24 @@ export type BeatingAnalysisSettings = InstaQLEntity<
 
 export type DissonanceParamsRecord = InstaQLEntity<AppSchema, 'dissonanceParams'>
 
+export type DissonanceParamsPreset = InstaQLEntity<
+  AppSchema,
+  'dissonanceParamsPresets'
+>
+
+export type BeatingAnalysisPreset = InstaQLEntity<
+  AppSchema,
+  'beatingAnalysisPresets'
+>
+
 export type SensoryDissonanceAnalysisSettings = InstaQLEntity<
   AppSchema,
   'sensoryDissonanceAnalysisSettings'
+>
+
+export type SensoryDissonanceAnalysisPreset = InstaQLEntity<
+  AppSchema,
+  'sensoryDissonanceAnalysisPresets'
 >
 
 export type BasicLink = { label: string; href: string }

@@ -1,4 +1,3 @@
-import type { DissonanceParamsRecord } from './types'
 import {
   DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
   DEFAULT_PHANTOM_HARMONICS_NUMBER,
@@ -51,8 +50,19 @@ function mergeOrder(
   return result
 }
 
-function persistOrder(
-  prefix: 'firstOrder' | 'secondOrder' | 'thirdOrder',
+type OrderPrefix = 'firstOrder' | 'secondOrder' | 'thirdOrder'
+type OrderColumn<P extends OrderPrefix> =
+  | `${P}Magnitude`
+  | `${P}XStar`
+  | `${P}B1`
+  | `${P}B2`
+  | `${P}S1`
+  | `${P}S2`
+  | `${P}MagnitudeFrequencyDecay`
+  | `${P}PhantomNotchDepth`
+
+function persistOrder<P extends OrderPrefix>(
+  prefix: P,
   params: DissonanceOrderParams,
 ) {
   return {
@@ -64,12 +74,23 @@ function persistOrder(
     [`${prefix}S2`]: params.s2,
     [`${prefix}MagnitudeFrequencyDecay`]: params.magnitudeFrequencyDecay,
     [`${prefix}PhantomNotchDepth`]: params.phantomNotchDepth,
+  } as Record<OrderColumn<P>, number>
+}
+
+export function toPersistedDissonanceParams(settings: DissonanceParamsState) {
+  return {
+    phantomHarmonicsNumber: settings.phantomHarmonicsNumber,
+    ...persistOrder('firstOrder', settings.firstOrderDissonance),
+    ...persistOrder('secondOrder', settings.secondOrderDissonance),
+    ...persistOrder('thirdOrder', settings.thirdOrderDissonance),
   }
 }
 
-function orderFromRecord(
-  record: DissonanceParamsRecord,
-  prefix: 'firstOrder' | 'secondOrder' | 'thirdOrder',
+export type DissonanceParamsColumns = ReturnType<typeof toPersistedDissonanceParams>
+
+function orderFromRecord<P extends OrderPrefix>(
+  record: DissonanceParamsColumns,
+  prefix: P,
 ): Partial<DissonanceOrderParams> {
   return {
     magnitude: record[`${prefix}Magnitude`],
@@ -83,17 +104,8 @@ function orderFromRecord(
   }
 }
 
-export function toPersistedDissonanceParams(settings: DissonanceParamsState) {
-  return {
-    phantomHarmonicsNumber: settings.phantomHarmonicsNumber,
-    ...persistOrder('firstOrder', settings.firstOrderDissonance),
-    ...persistOrder('secondOrder', settings.secondOrderDissonance),
-    ...persistOrder('thirdOrder', settings.thirdOrderDissonance),
-  }
-}
-
 export function mapDissonanceParamsRecordToState(
-  record: DissonanceParamsRecord,
+  record: DissonanceParamsColumns,
 ): DissonanceParamsState {
   return {
     firstOrderDissonance: mergeOrder(

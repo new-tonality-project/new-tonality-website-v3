@@ -36,8 +36,10 @@ export function toPersistedSensoryDissonanceAnalysisSettings(
   }
 }
 
-function mapRecordToState(
-  record: SensoryDissonanceAnalysisSettings,
+export function mapSensoryDissonanceAnalysisRecordToState(
+  record: Partial<
+    ReturnType<typeof toPersistedSensoryDissonanceAnalysisSettings>
+  >,
 ): SensoryDissonanceAnalysisState {
   return {
     showAverage:
@@ -61,8 +63,6 @@ function mapRecordToState(
       record.xAxisEnd ?? DEFAULT_SENSORY_DISSONANCE_ANALYSIS_STATE.xAxisEnd,
   }
 }
-
-const getCreateState = () => DEFAULT_SENSORY_DISSONANCE_ANALYSIS_STATE
 
 function createRecord(
   newId: string,
@@ -89,19 +89,22 @@ export function useSyncSensoryDissonanceAnalysisSettings({
   settingsRecord,
   isLoading,
   setSettings,
+  getCreateState,
 }: {
   userId: string
   settingsRecord: SensoryDissonanceAnalysisSettings | undefined
   isLoading: boolean
   setSettings: Dispatch<SetStateAction<SensoryDissonanceAnalysisState>>
+  getCreateState: () => SensoryDissonanceAnalysisState
 }) {
   return useSyncLinkedSettings({
     userId,
     isLoading,
     record: settingsRecord,
     setState: setSettings,
-    mapRecordToState,
+    mapRecordToState: mapSensoryDissonanceAnalysisRecordToState,
     getCreateState,
     createRecord,
   })
 }
+
