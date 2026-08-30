@@ -271,6 +271,8 @@ export function BeatingCharts({
 
   return (
     <>
+      <AudioControls />
+
       <div className="mb-4">
         <IntervalControls
           dissonanceOpen={dissonanceOpen}
@@ -333,8 +335,6 @@ export function BeatingCharts({
           </p>
         )}
       </div>
-
-      <AudioControls />
     </>
   )
 }

@@ -33,34 +33,6 @@ export function IntervalControls({
       />
       <DragNumberInput
         variant="outlined"
-        defaultValue={DEFAULT_BEATING_ANALYSIS_STATE.dissonanceCurveMinCents}
-        value={settings.dissonanceCurveMinCents}
-        min={0}
-        max={Math.max(0, settings.dissonanceCurveMaxCents - 1)}
-        minStep={1}
-        valueRange={100}
-        whole
-        label="Min cents"
-        onChange={(dissonanceCurveMinCents) =>
-          update({ dissonanceCurveMinCents })
-        }
-      />
-      <DragNumberInput
-        variant="outlined"
-        defaultValue={DEFAULT_BEATING_ANALYSIS_STATE.dissonanceCurveMaxCents}
-        value={settings.dissonanceCurveMaxCents}
-        min={Math.min(4800, settings.dissonanceCurveMinCents + 1)}
-        max={4800}
-        minStep={1}
-        valueRange={100}
-        whole
-        label="Max cents"
-        onChange={(dissonanceCurveMaxCents) =>
-          update({ dissonanceCurveMaxCents })
-        }
-      />
-      <DragNumberInput
-        variant="outlined"
         defaultValue={DEFAULT_BEATING_ANALYSIS_STATE.amplitude}
         value={settings.amplitude}
         min={0}
@@ -89,7 +61,7 @@ export function IntervalControls({
         onClick={onToggleDissonance}
         aria-pressed={dissonanceOpen}
       >
-        Dissonance settings
+        Dissonance
         <SettingsIcon className="size-4" />
       </Button>
       <Button
@@ -99,7 +71,7 @@ export function IntervalControls({
         onClick={onToggleSpectrum}
         aria-pressed={spectrumOpen}
       >
-        Spectrum settings
+        Spectrum
         <SettingsIcon className="size-4" />
       </Button>
     </div>

@@ -3,7 +3,7 @@ import { AdditiveSynth, type Partial, type Spectrum } from 'new-tonality-web-syn
 import type { SpectrumHarmonic } from '@/lib/spectrum'
 import { frequencyFromCents } from './utils'
 
-export const DEFAULT_SAMPLE_DURATION_SECONDS = 2
+export const DEFAULT_SAMPLE_DURATION_SECONDS = 10
 export const MIN_SAMPLE_DURATION_SECONDS = 0.5
 export const MAX_SAMPLE_DURATION_SECONDS = 30
 

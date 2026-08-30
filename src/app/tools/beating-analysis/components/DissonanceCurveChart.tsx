@@ -269,12 +269,7 @@ export function DissonanceCurveChart({
       },
       tooltip: { enabled: false },
       title: {
-        text: 'Beating analysis',
-        align: 'left',
-        margin: 0,
-        x: 68,
-        y: 10,
-        style: { fontSize: '14px', fontWeight: '600' },
+        text: undefined,
       },
       xAxis: {
         type: 'linear',
@@ -366,7 +361,7 @@ export function DissonanceCurveChart({
 
   return (
     <div className="relative mb-8 -ml-8 -mr-14">
-      <div className="absolute top-6.5 right-14 z-10 text-xs text-zinc-600 dark:text-zinc-400">
+      <div className="absolute top-3 right-14 z-10 text-xs text-zinc-600 dark:text-zinc-400">
         {`Intrinsic dissonance: ${roundToDecimals(dissonanceCurve.intrinsicDissonance?.dissonance ?? 0, 2)}`}
       </div>
       {/* @ts-expect-error - Highcharts Options type causes excessive stack depth when comparing with @highcharts/react props */}
