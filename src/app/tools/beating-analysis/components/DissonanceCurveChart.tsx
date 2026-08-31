@@ -184,6 +184,7 @@ export function DissonanceCurveChart({
       thirdOrderDissonance,
       phantomHarmonicsNumber,
       normalize: { min: 0, max: 1 },
+      maxGapCents: 1,
     }
   }, [
     firstOrderDissonance,

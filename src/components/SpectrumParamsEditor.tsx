@@ -69,7 +69,7 @@ export function SpectrumParamsEditor({
         minStep={1}
         valueRange={10}
         whole
-        label="Count"
+        label="Harmonics count"
         onChange={onHarmonicsCountChange}
       />
       <DragNumberInput
@@ -79,7 +79,7 @@ export function SpectrumParamsEditor({
         max={8}
         minStep={0.01}
         valueRange={1}
-        label="Stretch"
+        label="Stretch factor"
         onChange={onStretchFactorChange}
       />
 

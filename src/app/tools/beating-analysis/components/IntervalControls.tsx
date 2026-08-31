@@ -27,7 +27,7 @@ export function IntervalControls({
         min={0}
         max={4800}
         minStep={1}
-        valueRange={100}
+        valueRange={500}
         label="Interval (cents)"
         onChange={(intervalCents) => update({ intervalCents })}
       />

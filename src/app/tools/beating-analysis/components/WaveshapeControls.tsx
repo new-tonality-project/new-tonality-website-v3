@@ -59,7 +59,7 @@ export function WaveshapeControls() {
         min={0}
         max={Math.max(0, settings.dissonanceCurveMaxCents - 1)}
         minStep={1}
-        valueRange={100}
+        valueRange={1000}
         whole
         label="Min (cents)"
         onChange={(dissonanceCurveMinCents) =>
@@ -74,7 +74,7 @@ export function WaveshapeControls() {
         min={Math.min(4800, settings.dissonanceCurveMinCents + 1)}
         max={4800}
         minStep={1}
-        valueRange={100}
+        valueRange={1000}
         whole
         label="Max (cents)"
         onChange={(dissonanceCurveMaxCents) =>
