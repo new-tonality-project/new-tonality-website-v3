@@ -26,11 +26,18 @@ Finally, open [http://localhost:3000](http://localhost:3000) in your browser to 
 
 ## InstantDB schema
 
-Schema lives in `src/instant.schema.ts`. To push changes, log in once, then push to the app whose ID is `NEXT_PUBLIC_INSTANT_APP_ID` in `.env.development` or `.env.production`:
+Schema lives in `src/instant.schema.ts`. Scripts target the Instant app ID in `NEXT_PUBLIC_INSTANT_APP_ID` from `.env.development` or `.env.production`.
+
+Log in once, then push or pull schema:
 
 ```bash
-bun instant-cli login
-bun instant-cli push schema --app <APP_ID>
+bun run instant:login
+
+bun run instant:push-schema-dev
+bun run instant:pull-schema-dev
+
+bun run instant:push-schema-prod
+bun run instant:pull-schema-prod
 ```
 
 Push schema to production before deploying frontend changes that depend on new entities or attributes. An additive schema push is safe while the old frontend is still live; deploying new code before the schema exists is not.

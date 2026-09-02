@@ -8,10 +8,11 @@
     "start": "next start",
     "lint": "tsc && bunx eslint .",
     "test": "bun test",
-    "push-schema-prod": "npx instant-cli@latest push schema --env .env.production",
-    "pull-schema-prod": "npx instant-cli@latest pull schema --env .env.production",
-    "push-schema-dev": "npx instant-cli@latest push schema --env .env",
-    "pull-schema-dev": "npx instant-cli@latest pull schema --env .env"
+    "instant:login": "npx instant-cli login",
+    "instant:push-schema-prod": "npx instant-cli push schema --env .env.production",
+    "instant:pull-schema-prod": "npx instant-cli pull schema --env .env.production",
+    "instant:push-schema-dev": "npx instant-cli push schema --env .env.development",
+    "instant:pull-schema-dev": "npx instant-cli pull schema --env .env.development"
   },
   "browserslist": "defaults, not ie <= 11",
   "dependencies": {
