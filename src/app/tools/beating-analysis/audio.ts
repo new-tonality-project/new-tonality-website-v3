@@ -3,12 +3,17 @@ import { AdditiveSynth, type Partial, type Spectrum } from 'new-tonality-web-syn
 import type { SpectrumHarmonic } from '@/lib/spectrum'
 import { frequencyFromCents } from './utils'
 
-export const DEFAULT_SAMPLE_DURATION_SECONDS = 2
+export const DEFAULT_SAMPLE_DURATION_SECONDS = 10
 export const MIN_SAMPLE_DURATION_SECONDS = 0.5
 export const MAX_SAMPLE_DURATION_SECONDS = 30
 
 export const SYNTH_ADSR = { attack: 0.05, decay: 0, sustain: 1, release: 0.1 }
 export const SYNTH_VELOCITY = 0.35
+export const SYNTH_MASTER_GAIN = 0.5
+
+export function masterGainFromVolume(volume: number) {
+  return SYNTH_MASTER_GAIN * (volume / 100)
+}
 
 const AUDIBLE_MIN_HZ = 20
 const AUDIBLE_MAX_HZ = 20000
@@ -18,8 +23,7 @@ export type SynthSpectrumParams = {
   intervalCents: number
   amplitude: number
   phaseDegrees: number
-  referenceHarmonics: SpectrumHarmonic[]
-  intervalHarmonics: SpectrumHarmonic[]
+  harmonics: SpectrumHarmonic[]
 }
 
 export type PlaybackMode = 'reference' | 'interval' | 'combined'
@@ -40,13 +44,10 @@ function toSpectrum(partials: Partial[]): Spectrum {
 
 export function buildReferenceSynthSpectrum({
   referenceFrequency,
-  referenceHarmonics,
-}: Pick<
-  SynthSpectrumParams,
-  'referenceFrequency' | 'referenceHarmonics'
->): Spectrum {
+  harmonics,
+}: Pick<SynthSpectrumParams, 'referenceFrequency' | 'harmonics'>): Spectrum {
   return toSpectrum(
-    referenceHarmonics.map((harmonic) => ({
+    harmonics.map((harmonic) => ({
       rate: referenceFrequency * harmonic.ratio,
       amplitude: harmonic.amplitude,
     })),
@@ -58,7 +59,7 @@ export function buildIntervalSynthSpectrum({
   intervalCents,
   amplitude,
   phaseDegrees,
-  intervalHarmonics,
+  harmonics,
 }: SynthSpectrumParams): Spectrum {
   const intervalFrequency = frequencyFromCents(
     referenceFrequency,
@@ -67,7 +68,7 @@ export function buildIntervalSynthSpectrum({
   const phaseRad = (phaseDegrees * Math.PI) / 180
 
   return toSpectrum(
-    intervalHarmonics.map((harmonic) => ({
+    harmonics.map((harmonic) => ({
       rate: intervalFrequency * harmonic.ratio,
       amplitude: amplitude * harmonic.amplitude,
       phase: harmonic.ratio * phaseRad,

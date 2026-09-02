@@ -1,30 +1,48 @@
+import { Spectrum } from 'tuning-core'
+
 export type SpectrumHarmonic = {
   ratio: number
   amplitude: number
 }
 
+export const DEFAULT_STRETCH_FACTOR = 2
+
 export const DEFAULT_SPECTRUM_HARMONICS: SpectrumHarmonic[] = [
   { ratio: 1, amplitude: 1 },
 ]
 
-export function getDefaultHarmonic(index: number): SpectrumHarmonic {
-  const ratio = index + 1
-  return { ratio, amplitude: 1 / ratio }
+export function createStretchedHarmonics(
+  count: number,
+  stretchFactor: number,
+): SpectrumHarmonic[] {
+  const safeCount = Math.max(1, Math.floor(count))
+  const safeStretch =
+    Number.isFinite(stretchFactor) && stretchFactor > 1
+      ? stretchFactor
+      : DEFAULT_STRETCH_FACTOR
+
+  return Spectrum.stretched(safeCount, 1, safeStretch)
+    .getHarmonics()
+    .map((harmonic) => ({
+      ratio: harmonic.frequencyNum,
+      amplitude: harmonic.amplitude,
+    }))
+}
+
+export function getDefaultHarmonic(
+  index: number,
+  stretchFactor = DEFAULT_STRETCH_FACTOR,
+): SpectrumHarmonic {
+  return (
+    createStretchedHarmonics(index + 1, stretchFactor)[index] ?? {
+      ratio: 1,
+      amplitude: 1,
+    }
+  )
 }
 
 export function createDefaultHarmonicSeries(count: number): SpectrumHarmonic[] {
-  const safeCount = Math.max(1, Math.floor(count))
-
-  return Array.from({ length: safeCount }, (_, index) => getDefaultHarmonic(index))
-}
-
-export function getNextHarmonic(harmonics: SpectrumHarmonic[]): SpectrumHarmonic {
-  const nextRatio =
-    harmonics.length > 0
-      ? Math.max(...harmonics.map((harmonic) => harmonic.ratio)) + 1
-      : 1
-
-  return { ratio: nextRatio, amplitude: 1 / nextRatio }
+  return createStretchedHarmonics(count, DEFAULT_STRETCH_FACTOR)
 }
 
 export function getMaxHarmonicRatio(harmonics: SpectrumHarmonic[]) {
@@ -33,12 +51,6 @@ export function getMaxHarmonicRatio(harmonics: SpectrumHarmonic[]) {
 
 export function cloneHarmonics(harmonics: SpectrumHarmonic[]): SpectrumHarmonic[] {
   return harmonics.map((harmonic) => ({ ...harmonic }))
-}
-
-export function getMaxHarmonicRatioAcross(
-  ...spectra: SpectrumHarmonic[][]
-): number {
-  return Math.max(...spectra.map((harmonics) => getMaxHarmonicRatio(harmonics)), 1)
 }
 
 export function parseHarmonicsJson(value: string | undefined | null) {

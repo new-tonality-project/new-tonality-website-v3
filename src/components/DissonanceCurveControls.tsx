@@ -5,20 +5,22 @@ import {
   DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
   DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
   DEFAULT_PHANTOM_HARMONICS_NUMBER,
+  type DissonanceParams,
 } from 'sethares-dissonance'
-import { DragNumberInput } from '@/components'
+import { DragNumberInput } from '@/components/DragNumberInput'
 import { SidebarSection } from '@/components/SidebarSection'
-import type { ChartSettings } from './types'
 
-type DissonanceCurveControlsProps = {
-  value: ChartSettings
-  onChange: (params: ChartSettings) => void
+export type DissonanceCurveSettings = Required<DissonanceParams>
+
+type DissonanceCurveControlsProps<T extends DissonanceCurveSettings> = {
+  value: T
+  onChange: (params: T) => void
 }
 
-export function DissonanceCurveControls({
+export function DissonanceCurveControls<T extends DissonanceCurveSettings>({
   value,
   onChange,
-}: DissonanceCurveControlsProps) {
+}: DissonanceCurveControlsProps<T>) {
   return (
     <div className="flex flex-col gap-2 w-full">
       <SidebarSection title="Phantom harmonics">

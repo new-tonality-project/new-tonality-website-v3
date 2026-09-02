@@ -51,8 +51,7 @@ export type WaveformParams = {
   intervalCents: number
   amplitude: number
   phaseDegrees: number
-  referenceHarmonics: SpectrumHarmonic[]
-  intervalHarmonics: SpectrumHarmonic[]
+  harmonics: SpectrumHarmonic[]
 }
 
 export type SpectrumPartial = {
@@ -282,15 +281,11 @@ export function generateWaveforms({
   intervalCents,
   amplitude,
   phaseDegrees,
-  referenceHarmonics,
-  intervalHarmonics,
+  harmonics,
 }: WaveformParams) {
   const durationSec = periods / referenceFrequency
   const intervalFrequency = frequencyFromCents(referenceFrequency, intervalCents)
-  const samplesPerReferencePeriod = getSamplesPerReferencePeriod([
-    ...referenceHarmonics,
-    ...intervalHarmonics,
-  ])
+  const samplesPerReferencePeriod = getSamplesPerReferencePeriod(harmonics)
   const phaseRad = (phaseDegrees * Math.PI) / 180
   const sampleCount = periods * samplesPerReferencePeriod
 
@@ -304,14 +299,14 @@ export function generateWaveforms({
     const referenceSample = sampleHarmonicTone(
       timeSec,
       referenceFrequency,
-      referenceHarmonics,
+      harmonics,
       1,
       0,
     )
     const intervalSample = sampleHarmonicTone(
       timeSec,
       intervalFrequency,
-      intervalHarmonics,
+      harmonics,
       amplitude,
       phaseRad,
     )

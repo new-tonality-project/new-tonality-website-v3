@@ -8,30 +8,40 @@ import {
   type ReactNode,
 } from 'react'
 import { db } from '@/db'
-import { debounceTransaction } from '@/lib'
+import {
+  BEATING_ANALYSIS_DEFAULT_PRESET_ID,
+  debounceTransaction,
+  defaultPresetMeta,
+} from '@/lib'
+import { useEnsureDefaultPreset } from '@/hooks/useEnsureDefaultPreset'
 import {
   DEFAULT_BEATING_ANALYSIS_STATE,
+  mapBeatingAnalysisRecordToState,
+  toPersistedBeatingAnalysisSettings,
   useSyncBeatingAnalysisSettings,
   type BeatingAnalysisState,
 } from './useSyncBeatingAnalysisSettings'
-import { serializeHarmonicsJson } from '@/lib/spectrum'
 
 export type { BeatingAnalysisState }
 
 const persistSettings = debounceTransaction(
   (settingsId: string, settings: BeatingAnalysisState) => {
-    const { referenceHarmonics, intervalHarmonics, ...rest } = settings
-
     db.transact(
       db.tx.beatingAnalysisSettings[settingsId].update({
-        ...rest,
-        harmonicsJson: serializeHarmonicsJson(referenceHarmonics),
-        intervalHarmonicsJson: serializeHarmonicsJson(intervalHarmonics),
+        ...toPersistedBeatingAnalysisSettings(settings),
         updatedAt: Date.now(),
       }),
     )
   },
 )
+
+const createDefaultPreset = () =>
+  db.transact(
+    db.tx.beatingAnalysisPresets[BEATING_ANALYSIS_DEFAULT_PRESET_ID].update({
+      ...defaultPresetMeta(),
+      ...toPersistedBeatingAnalysisSettings(DEFAULT_BEATING_ANALYSIS_STATE),
+    }),
+  )
 
 type BeatingAnalysisContextValue = {
   settings: BeatingAnalysisState
@@ -47,7 +57,7 @@ export function BeatingAnalysisProvider({ children }: { children: ReactNode }) {
   const user = db.useUser()
   const [settings, setSettings] = useState(DEFAULT_BEATING_ANALYSIS_STATE)
 
-  const { isLoading, data } = db.useQuery({
+  const { isLoading: queryLoading, data } = db.useQuery({
     beatingAnalysisSettings: {
       $: {
         where: {
@@ -55,14 +65,37 @@ export function BeatingAnalysisProvider({ children }: { children: ReactNode }) {
         },
       },
     },
+    beatingAnalysisPresets: {
+      $: {
+        where: {
+          id: BEATING_ANALYSIS_DEFAULT_PRESET_ID,
+        },
+      },
+    },
   })
 
   const settingsRecord = data?.beatingAnalysisSettings[0]
+  const defaultPreset = data?.beatingAnalysisPresets[0]
+  const { isReady } = useEnsureDefaultPreset({
+    queryLoading,
+    record: defaultPreset,
+    create: createDefaultPreset,
+  })
+
+  const getCreateState = useCallback(
+    () =>
+      defaultPreset
+        ? mapBeatingAnalysisRecordToState(defaultPreset)
+        : DEFAULT_BEATING_ANALYSIS_STATE,
+    [defaultPreset],
+  )
+
   const settingsIdRef = useSyncBeatingAnalysisSettings({
     userId: user.id,
     settingsRecord,
-    isLoading,
+    isLoading: !isReady,
     setSettings,
+    getCreateState,
   })
 
   const update = useCallback((partial: Partial<BeatingAnalysisState>) => {
@@ -80,7 +113,7 @@ export function BeatingAnalysisProvider({ children }: { children: ReactNode }) {
 
   return (
     <BeatingAnalysisContext.Provider
-      value={{ settings, update, isLoading }}
+      value={{ settings, update, isLoading: queryLoading || !isReady }}
     >
       {children}
     </BeatingAnalysisContext.Provider>

@@ -12,13 +12,13 @@ export const tools: Tool[] = [
     logo: dissonanceSurveyImage,
     link: { href: '/tools/sensory-dissonance-analysis', label: 'Explore' },
   },
-  // {
-  //   name: 'Beating analysis',
-  //   description:
-  //     'Visualize how two pure tones interfere and produce beating patterns by adjusting interval, amplitude, phase, and reference frequency.',
-  //   logo: beatingAnalysisImage,
-  //   link: { href: '/tools/beating-analysis', label: 'Explore' },
-  // },
+  {
+    name: 'Beating analysis',
+    description:
+      'Visualize how two pure tones interfere and produce beating patterns by adjusting interval, amplitude, phase, and reference frequency.',
+    logo: beatingAnalysisImage,
+    link: { href: '/tools/beating-analysis', label: 'Explore' },
+  },
   {
     name: 'Legacy Additive Synth V1',
     description:

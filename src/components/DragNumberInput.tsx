@@ -32,12 +32,27 @@ function clamp(num: number, min: number, max: number, whole: boolean) {
   return whole ? Math.floor(val) : val
 }
 
+function decimalPlaces(step: number) {
+  if (step <= 0) return 0
+  return Math.max(0, Math.ceil(-Math.log10(step)))
+}
+
 function quantize(val: number, step: number): number {
   if (step <= 0) return val
   const result = Math.round(val / step) * step
-  // Normalize to avoid floating point artifacts and trailing zeros in display
-  const decimals = Math.max(0, Math.ceil(-Math.log10(step)))
-  return parseFloat(result.toFixed(decimals))
+  return parseFloat(result.toFixed(decimalPlaces(step)))
+}
+
+function formatDisplayNumber(value: number, step: number, whole: boolean) {
+  if (!Number.isFinite(value)) {
+    return String(value)
+  }
+
+  if (whole) {
+    return String(Math.trunc(value))
+  }
+
+  return parseFloat(value.toFixed(decimalPlaces(step))).toString()
 }
 
 export function DragNumberInput({
@@ -219,16 +234,18 @@ export function DragNumberInput({
     [min, max, whole, minStep, isControlled, onChange, setDebouncedValue]
   )
 
+  const formattedValue = formatDisplayNumber(value, minStep, whole)
+
   const handleFocus = useCallback(() => {
     setIsFocused(true)
-    setDraftValue(String(value))
-  }, [value])
+    setDraftValue(formatDisplayNumber(value, minStep, whole))
+  }, [value, minStep, whole])
 
   // Sync draft when value changes from parent while focused (e.g. reset button)
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (isFocused) setDraftValue(String(value))
-  }, [isFocused, value])
+    if (isFocused) setDraftValue(formatDisplayNumber(value, minStep, whole))
+  }, [isFocused, value, minStep, whole])
 
   const handleBlur = useCallback(() => {
     setIsFocused(false)
@@ -259,7 +276,7 @@ export function DragNumberInput({
     [isMini]
   )
 
-  const displayValue = isFocused && draftValue !== null ? draftValue : String(value)
+  const displayValue = isFocused && draftValue !== null ? draftValue : formattedValue
   const padding = valueRange <= 0.1 ? 4 : valueRange < 100 ? 3 : 0
   const inputWidth = isMini
     ? displayValue.length

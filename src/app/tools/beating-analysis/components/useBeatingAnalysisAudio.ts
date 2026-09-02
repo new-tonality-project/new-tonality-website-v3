@@ -7,6 +7,7 @@ import {
   SYNTH_ADSR,
   SYNTH_VELOCITY,
   buildSynthSpectrumForMode,
+  masterGainFromVolume,
   type PlaybackMode,
 } from '../audio'
 import { useBeatingAnalysisSettings } from './BeatingAnalysisProvider'
@@ -57,6 +58,7 @@ export function useBeatingAnalysisAudio() {
         audioContext,
         adsr: SYNTH_ADSR,
       })
+      synth.setMasterGain(masterGainFromVolume(settingsRef.current.volume))
       audioContextRef.current = audioContext
       synthRef.current = synth
       return synth
@@ -176,8 +178,7 @@ export function useBeatingAnalysisAudio() {
       intervalCents: settings.intervalCents,
       amplitude: settings.amplitude,
       phaseDegrees: settings.phaseDegrees,
-      referenceHarmonics: settings.referenceHarmonics,
-      intervalHarmonics: settings.intervalHarmonics,
+      harmonics: settings.harmonics,
     }
 
     for (const mode of activeModes) {
@@ -185,10 +186,13 @@ export function useBeatingAnalysisAudio() {
     }
   }, [
     settings.amplitude,
-    settings.intervalHarmonics,
+    settings.harmonics,
     settings.intervalCents,
     settings.phaseDegrees,
     settings.referenceFrequency,
-    settings.referenceHarmonics,
   ])
+
+  useEffect(() => {
+    synthRef.current?.setMasterGain(masterGainFromVolume(settings.volume))
+  }, [settings.volume])
 }

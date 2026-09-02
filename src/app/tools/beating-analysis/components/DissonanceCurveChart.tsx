@@ -7,11 +7,6 @@ import { useDissonanceCurve, type UseDissonanceCurveOptions } from '@/hooks'
 import { COLORS } from '@/lib/colors'
 import { roundToDecimals } from '@/lib/utils'
 import {
-  DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
-  DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
-  DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
-} from 'sethares-dissonance'
-import {
   centsToRatio,
   createSpectrumFromHarmonics,
   getHarmonicsAmplitudeAxisBounds,
@@ -142,22 +137,22 @@ export function DissonanceCurveChart({
   referenceFrequency,
   intervalCents,
   amplitude,
-  referenceHarmonics,
-  intervalHarmonics,
+  harmonics,
   phantomHarmonicsNumber,
-  secondOrderBeatingContribution,
-  thirdOrderBeatingContribution,
+  firstOrderDissonance,
+  secondOrderDissonance,
+  thirdOrderDissonance,
   dissonanceCurveMinCents,
   dissonanceCurveMaxCents,
 }: {
   referenceFrequency: number
   intervalCents: number
   amplitude: number
-  referenceHarmonics: SpectrumHarmonic[]
-  intervalHarmonics: SpectrumHarmonic[]
+  harmonics: SpectrumHarmonic[]
   phantomHarmonicsNumber: number
-  secondOrderBeatingContribution: number
-  thirdOrderBeatingContribution: number
+  firstOrderDissonance: UseDissonanceCurveOptions['firstOrderDissonance']
+  secondOrderDissonance: UseDissonanceCurveOptions['secondOrderDissonance']
+  thirdOrderDissonance: UseDissonanceCurveOptions['thirdOrderDissonance']
   dissonanceCurveMinCents: number
   dissonanceCurveMaxCents: number
 }) {
@@ -165,17 +160,17 @@ export function DissonanceCurveChart({
   const maxCents = Math.max(dissonanceCurveMinCents, dissonanceCurveMaxCents)
 
   const referenceSpectrum = useMemo(
-    () => createSpectrumFromHarmonics(referenceFrequency, referenceHarmonics, 1),
-    [referenceFrequency, referenceHarmonics],
+    () => createSpectrumFromHarmonics(referenceFrequency, harmonics, 1),
+    [referenceFrequency, harmonics],
   )
   const intervalSpectrum = useMemo(
     () =>
       createSpectrumFromHarmonics(
         referenceFrequency,
-        intervalHarmonics,
+        harmonics,
         amplitude,
       ),
-    [amplitude, intervalHarmonics, referenceFrequency],
+    [amplitude, harmonics, referenceFrequency],
   )
 
   const dissonanceCurveOptions = useMemo((): UseDissonanceCurveOptions => {
@@ -184,26 +179,22 @@ export function DissonanceCurveChart({
       complement: intervalSpectrum,
       start: centsToRatio(minCents),
       end: centsToRatio(maxCents),
-      firstOrderDissonance: DEFAULT_FIRST_ORDER_DISSONANCE_PARAMS,
-      secondOrderDissonance: {
-        ...DEFAULT_SECOND_ORDER_DISSONANCE_PARAMS,
-        magnitude: secondOrderBeatingContribution,
-      },
-      thirdOrderDissonance: {
-        ...DEFAULT_THIRD_ORDER_DISSONANCE_PARAMS,
-        magnitude: thirdOrderBeatingContribution,
-      },
+      firstOrderDissonance,
+      secondOrderDissonance,
+      thirdOrderDissonance,
       phantomHarmonicsNumber,
       normalize: { min: 0, max: 1 },
+      maxGapCents: 1,
     }
   }, [
+    firstOrderDissonance,
     intervalSpectrum,
     maxCents,
     minCents,
     phantomHarmonicsNumber,
     referenceSpectrum,
-    secondOrderBeatingContribution,
-    thirdOrderBeatingContribution,
+    secondOrderDissonance,
+    thirdOrderDissonance,
   ])
 
   const dissonanceCurve = useDissonanceCurve(dissonanceCurveOptions)
@@ -218,7 +209,7 @@ export function DissonanceCurveChart({
         referenceFrequency,
         0,
         1,
-        referenceHarmonics,
+        harmonics,
         phantomHarmonicsNumber,
       ),
       minCents,
@@ -229,7 +220,7 @@ export function DissonanceCurveChart({
         referenceFrequency,
         intervalCents,
         amplitude,
-        intervalHarmonics,
+        harmonics,
         phantomHarmonicsNumber,
       ),
       minCents,
@@ -279,12 +270,7 @@ export function DissonanceCurveChart({
       },
       tooltip: { enabled: false },
       title: {
-        text: 'Beating analysis',
-        align: 'left',
-        margin: 0,
-        x: 68,
-        y: 10,
-        style: { fontSize: '14px', fontWeight: '600' },
+        text: undefined,
       },
       xAxis: {
         type: 'linear',
@@ -367,17 +353,16 @@ export function DissonanceCurveChart({
     amplitude,
     dissonanceCurve,
     intervalCents,
-    intervalHarmonics,
+    harmonics,
     maxCents,
     minCents,
     phantomHarmonicsNumber,
     referenceFrequency,
-    referenceHarmonics,
   ])
 
   return (
     <div className="relative mb-8 -ml-8 -mr-14">
-      <div className="absolute top-6.5 right-14 z-10 text-xs text-zinc-600 dark:text-zinc-400">
+      <div className="absolute top-3 right-14 z-10 text-xs text-zinc-600 dark:text-zinc-400">
         {`Intrinsic dissonance: ${roundToDecimals(dissonanceCurve.intrinsicDissonance?.dissonance ?? 0, 2)}`}
       </div>
       {/* @ts-expect-error - Highcharts Options type causes excessive stack depth when comparing with @highcharts/react props */}

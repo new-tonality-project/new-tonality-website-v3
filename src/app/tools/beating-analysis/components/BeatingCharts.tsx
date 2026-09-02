@@ -3,7 +3,6 @@
 import { useMemo } from 'react'
 import { Chart } from '@highcharts/react'
 import type Highcharts from 'highcharts'
-import { SettingsIcon } from '@/components'
 import { COLORS } from '@/lib/colors'
 import { roundToDecimals } from '@/lib/utils'
 import {
@@ -14,8 +13,12 @@ import {
   getReferencePeriodGridTicks,
   REAL_HARMONICS_ARTIFACT_WARNING_THRESHOLD,
 } from '../utils'
+import { useDissonanceParams } from '@/components/DissonanceParamsProvider'
 import { useBeatingAnalysisSettings } from './BeatingAnalysisProvider'
+import { AudioControls } from './AudioControls'
 import { DissonanceCurveChart } from './DissonanceCurveChart'
+import { IntervalControls } from './IntervalControls'
+import { WaveshapeControls } from './WaveshapeControls'
 
 const baseChartOptions: Highcharts.Options = {
   chart: {
@@ -167,30 +170,37 @@ function WaveformChart({
 }
 
 export function BeatingCharts({
-  sidebarOpen,
-  onToggleSidebar,
+  dissonanceOpen,
+  onToggleDissonance,
+  spectrumOpen,
+  onToggleSpectrum,
 }: {
-  sidebarOpen: boolean
-  onToggleSidebar: () => void
+  dissonanceOpen: boolean
+  onToggleDissonance: () => void
+  spectrumOpen: boolean
+  onToggleSpectrum: () => void
 }) {
   const { settings } = useBeatingAnalysisSettings()
+  const { settings: dissonanceParams } = useDissonanceParams()
   const {
     referenceFrequency,
     periods,
     intervalCents,
     amplitude,
     phaseDegrees,
-    referenceHarmonics,
-    intervalHarmonics,
+    harmonics,
     realHarmonicsNumber,
-    phantomHarmonicsNumber,
-    secondOrderBeatingContribution,
-    thirdOrderBeatingContribution,
     dissonanceCurveMinCents,
     dissonanceCurveMaxCents,
     showEnvelope,
     showRms,
   } = settings
+  const {
+    phantomHarmonicsNumber,
+    firstOrderDissonance,
+    secondOrderDissonance,
+    thirdOrderDissonance,
+  } = dissonanceParams
   const waveforms = useMemo(
     () =>
       generateWaveforms({
@@ -199,8 +209,7 @@ export function BeatingCharts({
         intervalCents,
         amplitude,
         phaseDegrees,
-        referenceHarmonics,
-        intervalHarmonics,
+        harmonics,
       }),
     [
       referenceFrequency,
@@ -208,8 +217,7 @@ export function BeatingCharts({
       intervalCents,
       amplitude,
       phaseDegrees,
-      referenceHarmonics,
-      intervalHarmonics,
+      harmonics,
     ],
   )
 
@@ -266,63 +274,71 @@ export function BeatingCharts({
   }, [showEnvelope, showRms, sumEnvelope, sumRms])
 
   return (
-    <div className="relative flex flex-col md:-ml-7">
+    <>
+      <AudioControls />
 
-      <DissonanceCurveChart
-        referenceFrequency={referenceFrequency}
-        intervalCents={intervalCents}
-        amplitude={amplitude}
-        referenceHarmonics={referenceHarmonics}
-        intervalHarmonics={intervalHarmonics}
-        phantomHarmonicsNumber={phantomHarmonicsNumber}
-        secondOrderBeatingContribution={secondOrderBeatingContribution}
-        thirdOrderBeatingContribution={thirdOrderBeatingContribution}
-        dissonanceCurveMinCents={dissonanceCurveMinCents}
-        dissonanceCurveMaxCents={dissonanceCurveMaxCents}
-      />
+      <div className="mb-4">
+        <IntervalControls
+          dissonanceOpen={dissonanceOpen}
+          onToggleDissonance={onToggleDissonance}
+          spectrumOpen={spectrumOpen}
+          onToggleSpectrum={onToggleSpectrum}
+        />
+      </div>
 
-      <button
-        type="button"
-        onClick={onToggleSidebar}
-        aria-label={sidebarOpen ? 'Close parameters' : 'Open parameters'}
-        aria-pressed={sidebarOpen}
-        className="absolute -top-1 left-2 z-10 flex size-9 cursor-pointer items-center justify-center rounded-lg text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-      >
-        <SettingsIcon className="size-4" />
-      </button>
+      <div className="relative md:-ml-7">
+        <DissonanceCurveChart
+          referenceFrequency={referenceFrequency}
+          intervalCents={intervalCents}
+          amplitude={amplitude}
+          harmonics={harmonics}
+          phantomHarmonicsNumber={phantomHarmonicsNumber}
+          firstOrderDissonance={firstOrderDissonance}
+          secondOrderDissonance={secondOrderDissonance}
+          thirdOrderDissonance={thirdOrderDissonance}
+          dissonanceCurveMinCents={dissonanceCurveMinCents}
+          dissonanceCurveMaxCents={dissonanceCurveMaxCents}
+        />
+      </div>
 
-      <WaveformChart
-        data={waveforms.reference}
-        color={COLORS.blue}
-        durationMs={waveforms.durationMs}
-        periodGridTicks={periodGridTicks}
-        height={75}
-        yAxisMin={-1.8}
-        yAxisMax={1.8}
-      />
-      <WaveformChart
-        data={waveforms.intervalTone}
-        color={COLORS.orange}
-        durationMs={waveforms.durationMs}
-        periodGridTicks={periodGridTicks}
-        height={75}
-        yAxisMin={-1.8}
-        yAxisMax={1.8}
-      />
-      <WaveformChart
-        data={waveforms.sum}
-        color={COLORS.green}
-        durationMs={waveforms.durationMs}
-        periodGridTicks={periodGridTicks}
-        showXAxis
-        showYAxisTitle
-        overlaySeries={sumOverlaySeries}
-      />
-      {realHarmonicsNumber > REAL_HARMONICS_ARTIFACT_WARNING_THRESHOLD && (
-        <p className="px-2 text-sm text-red-600 dark:text-red-400">
-          Warning, visible artifacts may appear in the waveforms due to discretization errors.
-        </p>
-      )}
-    </div>
+      <div className="mb-4">
+        <WaveshapeControls />
+      </div>
+
+      <div className="relative flex flex-col md:-ml-7">
+        <WaveformChart
+          data={waveforms.reference}
+          color={COLORS.blue}
+          durationMs={waveforms.durationMs}
+          periodGridTicks={periodGridTicks}
+          height={75}
+          yAxisMin={-1.8}
+          yAxisMax={1.8}
+        />
+        <WaveformChart
+          data={waveforms.intervalTone}
+          color={COLORS.orange}
+          durationMs={waveforms.durationMs}
+          periodGridTicks={periodGridTicks}
+          height={75}
+          yAxisMin={-1.8}
+          yAxisMax={1.8}
+        />
+        <WaveformChart
+          data={waveforms.sum}
+          color={COLORS.green}
+          durationMs={waveforms.durationMs}
+          periodGridTicks={periodGridTicks}
+          showXAxis
+          showYAxisTitle
+          overlaySeries={sumOverlaySeries}
+        />
+        {realHarmonicsNumber > REAL_HARMONICS_ARTIFACT_WARNING_THRESHOLD && (
+          <p className="px-2 text-sm text-red-600 dark:text-red-400">
+            Warning, visible artifacts may appear in the waveforms due to discretization errors.
+          </p>
+        )}
+      </div>
+    </>
   )
 }
