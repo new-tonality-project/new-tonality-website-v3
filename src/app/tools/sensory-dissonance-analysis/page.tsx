@@ -10,7 +10,6 @@ import {
 } from '@/components'
 import { ExperimentCharts } from './components/ExperimentCharts'
 import { UnfinishedExperimentsModal } from './components/UnfinishedExperimentsModal'
-import { FirefoxWarningModal } from './components/FirefoxWarningModal'
 import { useAuth } from '@clerk/nextjs'
 import { TextLink } from '@/components/catalyst/text'
 import { SOCIAL_MEDIA_LINKS } from '@/lib'
@@ -22,7 +21,6 @@ export default function DissonanceSurveyPage() {
   
   return (
     <Container className="mt-16 lg:mt-32">
-      <FirefoxWarningModal />
       {isSignedIn && (
         <UnfinishedExperimentsModal active={!surveyOpen} />
       )}

@@ -1,6 +1,7 @@
 import { type Metadata } from 'next'
 import { Providers } from '@/app/providers'
 import { Layout } from '@/components/Layout'
+import { FirefoxWarningModal } from '@/components/FirefoxWarningModal'
 import { ClerkProvider } from '@clerk/nextjs'
 
 import '@/styles/tailwind.css'
@@ -27,6 +28,7 @@ export default function RootLayout({
       <html lang="en" className="h-full antialiased" suppressHydrationWarning>
         <body className="flex h-full bg-zinc-50 dark:bg-black">
           <Providers>
+            <FirefoxWarningModal />
             <div className="flex w-full">
               <Layout>{children}</Layout>
             </div>
