@@ -7,6 +7,33 @@ import {
   parseMusicalBackground,
 } from '@/lib'
 
+const SURVEY_VOICE_ID = 'interval'
+const SURVEY_PARTIAL_AMPLITUDE = 0.2
+const SURVEY_VELOCITY = 0.5
+
+function playSurveyInterval(
+  synth: AdditiveSynth,
+  intervalCents: number,
+  meanFrequency: number,
+) {
+  const [f1, f2] = getIntervalFrequencies(intervalCents, meanFrequency)
+  const partials =
+    f1 === f2
+      ? [{ rate: f1, amplitude: SURVEY_PARTIAL_AMPLITUDE }]
+      : [
+          { rate: f1, amplitude: SURVEY_PARTIAL_AMPLITUDE },
+          { rate: f2, amplitude: SURVEY_PARTIAL_AMPLITUDE },
+        ]
+
+  synth.releaseAll()
+  synth.update([{ partials }], SURVEY_VOICE_ID)
+  synth.play({
+    pitch: 1,
+    velocity: SURVEY_VELOCITY,
+    voiceId: SURVEY_VOICE_ID,
+  })
+}
+
 // TODO: when exiting survey we get questions reset to defaultContext rather than data from BE. Need to fix this.
 
 export const surveyMachine = machineSetup.createMachine({
@@ -112,20 +139,11 @@ export const surveyMachine = machineSetup.createMachine({
             }),
             ({ context, event }) => {
               if (!context.synth) return
-
-              const [f1, f2] = getIntervalFrequencies(
+              playSurveyInterval(
+                context.synth,
                 event.value,
                 context.meanFrequency,
               )
-
-              context.synth.releaseAll()
-
-              if (f1 !== f2) {
-                context.synth.play({ pitch: f1, velocity: 0.5 })
-                context.synth.play({ pitch: f2, velocity: 0.5 })
-              } else {
-                context.synth.play({ pitch: f1, velocity: 0.5 })
-              }
             },
           ],
         },
@@ -178,20 +196,11 @@ export const surveyMachine = machineSetup.createMachine({
             }),
             ({ context, event }) => {
               if (!context.synth) return
-
-              const [f1, f2] = getIntervalFrequencies(
+              playSurveyInterval(
+                context.synth,
                 event.value,
                 context.meanFrequency,
               )
-
-              context.synth.releaseAll()
-
-              if (f1 !== f2) {
-                context.synth.play({ pitch: f1, velocity: 0.5 })
-                context.synth.play({ pitch: f2, velocity: 0.5 })
-              } else {
-                context.synth.play({ pitch: f1, velocity: 0.5 })
-              }
             },
           ],
         },
